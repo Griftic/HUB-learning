@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La chaîne de valeur de la phonologie</title>
+<meta property="og:title" content="La chaîne de valeur de la phonologie">
+<meta property="og:description" content="Du signal acoustique au sens — 6 infographies interactives pour comprendre comment le son devient du sens.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#080c18;color:#e2e8f0;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{height:4px;width:6px}
+::-webkit-scrollbar-track{background:#080c18}
+::-webkit-scrollbar-thumb{background:#1a2240;border-radius:4px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+#root{min-height:100vh}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const {useState,useEffect,useCallback} = React;
+
+const C={bg:"#080c18",surface:"#0f1629",surfaceLight:"#1a2240",border:"#1e2a4a",text:"#e2e8f0",textMuted:"#94a3b8",textDim:"#64748b",warm:"#ff6b4a",warmLight:"#ff8a65",warmGlow:"rgba(255,107,74,0.15)",indigo:"#818cf8",indigoDeep:"#6366f1",indigoGlow:"rgba(129,140,248,0.15)",cyan:"#22d3ee",cyanDeep:"#06b6d4",cyanGlow:"rgba(34,211,238,0.12)",emerald:"#34d399",emeraldDeep:"#10b981",emeraldGlow:"rgba(52,211,153,0.12)",purple:"#a78bfa",pink:"#f472b6"};
+const fd='Syne, system-ui, sans-serif';
+const fb='DM Sans, system-ui, sans-serif';
+
+const pill=(c,bg)=>({display:"inline-block",padding:"2px 10px",borderRadius:999,fontSize:11,fontWeight:600,color:c,background:bg,letterSpacing:"0.04em",textTransform:"uppercase"});
+const cardS=(bc=C.border)=>({background:C.surface,border:`1px solid ${bc}`,borderRadius:16,padding:20,transition:"all 0.3s ease"});
+
+// ═══════════════════════════════════════════
+// INFOGRAPHIE 1 — Vue d'ensemble
+// ═══════════════════════════════════════════
+function Infographie1(){
+  const[active,setActive]=useState(null);
+  const stages=[
+    {id:0,icon:"🔊",label:"Signal acoustique",type:"physique",color:C.warm,glow:C.warmGlow,desc:"Ondes sonores brutes produites par l'appareil phonatoire. Vibrations continues, mesurables en fréquence et amplitude.",analogy:"🏭 La matière première qui entre dans l'usine.",output:"Onde sonore continue"},
+    {id:1,icon:"👂",label:"Perception phonétique",type:"cognitif",color:C.indigo,glow:C.indigoGlow,desc:"Le cerveau reçoit et décode le signal : il identifie les propriétés acoustiques (fréquence, durée, intensité).",analogy:"📡 Le capteur qui analyse la matière brute.",output:"Représentation acoustique"},
+    {id:2,icon:"✂️",label:"Segmentation en phones",type:"cognitif",color:C.indigo,glow:C.indigoGlow,desc:"Le flux sonore continu est découpé en unités discrètes — les phones. Le cerveau trouve les frontières entre les sons.",analogy:"🔪 La découpe sur la chaîne de montage.",output:"Séquence de phones [b, a, l]"},
+    {id:3,icon:"🏷️",label:"Catégorisation en phonèmes",type:"cognitif",color:C.purple,glow:"rgba(167,139,250,0.12)",desc:"Les phones sont classés en catégories abstraites — les phonèmes. Des variations différentes sont regroupées sous une même étiquette.",analogy:"📦 Le tri : chaque pièce va dans le bon bac.",output:"Séquence de phonèmes /b, a, l/"},
+    {id:4,icon:"⚙️",label:"Règles phonologiques",type:"cognitif",color:C.cyanDeep,glow:C.cyanGlow,desc:"Des règles automatiques transforment les formes sous-jacentes en formes de surface : assimilation, liaison, élision…",analogy:"🔧 Les machines qui ajustent et polissent.",output:"Forme de surface adaptée au contexte"},
+    {id:5,icon:"💡",label:"Sens & mot",type:"sortie",color:C.emerald,glow:C.emeraldGlow,desc:"La séquence phonologique est associée à une entrée lexicale : le mot est reconnu, le sens émerge.",analogy:"🎁 Le produit fini, prêt à être utilisé.",output:'Mot reconnu : "bal" → fête dansante'}
+  ];
+  const typeLabel={physique:"Input physique",cognitif:"Traitement cognitif",sortie:"Sortie linguistique"};
+  const typeColor={physique:C.warm,cognitif:C.indigo,sortie:C.emerald};
+
+  return <div>
+    <div style={{textAlign:"center",marginBottom:28}}>
+      <div style={{...pill(C.warm,C.warmGlow),marginBottom:10}}>Infographie 1/6</div>
+      <h2 style={{fontFamily:fd,fontSize:26,fontWeight:800,color:C.text,lineHeight:1.2}}>Du son au sens</h2>
+      <p style={{color:C.textMuted,fontSize:13,marginTop:6,maxWidth:460,marginLeft:"auto",marginRight:"auto"}}>Le pipeline complet : comment une onde sonore devient un mot compris.<br/><span style={{fontSize:11,color:C.textDim}}>Touchez chaque station pour explorer.</span></p>
+    </div>
+    <div style={{display:"flex",gap:14,justifyContent:"center",marginBottom:24,flexWrap:"wrap"}}>
+      {Object.entries(typeLabel).map(([k,v])=><div key={k} style={{display:"flex",alignItems:"center",gap:6}}><div style={{width:10,height:10,borderRadius:"50%",background:typeColor[k]}}/><span style={{fontSize:11,color:C.textMuted}}>{v}</span></div>)}
+    </div>
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:0}}>
+      {stages.map((s,i)=><div key={s.id} style={{display:"flex",flexDirection:"column",alignItems:"center",width:"100%"}}>
+        <div onClick={()=>setActive(active===s.id?null:s.id)} style={{...cardS(active===s.id?s.color:C.border),cursor:"pointer",width:"100%",maxWidth:520,display:"flex",alignItems:"center",gap:14,boxShadow:active===s.id?`0 0 30px ${s.glow}`:"none",transform:active===s.id?"scale(1.02)":"scale(1)"}}>
+          <div style={{width:44,height:44,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,background:s.glow,border:`1px solid ${s.color}33`,flexShrink:0}}>{s.icon}</div>
+          <div style={{flex:1}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+              <span style={{fontFamily:fd,fontWeight:700,color:C.text,fontSize:14}}>{s.label}</span>
+              <span style={pill(s.color,s.glow)}>{s.type}</span>
+            </div>
+            {active===s.id&&<div style={{marginTop:10,animation:"fadeIn 0.3s ease"}}>
+              <p style={{color:C.textMuted,fontSize:12,lineHeight:1.6}}>{s.desc}</p>
+              <div style={{marginTop:8,padding:"6px 10px",borderRadius:8,background:C.bg,fontSize:11,color:C.textDim}}>{s.analogy}</div>
+              <div style={{marginTop:6,fontSize:11,color:s.color}}>→ Output : <strong>{s.output}</strong></div>
+            </div>}
+          </div>
+          <div style={{color:C.textDim,fontSize:16,fontWeight:700,fontFamily:fd}}>{i+1}</div>
+        </div>
+        {i<stages.length-1&&<div style={{display:"flex",flexDirection:"column",alignItems:"center",height:20}}>
+          <div style={{width:2,height:12,background:`linear-gradient(${stages[i].color}44, ${stages[i+1].color}44)`}}/>
+          <div style={{color:C.textDim,fontSize:9}}>▼</div>
+        </div>}
+      </div>)}
+    </div>
+  </div>;
+}
+
+// ═══════════════════════════════════════════
+// INFOGRAPHIE 2 — Phonétique vs Phonologie
+// ═══════════════════════════════════════════
+function Infographie2(){
+  const[hov,setHov]=useState(null);
+  const allo=[{s:"[ʁ]",l:"R uvulaire (Paris)",c:C.warm},{s:"[r]",l:"R roulé (occitan)",c:C.warmLight},{s:"[ʀ]",l:"R grasseyé",c:"#ff9a76"}];
+  const Col=({side,color,icon,title,sub,rows,children})=><div onMouseEnter={()=>setHov(side)} onMouseLeave={()=>setHov(null)} onClick={()=>setHov(hov===side?null:side)} style={{...cardS(hov===side?color:C.border),boxShadow:hov===side?`0 0 40px ${color}15`:"none"}}>
+    <div style={{textAlign:"center",marginBottom:14}}><div style={{fontSize:32,marginBottom:6}}>{icon}</div><h3 style={{fontFamily:fd,color,fontSize:17,fontWeight:700}}>{title}</h3><p style={{fontSize:11,color:C.textDim,marginTop:2}}>{sub}</p></div>
+    <div style={{fontSize:12,color:C.textMuted,lineHeight:1.7}}>{rows.map((r,i)=><div key={i} style={{padding:"6px 0",borderBottom:i<rows.length-1?`1px solid ${C.border}`:"none"}}>{r}</div>)}</div>
+    <div style={{marginTop:14}}>{children}</div>
+  </div>;
+
+  return <div>
+    <div style={{textAlign:"center",marginBottom:28}}>
+      <div style={{...pill(C.indigo,C.indigoGlow),marginBottom:10}}>Infographie 2/6</div>
+      <h2 style={{fontFamily:fd,fontSize:26,fontWeight:800,color:C.text}}>Le territoire vs la carte</h2>
+      <p style={{color:C.textMuted,fontSize:13,marginTop:6,maxWidth:480,marginLeft:"auto",marginRight:"auto"}}>La phonétique décrit tous les sons réels. La phonologie les organise en catégories utiles.</p>
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,maxWidth:660,margin:"0 auto"}}>
+      <Col side="pho" color={C.warm} icon="🛰️" title="Phonétique" sub="= La photo satellite" rows={[<span key="a">🎯 <strong style={{color:C.text}}>Objet</strong> : sons réels, physiques</span>,<span key="b">📏 <strong style={{color:C.text}}>Nature</strong> : continu, mesurable</span>,<span key="c">🔬 <strong style={{color:C.text}}>Méthode</strong> : spectrogrammes, IRM</span>,<span key="d">📐 <strong style={{color:C.text}}>Notation</strong> : crochets [ ]</span>]}>
+        <div style={{padding:10,background:C.warmGlow,borderRadius:10,textAlign:"center"}}>
+          <div style={{fontSize:11,color:C.textDim,marginBottom:6}}>Voit toutes les variantes :</div>
+          <div style={{display:"flex",gap:4,justifyContent:"center",flexWrap:"wrap"}}>{allo.map(a=><span key={a.s} style={{padding:"3px 8px",borderRadius:8,background:C.surface,border:`1px solid ${a.c}44`,fontSize:12,color:a.c,fontWeight:600}}>{a.s}<span style={{fontSize:9,color:C.textDim,marginLeft:3}}>{a.l}</span></span>)}</div>
+        </div>
+      </Col>
+      <Col side="phono" color={C.indigo} icon="🗺️" title="Phonologie" sub="= La carte routière" rows={[<span key="a">🎯 <strong style={{color:C.text}}>Objet</strong> : catégories abstraites</span>,<span key="b">📏 <strong style={{color:C.text}}>Nature</strong> : discret, systémique</span>,<span key="c">🔬 <strong style={{color:C.text}}>Méthode</strong> : paires minimales, règles</span>,<span key="d">📐 <strong style={{color:C.text}}>Notation</strong> : barres obliques / /</span>]}>
+        <div style={{padding:10,background:C.indigoGlow,borderRadius:10,textAlign:"center"}}>
+          <div style={{fontSize:11,color:C.textDim,marginBottom:6}}>Résume en une catégorie :</div>
+          <div style={{display:"inline-block",padding:"6px 20px",borderRadius:10,background:C.surface,border:`1px solid ${C.indigo}44`,fontSize:18,color:C.indigo,fontWeight:700,fontFamily:fd}}>/r/</div>
+          <div style={{fontSize:10,color:C.textDim,marginTop:4}}>Toutes les variantes → un seul phonème</div>
+        </div>
+      </Col>
+    </div>
+    <div style={{textAlign:"center",margin:"20px 0 14px",color:C.textDim,fontSize:12}}>
+      <div style={{fontSize:18}}>⟱</div>La phonologie <strong style={{color:C.cyan}}>filtre</strong> et <strong style={{color:C.cyan}}>simplifie</strong> la réalité phonétique
+    </div>
+    <div style={{...cardS(C.cyanDeep),maxWidth:500,margin:"0 auto",textAlign:"center",background:`linear-gradient(135deg, ${C.surface}, ${C.surfaceLight})`}}>
+      <div style={{fontSize:12,color:C.textMuted,lineHeight:1.7}}>💡 <strong style={{color:C.cyan}}>Idée clé</strong> : En français, que vous prononciez un R parisien, roulé ou grasseyé, on comprend le même mot. La phonologie ne retient que les différences <strong style={{color:C.text}}>qui changent le sens</strong>.</div>
+    </div>
+  </div>;
+}
+
+// ═══════════════════════════════════════════
+// INFOGRAPHIE 3 — Les phonèmes
+// ═══════════════════════════════════════════
+function Infographie3(){
+  const[sel,setSel]=useState(null);
+  const[quizMode,setQuizMode]=useState(false);
+  const[qI,setQI]=useState(0);
+  const[score,setScore]=useState(0);
+  const[ans,setAns]=useState(null);
+
+  const cons=[{p:"/p/",ex:"pas",t:"occlusive bilabiale sourde"},{p:"/b/",ex:"bas",t:"occlusive bilabiale sonore"},{p:"/t/",ex:"tas",t:"occlusive dentale sourde"},{p:"/d/",ex:"dos",t:"occlusive dentale sonore"},{p:"/k/",ex:"car",t:"occlusive vélaire sourde"},{p:"/g/",ex:"gare",t:"occlusive vélaire sonore"},{p:"/f/",ex:"fou",t:"fricative labiodentale sourde"},{p:"/v/",ex:"vous",t:"fricative labiodentale sonore"},{p:"/s/",ex:"sa",t:"fricative alvéolaire sourde"},{p:"/z/",ex:"zone",t:"fricative alvéolaire sonore"},{p:"/ʃ/",ex:"chat",t:"fricative post-alvéolaire sourde"},{p:"/ʒ/",ex:"je",t:"fricative post-alvéolaire sonore"},{p:"/m/",ex:"mot",t:"nasale bilabiale"},{p:"/n/",ex:"non",t:"nasale dentale"},{p:"/ɲ/",ex:"agneau",t:"nasale palatale"},{p:"/l/",ex:"la",t:"latérale alvéolaire"},{p:"/ʁ/",ex:"rue",t:"fricative uvulaire"}];
+  const voy=[{p:"/i/",ex:"si",t:"fermée antérieure"},{p:"/e/",ex:"thé",t:"mi-fermée antérieure"},{p:"/ɛ/",ex:"fête",t:"mi-ouverte antérieure"},{p:"/a/",ex:"patte",t:"ouverte centrale"},{p:"/y/",ex:"tu",t:"fermée antérieure arrondie"},{p:"/ø/",ex:"peu",t:"mi-fermée antérieure arrondie"},{p:"/œ/",ex:"peur",t:"mi-ouverte antérieure arrondie"},{p:"/u/",ex:"ou",t:"fermée postérieure arrondie"},{p:"/o/",ex:"mot",t:"mi-fermée postérieure"},{p:"/ɔ/",ex:"sort",t:"mi-ouverte postérieure"},{p:"/ə/",ex:"le",t:"schwa (caduc)"},{p:"/ɑ̃/",ex:"an",t:"nasale ouverte postérieure"},{p:"/ɛ̃/",ex:"vin",t:"nasale mi-ouverte"},{p:"/ɔ̃/",ex:"on",t:"nasale mi-ouverte postérieure"}];
+  const pm=[{a:"/p/",b:"/b/",mA:"pas",mB:"bas",tr:"± voisé"},{a:"/s/",b:"/z/",mA:"poisson",mB:"poison",tr:"± voisé"},{a:"/ʃ/",b:"/ʒ/",mA:"chou",mB:"joue",tr:"± voisé"},{a:"/t/",b:"/d/",mA:"ton",mB:"don",tr:"± voisé"},{a:"/i/",b:"/y/",mA:"si",mB:"su",tr:"± arrondi"},{a:"/u/",b:"/y/",mA:"ou",mB:"u (tu)",tr:"ant./post."}];
+  const quiz=[{q:'« pas » vs « bas » — quel trait change ?',a:"± voisé",o:["± voisé","± nasal","lieu d'articulation"]},{q:'« poisson » vs « poison » — quel phonème diffère ?',a:"/s/ vs /z/",o:["/p/ vs /b/","/s/ vs /z/","/ɔ/ vs /o/"]},{q:'« chou » vs « joue » — quelle paire ?',a:"/ʃ/ vs /ʒ/",o:["/s/ vs /z/","/ʃ/ vs /ʒ/","/k/ vs /g/"]},{q:"Combien de consonnes en français (≈) ?",a:"17-18",o:["10-12","17-18","25-30"]}];
+
+  const handleQ=(opt)=>{setAns(opt);if(opt===quiz[qI].a)setScore(s=>s+1);setTimeout(()=>{setAns(null);if(qI<quiz.length-1)setQI(q=>q+1);else{setQI(0);setTimeout(()=>setQuizMode(false),100);}},1200);};
+
+  const PN=({item,color})=><div onClick={()=>setSel(sel===item.p?null:item.p)} style={{padding:"5px 8px",borderRadius:10,background:sel===item.p?`${color}22`:C.surfaceLight,border:`1px solid ${sel===item.p?color:C.border}`,cursor:"pointer",textAlign:"center",transition:"all 0.2s",minWidth:50}}>
+    <div style={{fontFamily:fd,fontWeight:700,fontSize:14,color}}>{item.p}</div>
+    <div style={{fontSize:9,color:C.textDim}}>{item.ex}</div>
+    {sel===item.p&&<div style={{fontSize:8,color:C.textMuted,marginTop:1,animation:"fadeIn 0.2s"}}>{item.t}</div>}
+  </div>;
+
+  return <div>
+    <div style={{textAlign:"center",marginBottom:22}}>
+      <div style={{...pill(C.purple,"rgba(167,139,250,0.15)"),marginBottom:10}}>Infographie 3/6</div>
+      <h2 style={{fontFamily:fd,fontSize:26,fontWeight:800,color:C.text}}>Les atomes du langage</h2>
+      <p style={{color:C.textMuted,fontSize:13,marginTop:6,maxWidth:460,marginLeft:"auto",marginRight:"auto"}}>~17 consonnes, ~14 voyelles. Touchez pour explorer.</p>
+      <div style={{fontSize:11,color:C.textDim,marginTop:4}}>🧱 Comme des Lego — limités en nombre, infinis en combinaisons.</div>
+    </div>
+    <div style={{marginBottom:16}}>
+      <h4 style={{fontFamily:fd,color:C.warm,fontSize:13,fontWeight:700,marginBottom:8}}>Consonnes</h4>
+      <div style={{display:"flex",flexWrap:"wrap",gap:5}}>{cons.map(c=><PN key={c.p} item={c} color={C.warm}/>)}</div>
+    </div>
+    <div style={{marginBottom:20}}>
+      <h4 style={{fontFamily:fd,color:C.indigo,fontSize:13,fontWeight:700,marginBottom:8}}>Voyelles</h4>
+      <div style={{display:"flex",flexWrap:"wrap",gap:5}}>{voy.map(v=><PN key={v.p} item={v} color={C.indigo}/>)}</div>
+    </div>
+    <div style={{...cardS(C.cyan+"44"),marginBottom:18}}>
+      <h4 style={{fontFamily:fd,color:C.cyan,fontSize:13,fontWeight:700,marginBottom:10}}>Paires minimales — un trait, un sens différent</h4>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(180px, 1fr))",gap:8}}>{pm.map((p,i)=><div key={i} style={{padding:8,borderRadius:10,background:C.bg,display:"flex",alignItems:"center",gap:6,fontSize:12,flexWrap:"wrap"}}>
+        <span style={{color:C.warm,fontWeight:700,fontFamily:fd}}>«{p.mA}»</span><span style={{color:C.textDim}}>vs</span><span style={{color:C.indigo,fontWeight:700,fontFamily:fd}}>«{p.mB}»</span><span style={pill(C.cyan,C.cyanGlow)}>{p.tr}</span>
+      </div>)}</div>
+    </div>
+    <div style={{textAlign:"center"}}>
+      <button onClick={()=>{setQuizMode(!quizMode);setQI(0);setScore(0);setAns(null);}} style={{padding:"9px 22px",borderRadius:12,border:`1px solid ${C.emerald}`,background:quizMode?C.emerald:"transparent",color:quizMode?C.bg:C.emerald,fontFamily:fd,fontWeight:700,cursor:"pointer",fontSize:13,transition:"all 0.3s"}}>{quizMode?"✕ Fermer le quiz":"🎮 Mode Quiz"}</button>
+    </div>
+    {quizMode&&<div style={{...cardS(C.emerald+"44"),marginTop:14,textAlign:"center",animation:"fadeIn 0.3s"}}>
+      <div style={{fontSize:11,color:C.textDim,marginBottom:6}}>Question {qI+1}/{quiz.length} — Score : {score}</div>
+      <div style={{fontFamily:fd,fontWeight:700,color:C.text,fontSize:15,marginBottom:14}}>{quiz[qI].q}</div>
+      <div style={{display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap"}}>{quiz[qI].o.map(o=><button key={o} onClick={()=>!ans&&handleQ(o)} disabled={!!ans} style={{padding:"7px 16px",borderRadius:10,border:`1px solid ${ans?o===quiz[qI].a?C.emerald:o===ans?C.warm:C.border:C.border}`,background:ans?o===quiz[qI].a?C.emeraldGlow:o===ans?C.warmGlow:C.surface:C.surface,color:C.text,cursor:ans?"default":"pointer",fontFamily:fb,fontSize:12,transition:"all 0.2s"}}>{o}</button>)}</div>
+      {ans&&<div style={{marginTop:10,fontSize:12,color:ans===quiz[qI].a?C.emerald:C.warm}}>{ans===quiz[qI].a?"✓ Correct !":"✗ Réponse : "+quiz[qI].a}</div>}
+    </div>}
+  </div>;
+}
+
+// ═══════════════════════════════════════════
+// INFOGRAPHIE 4 — Traits distinctifs
+// ═══════════════════════════════════════════
+function Infographie4(){
+  const[at,setAt]=useState(null);
+  const traits=[
+    {name:"± voisé",desc:"Les cordes vocales vibrent-elles ?",icon:"🔔",plus:["/b/","/d/","/g/","/v/","/z/","/ʒ/"],minus:["/p/","/t/","/k/","/f/","/s/","/ʃ/"],color:C.warm},
+    {name:"± nasal",desc:"L'air passe-t-il par le nez ?",icon:"👃",plus:["/m/","/n/","/ɲ/"],minus:["/p/","/b/","/t/","/d/"],color:C.indigo},
+    {name:"Bilabial",desc:"Les deux lèvres se touchent",icon:"👄",plus:["/p/","/b/","/m/"],minus:[],color:C.cyan},
+    {name:"Alvéolaire",desc:"La langue touche les alvéoles",icon:"🦷",plus:["/t/","/d/","/n/","/s/","/z/","/l/"],minus:[],color:C.emerald},
+    {name:"Occlusif",desc:"Blocage complet puis relâchement",icon:"🚧",plus:["/p/","/b/","/t/","/d/","/k/","/g/"],minus:[],color:C.purple},
+    {name:"Fricatif",desc:"Rétrécissement continu de l'air",icon:"💨",plus:["/f/","/v/","/s/","/z/","/ʃ/","/ʒ/"],minus:[],color:C.pink}
+  ];
+  const decomp=[{ph:"/t/",tr:{voisé:"−",nasal:"−",lieu:"alvéolaire",mode:"occlusif"},c:C.warm},{ph:"/d/",tr:{voisé:"+",nasal:"−",lieu:"alvéolaire",mode:"occlusif"},c:C.indigo}];
+
+  return <div>
+    <div style={{textAlign:"center",marginBottom:24}}>
+      <div style={{...pill(C.pink,"rgba(244,114,182,0.15)"),marginBottom:10}}>Infographie 4/6</div>
+      <h2 style={{fontFamily:fd,fontSize:26,fontWeight:800,color:C.text}}>L'ADN des sons</h2>
+      <p style={{color:C.textMuted,fontSize:13,marginTop:6,maxWidth:460,marginLeft:"auto",marginRight:"auto"}}>Chaque phonème = un bundle de traits. Touchez un trait pour explorer.</p>
+    </div>
+    <div style={{display:"flex",flexWrap:"wrap",gap:6,justifyContent:"center",marginBottom:20}}>
+      {traits.map(t=><button key={t.name} onClick={()=>setAt(at===t.name?null:t.name)} style={{padding:"7px 14px",borderRadius:12,border:`1px solid ${at===t.name?t.color:C.border}`,background:at===t.name?`${t.color}22`:C.surface,color:at===t.name?t.color:C.textMuted,cursor:"pointer",fontFamily:fd,fontWeight:600,fontSize:12,display:"flex",alignItems:"center",gap:5,transition:"all 0.2s"}}><span>{t.icon}</span>{t.name}</button>)}
+    </div>
+    {at&&(()=>{const t=traits.find(x=>x.name===at);return <div style={{...cardS(t.color+"66"),marginBottom:20,animation:"fadeIn 0.3s"}}>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+        <span style={{fontSize:22}}>{t.icon}</span>
+        <div><div style={{fontFamily:fd,fontWeight:700,color:t.color,fontSize:15}}>{t.name}</div><div style={{fontSize:11,color:C.textMuted}}>{t.desc}</div></div>
+      </div>
+      {t.plus.length>0&&<div style={{marginBottom:6}}>
+        <span style={{fontSize:10,color:C.textDim}}>{t.name.startsWith("±")?"[+ "+t.name.slice(2)+"]":"Phonèmes concernés"} :</span>
+        <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:4}}>{t.plus.map(p=><span key={p} style={{padding:"3px 9px",borderRadius:8,background:`${t.color}22`,color:t.color,fontSize:13,fontWeight:700,fontFamily:fd}}>{p}</span>)}</div>
+      </div>}
+      {t.minus.length>0&&<div>
+        <span style={{fontSize:10,color:C.textDim}}>[− {t.name.slice(2)}] :</span>
+        <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:4}}>{t.minus.map(p=><span key={p} style={{padding:"3px 9px",borderRadius:8,background:C.surfaceLight,color:C.textMuted,fontSize:13,fontWeight:600,fontFamily:fd}}>{p}</span>)}</div>
+      </div>}
+    </div>;})()}
+    <div style={{...cardS(C.border),maxWidth:480,margin:"0 auto"}}>
+      <h4 style={{fontFamily:fd,fontSize:13,fontWeight:700,color:C.cyan,marginBottom:10}}>🧬 Décomposition : /t/ vs /d/</h4>
+      <div style={{fontSize:11,color:C.textDim,marginBottom:10}}>Un seul trait diffère — comme un bit qui bascule.</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+        {decomp.map(d=><div key={d.ph} style={{padding:10,borderRadius:10,background:C.bg,textAlign:"center"}}>
+          <div style={{fontFamily:fd,fontSize:22,fontWeight:800,color:d.c}}>{d.ph}</div>
+          {Object.entries(d.tr).map(([k,v])=><div key={k} style={{display:"flex",justifyContent:"space-between",fontSize:11,padding:"2px 0",borderBottom:`1px solid ${C.border}`,color:k==="voisé"?(v==="+"?C.emerald:C.warm):C.textMuted,fontWeight:k==="voisé"?700:400}}><span>{k}</span><span>{v}</span></div>)}
+        </div>)}
+      </div>
+      <div style={{textAlign:"center",marginTop:10,fontSize:11,color:C.cyan}}>→ Seul <strong>[± voisé]</strong> change : « ton » ≠ « don »</div>
+    </div>
+  </div>;
+}
+
+// ═══════════════════════════════════════════
+// INFOGRAPHIE 5 — Règles phonologiques
+// ═══════════════════════════════════════════
+function Infographie5(){
+  const[ar,setAr]=useState(0);
+  const rules=[
+    {name:"Liaison",icon:"🔗",ex:{u:'/le/ + /ami/',r:"Insertion de [z] entre voyelles",s:"[le.za.mi]",rd:'« les amis » → [le.za.mi]'},exp:"La consonne finale muette se prononce devant une voyelle initiale. Un pont sonore entre deux mots.",color:C.indigo},
+    {name:"Assimilation",icon:"🔄",ex:{u:'/mɛd.sɛ̃/',r:"/d/ → [t] devant consonne sourde",s:"[mɛt.sɛ̃]",rd:'« médecin » → [mɛt.sɛ̃]'},exp:"Une consonne voisée devient sourde au contact d'une consonne sourde voisine.",color:C.warm},
+    {name:"Élision",icon:"✂️",ex:{u:'/lə/ + /ami/',r:"Suppression du /ə/ devant voyelle",s:"[la.mi]",rd:"« le ami » → « l'ami » [la.mi]"},exp:"La voyelle /ə/ disparaît devant un mot commençant par une voyelle pour éviter un hiatus.",color:C.cyan},
+    {name:"Nasalisation",icon:"👃",ex:{u:'/bɔn/',r:"Voyelle + /n/ → voyelle nasale",s:"[bɔ̃]",rd:'« bon » → [bɔ̃]'},exp:"Devant une consonne nasale en fin de syllabe, la voyelle se nasalise.",color:C.purple}
+  ];
+  const r=rules[ar];
+
+  return <div>
+    <div style={{textAlign:"center",marginBottom:24}}>
+      <div style={{...pill(C.cyanDeep,C.cyanGlow),marginBottom:10}}>Infographie 5/6</div>
+      <h2 style={{fontFamily:fd,fontSize:26,fontWeight:800,color:C.text}}>Les lois de transformation</h2>
+      <p style={{color:C.textMuted,fontSize:13,marginTop:6,maxWidth:460,marginLeft:"auto",marginRight:"auto"}}>Des filtres qui transforment la forme profonde en forme de surface.</p>
+      <p style={{fontSize:10,color:C.textDim,marginTop:4}}>📸 Comme des filtres Instagram — même base, rendu différent selon le contexte.</p>
+    </div>
+    <div style={{display:"flex",gap:6,justifyContent:"center",marginBottom:20,flexWrap:"wrap"}}>
+      {rules.map((rl,i)=><button key={rl.name} onClick={()=>setAr(i)} style={{padding:"7px 14px",borderRadius:10,border:`1px solid ${ar===i?rl.color:C.border}`,background:ar===i?`${rl.color}22`:C.surface,color:ar===i?rl.color:C.textMuted,fontFamily:fd,fontWeight:600,fontSize:12,cursor:"pointer",display:"flex",alignItems:"center",gap:5,transition:"all 0.2s"}}>{rl.icon} {rl.name}</button>)}
+    </div>
+    <div style={{...cardS(r.color+"44"),maxWidth:520,margin:"0 auto",animation:"fadeIn 0.3s"}}>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+        <span style={{fontSize:26}}>{r.icon}</span>
+        <div><div style={{fontFamily:fd,fontWeight:700,color:r.color,fontSize:16}}>{r.name}</div><div style={{fontSize:11,color:C.textMuted}}>{r.exp}</div></div>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:0}}>
+        <div style={{padding:"9px 18px",borderRadius:12,background:C.bg,border:`1px solid ${C.border}`,textAlign:"center",width:"100%",maxWidth:360}}>
+          <div style={{fontSize:9,color:C.textDim,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:3}}>Forme sous-jacente</div>
+          <div style={{fontFamily:fd,fontSize:18,fontWeight:700,color:C.textMuted}}>{r.ex.u}</div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"4px 0"}}>
+          <div style={{width:2,height:10,background:r.color+"44"}}/>
+          <div style={{padding:"5px 14px",borderRadius:20,background:`${r.color}22`,border:`1px solid ${r.color}44`,fontSize:11,color:r.color,fontWeight:600}}>⚙ {r.ex.r}</div>
+          <div style={{width:2,height:10,background:r.color+"44"}}/>
+          <div style={{color:r.color,fontSize:12}}>▼</div>
+        </div>
+        <div style={{padding:"9px 18px",borderRadius:12,background:`${r.color}11`,border:`1px solid ${r.color}44`,textAlign:"center",width:"100%",maxWidth:360}}>
+          <div style={{fontSize:9,color:C.textDim,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:3}}>Forme de surface</div>
+          <div style={{fontFamily:fd,fontSize:18,fontWeight:700,color:r.color}}>{r.ex.s}</div>
+        </div>
+      </div>
+      <div style={{marginTop:14,padding:"7px 10px",borderRadius:8,background:C.bg,fontSize:12,color:C.text,textAlign:"center"}}>{r.ex.rd}</div>
+    </div>
+  </div>;
+}
+
+// ═══════════════════════════════════════════
+// INFOGRAPHIE 6 — Applications
+// ═══════════════════════════════════════════
+function Infographie6(){
+  const[ad,setAd]=useState(null);
+  const domains=[
+    {icon:"🗣",name:"Orthophonie",color:C.warm,desc:"Diagnostic et traitement des troubles phonologiques",ex:'Un enfant qui dit « tien » au lieu de « chien » : substitution /ʃ/ → /t/. L\'orthophoniste cible l\'erreur via le système phonologique.'},
+    {icon:"🤖",name:"NLP & Voix",color:C.indigo,desc:"Reconnaissance vocale, TTS, assistants",ex:"Siri, Alexa : convertir un signal en phonèmes puis en mots. La phonologie fournit l'inventaire des unités à reconnaître."},
+    {icon:"📚",name:"Enseignement langues",color:C.cyan,desc:"FLE, acquisition d'une L2",ex:'Un anglophone doit maîtriser /y/ (« tu ») — absent de l\'anglais. La phonologie identifie les contrastes à enseigner.'},
+    {icon:"🧒",name:"Acquisition langage",color:C.emerald,desc:"Comment l'enfant construit son système",ex:'À 12 mois, un bébé francophone distingue /p/ de /b/ mais pas les tons du mandarin : spécialisation phonologique.'},
+    {icon:"🔤",name:"Systèmes d'écriture",color:C.purple,desc:"Conception d'alphabets, graphème-phonème",ex:'Le phonème /o/ peut s\'écrire « o », « au », « eau » — un casse-tête orthographique révélé par la phonologie.'},
+    {icon:"🧠",name:"Neurolinguistique",color:C.pink,desc:"Traitement cérébral des phonèmes",ex:'L\'aphasie de Broca peut provoquer « table » → « trable ». Le cerveau perd la capacité d\'organiser les phonèmes.'}
+  ];
+
+  return <div>
+    <div style={{textAlign:"center",marginBottom:24}}>
+      <div style={{...pill(C.emerald,C.emeraldGlow),marginBottom:10}}>Infographie 6/6</div>
+      <h2 style={{fontFamily:fd,fontSize:26,fontWeight:800,color:C.text}}>À quoi sert la phonologie ?</h2>
+      <p style={{color:C.textMuted,fontSize:13,marginTop:6}}>Six domaines où elle est indispensable.</p>
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(190px, 1fr))",gap:10,maxWidth:640,margin:"0 auto"}}>
+      {domains.map(d=><div key={d.name} onClick={()=>setAd(ad===d.name?null:d.name)} style={{...cardS(ad===d.name?d.color:C.border),cursor:"pointer",boxShadow:ad===d.name?`0 0 25px ${d.color}22`:"none",transition:"all 0.3s"}}>
+        <div style={{fontSize:26,marginBottom:6}}>{d.icon}</div>
+        <div style={{fontFamily:fd,fontWeight:700,fontSize:13,color:d.color}}>{d.name}</div>
+        <div style={{fontSize:10,color:C.textDim,marginTop:3,lineHeight:1.5}}>{d.desc}</div>
+        {ad===d.name&&<div style={{marginTop:8,padding:8,borderRadius:8,background:C.bg,fontSize:11,color:C.textMuted,lineHeight:1.6,animation:"fadeIn 0.3s"}}>💡 {d.ex}</div>}
+      </div>)}
+    </div>
+  </div>;
+}
+
+// ═══════════════════════════════════════════
+// APP PRINCIPALE
+// ═══════════════════════════════════════════
+const tabs=[
+  {id:0,short:"1. Pipeline"},
+  {id:1,short:"2. Territoire/Carte"},
+  {id:2,short:"3. Atomes"},
+  {id:3,short:"4. ADN"},
+  {id:4,short:"5. Règles"},
+  {id:5,short:"6. Applications"}
+];
+const tabColors=[C.warm,C.indigo,C.purple,C.pink,C.cyanDeep,C.emerald];
+
+function App(){
+  const[at,setAt]=useState(0);
+  return <div style={{fontFamily:fb,background:C.bg,color:C.text,minHeight:"100vh",paddingBottom:40}}>
+    <div style={{textAlign:"center",padding:"28px 16px 18px",borderBottom:`1px solid ${C.border}`,marginBottom:20,background:`linear-gradient(180deg, ${C.surfaceLight}55 0%, ${C.bg} 100%)`}}>
+      <div style={{fontSize:11,color:C.textDim,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:6}}>Infographies interactives</div>
+      <h1 style={{fontFamily:fd,fontSize:28,fontWeight:800,margin:0,background:`linear-gradient(135deg, ${C.warm}, ${C.indigo}, ${C.cyan})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",lineHeight:1.2}}>La chaîne de valeur de la phonologie</h1>
+      <p style={{color:C.textMuted,fontSize:13,marginTop:6,maxWidth:420,marginLeft:"auto",marginRight:"auto"}}>Du signal acoustique au sens — en 6 étapes visuelles.</p>
+    </div>
+    <div style={{display:"flex",gap:4,justifyContent:"center",padding:"0 12px",marginBottom:24,flexWrap:"wrap"}}>
+      {tabs.map((t,i)=><button key={t.id} onClick={()=>setAt(t.id)} style={{padding:"7px 12px",borderRadius:10,border:`1px solid ${at===t.id?tabColors[i]:C.border}`,background:at===t.id?`${tabColors[i]}22`:"transparent",color:at===t.id?tabColors[i]:C.textDim,fontFamily:fd,fontWeight:600,fontSize:11,cursor:"pointer",transition:"all 0.2s",whiteSpace:"nowrap"}}>{t.short}</button>)}
+    </div>
+    <div style={{maxWidth:700,margin:"0 auto",padding:"0 16px",animation:"fadeIn 0.35s"}} key={at}>
+      {at===0&&<Infographie1/>}{at===1&&<Infographie2/>}{at===2&&<Infographie3/>}{at===3&&<Infographie4/>}{at===4&&<Infographie5/>}{at===5&&<Infographie6/>}
+    </div>
+    <div style={{display:"flex",justifyContent:"center",gap:12,marginTop:28,padding:"0 16px"}}>
+      {at>0&&<button onClick={()=>setAt(at-1)} style={{padding:"9px 18px",borderRadius:10,border:`1px solid ${C.border}`,background:C.surface,color:C.textMuted,fontFamily:fd,fontWeight:600,fontSize:12,cursor:"pointer"}}>← Précédent</button>}
+      {at<5&&<button onClick={()=>setAt(at+1)} style={{padding:"9px 18px",borderRadius:10,border:`1px solid ${tabColors[at+1]}`,background:`${tabColors[at+1]}22`,color:tabColors[at+1],fontFamily:fd,fontWeight:600,fontSize:12,cursor:"pointer"}}>Suivant →</button>}
+    </div>
+  </div>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
