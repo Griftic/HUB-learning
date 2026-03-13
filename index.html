@@ -15,85 +15,57 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#060a14;color:#e2e8f0
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:#060a14}
 ::-webkit-scrollbar-thumb{background:#1a2240;border-radius:4px}
-
-/* ── Grain overlay ── */
 body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")}
-
-/* ── Animations ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes glow-pulse{0%,100%{opacity:0.4}50%{opacity:0.8}}
 @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-
-/* ── Layout ── */
 .wrapper{max-width:840px;margin:0 auto;padding:0 20px}
-
-/* ── Header ── */
 .header{padding:60px 0 40px;text-align:center;position:relative}
 .header::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(90deg,transparent,#1e2a4a,transparent)}
 .logo-mark{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#ff6b4a22,#818cf822,#22d3ee22);border:1px solid #1e2a4a;margin-bottom:20px;font-size:24px;animation:float 4s ease-in-out infinite}
 .header h1{font-family:'Syne',sans-serif;font-size:clamp(28px,5vw,40px);font-weight:800;line-height:1.1;margin-bottom:10px;background:linear-gradient(135deg,#ff6b4a,#818cf8,#22d3ee,#34d399);background-size:300% 300%;animation:gradient-shift 8s ease infinite;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .header .subtitle{color:#64748b;font-size:14px;max-width:400px;margin:0 auto;line-height:1.6}
 .header .subtitle span{color:#94a3b8}
-
-/* ── Stats bar ── */
 .stats{display:flex;justify-content:center;gap:32px;padding:24px 0;margin:24px 0 40px;border-top:1px solid #0f1629;border-bottom:1px solid #0f1629}
 .stat{text-align:center}
 .stat-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#818cf8}
 .stat-label{font-size:11px;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.08em}
-
-/* ── Project grid ── */
 .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:60px}
-
-.project-card{background:#0a0f1e;border:1px solid #141c33;border-radius:20px;padding:24px;cursor:pointer;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden;text-decoration:none;display:block}
-.project-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0;opacity:0;transition:opacity 0.3s}
+.project-card{background:#0a0f1e;border:1px solid #141c33;border-radius:20px;padding:24px;cursor:pointer;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden;text-decoration:none;display:block;color:#e2e8f0}
 .project-card:hover{transform:translateY(-4px);border-color:#1e2a4a;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
-.project-card:hover::before{opacity:1}
-
-.card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px;transition:transform 0.3s}
+.project-card:hover .card-bar{opacity:1 !important}
 .project-card:hover .card-icon{transform:scale(1.1)}
-
+.card-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0;opacity:0;transition:opacity 0.3s}
+.card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px;transition:transform 0.3s}
 .card-tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:10px}
 .card-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:#e2e8f0;margin-bottom:6px;line-height:1.3}
 .card-desc{font-size:12px;color:#64748b;line-height:1.6}
-.card-meta{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:11px;color:#475569}
+.card-meta{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:11px;color:#475569;flex-wrap:wrap}
 .card-meta .dot{width:3px;height:3px;border-radius:50%;background:#475569}
-
-/* ── Empty slot ── */
-.empty-slot{border-style:dashed;border-color:#141c33;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;cursor:default}
-.empty-slot:hover{transform:none;box-shadow:none;border-color:#1e2a4a}
+.empty-slot{border-style:dashed !important;border-color:#141c33 !important;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;cursor:default !important}
+.empty-slot:hover{transform:none !important;box-shadow:none !important;border-color:#1e2a4a !important}
 .empty-slot .plus{width:40px;height:40px;border-radius:12px;background:#0f1629;border:1px solid #1e2a4a;display:flex;align-items:center;justify-content:center;font-size:18px;color:#475569;margin-bottom:10px}
 .empty-slot p{color:#475569;font-size:12px;text-align:center;line-height:1.5}
-
-/* ── Footer ── */
 .footer{text-align:center;padding:30px 0 50px;border-top:1px solid #0f1629}
 .footer p{font-size:11px;color:#334155}
 .footer a{color:#64748b;text-decoration:none;transition:color 0.2s}
 .footer a:hover{color:#818cf8}
 .footer .made-with{font-family:'JetBrains Mono',monospace;font-size:10px;color:#1e293b;margin-top:6px}
-
-/* ── Responsive ── */
 @media(max-width:600px){
   .header{padding:40px 0 28px}
   .stats{gap:20px}
   .projects-grid{grid-template-columns:1fr}
 }
-
-/* ── Staggered animations ── */
 .project-card:nth-child(1){animation:fadeUp 0.6s ease both;animation-delay:0.1s}
 .project-card:nth-child(2){animation:fadeUp 0.6s ease both;animation-delay:0.2s}
 .project-card:nth-child(3){animation:fadeUp 0.6s ease both;animation-delay:0.3s}
 .project-card:nth-child(4){animation:fadeUp 0.6s ease both;animation-delay:0.4s}
-.project-card:nth-child(5){animation:fadeUp 0.6s ease both;animation-delay:0.5s}
-.project-card:nth-child(6){animation:fadeUp 0.6s ease both;animation-delay:0.6s}
 </style>
 </head>
 <body>
 
 <div class="wrapper">
 
-  <!-- ══ HEADER ══ -->
   <header class="header">
     <div class="logo-mark">⚡</div>
     <h1>Saad's Lab</h1>
@@ -103,10 +75,9 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
     </p>
   </header>
 
-  <!-- ══ STATS ══ -->
   <div class="stats">
     <div class="stat">
-      <div class="stat-num" id="project-count">1</div>
+      <div class="stat-num" id="project-count">2</div>
       <div class="stat-label">Projets</div>
     </div>
     <div class="stat">
@@ -120,16 +91,16 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
   </div>
 
   <!-- ══════════════════════════════════════════════
-       PROJETS — AJOUTE LES TIENS ICI
-       Copie un bloc <a class="project-card"> et modifie :
-       • href="ton-fichier.html"
-       • l'icône, le titre, la description, le tag
+       PROJETS — Pour en ajouter un nouveau :
+       1. Copie un bloc <a class="project-card">
+       2. Modifie href, icône, titre, description, tag
+       3. Upload le nouveau .html dans le repo
        ══════════════════════════════════════════════ -->
   <div class="projects-grid">
 
     <!-- ── Projet 1 : Phonologie ── -->
-    <a class="project-card" href="phonologie.html" style="--accent:#818cf8">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0;background:linear-gradient(90deg,#ff6b4a,#818cf8,#22d3ee);opacity:0;transition:opacity 0.3s" class="card-bar"></div>
+    <a class="project-card" href="phonologie.html">
+      <div class="card-bar" style="background:linear-gradient(90deg,#ff6b4a,#818cf8,#22d3ee)"></div>
       <div class="card-icon" style="background:rgba(129,140,248,0.12);border:1px solid rgba(129,140,248,0.2)">🔊</div>
       <div class="card-tag" style="color:#818cf8;background:rgba(129,140,248,0.12)">Linguistique</div>
       <div class="card-title">La chaîne de valeur de la phonologie</div>
@@ -143,22 +114,21 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
       </div>
     </a>
 
-    <!-- ── Projet 2 : À VENIR (exemple pré-rempli) ── -->
-    <!--
-    <a class="project-card" href="smartgate.html">
-      <div class="card-icon" style="background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.2)">🚪</div>
-      <div class="card-tag" style="color:#34d399;background:rgba(52,211,153,0.12)">Computer Vision</div>
-      <div class="card-title">SmartGate AI</div>
-      <div class="card-desc">Système de porte coulissante automatique avec détection YOLO/RF-DETR.</div>
+    <!-- ── Projet 2 : Zoroastrisme ── -->
+    <a class="project-card" href="zoroastrisme.html">
+      <div class="card-bar" style="background:linear-gradient(90deg,#f59e0b,#ef4444,#f97316)"></div>
+      <div class="card-icon" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.2)">🔥</div>
+      <div class="card-tag" style="color:#f59e0b;background:rgba(245,158,11,0.12)">Religion & Histoire</div>
+      <div class="card-title">Le Zoroastrisme</div>
+      <div class="card-desc">Exploration de l'une des plus anciennes religions monothéistes — origines, croyances, influence sur les traditions abrahamiques.</div>
       <div class="card-meta">
-        <span>IoT</span>
+        <span>Histoire</span>
         <span class="dot"></span>
-        <span>Edge AI</span>
+        <span>Théologie comparée</span>
         <span class="dot"></span>
         <span>2026</span>
       </div>
     </a>
-    -->
 
     <!-- ── Slot vide ── -->
     <div class="project-card empty-slot">
@@ -168,7 +138,6 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 
   </div>
 
-  <!-- ══ FOOTER ══ -->
   <footer class="footer">
     <p>Hébergé gratuitement sur <a href="https://pages.github.com" target="_blank">GitHub Pages</a></p>
     <div class="made-with">built with claude × curiosité</div>
@@ -177,16 +146,6 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 </div>
 
 <script>
-// Hover effect for card bar
-document.querySelectorAll('.project-card:not(.empty-slot)').forEach(card=>{
-  const bar=card.querySelector('.card-bar');
-  if(bar){
-    card.addEventListener('mouseenter',()=>bar.style.opacity='1');
-    card.addEventListener('mouseleave',()=>bar.style.opacity='0');
-  }
-});
-
-// Auto-count projects
 const count=document.querySelectorAll('.project-card:not(.empty-slot) .card-title').length;
 document.getElementById('project-count').textContent=count;
 </script>
