@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photonique — La Révolution de la Lumière</title>
+<meta property="og:title" content="Photonique — La Révolution de la Lumière">
+<meta property="og:description" content="La fin de l'ère de l'Électron. Comment la lumière va tout changer.">
+<meta property="og:image" content="https://griftic.github.io/HUB-learning/og-photonique.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Instrument Sans','Helvetica Neue',sans-serif;background:#000;color:#e0e0e0;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(0,255,255,0.2);color:#fff}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:#1a1a2e;border-radius:4px}
+
+/* ═══════════════════════════════════════════
+   CSS VARIABLES
+   ═══════════════════════════════════════════ */
+:root{
+  --cyan:#00e5ff;
+  --magenta:#ff006e;
+  --gold:#ffd700;
+  --oled:#000000;
+  --surface:#0a0a0f;
+  --surface2:#111118;
+  --border:#1a1a28;
+  --text:#e8e8f0;
+  --text-dim:#5a5a72;
+  --font-display:'Outfit',sans-serif;
+  --font-body:'Instrument Sans',sans-serif;
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.4)}}
+@keyframes photon-race{0%{left:-10%}100%{left:110%}}
+@keyframes electron-crawl{0%{left:-10%}100%{left:110%}}
+@keyframes pulse-ring{0%{transform:scale(1);opacity:0.6}100%{transform:scale(2.5);opacity:0}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes beam{0%{opacity:0;transform:scaleX(0) translateX(0)}30%{opacity:1;transform:scaleX(0.5) translateX(20%)}100%{opacity:0;transform:scaleX(1) translateX(100%)}}
+@keyframes typewriter{from{width:0}to{width:100%}}
+@keyframes blink{0%,100%{border-color:var(--cyan)}50%{border-color:transparent}}
+@keyframes particle-drift{0%{transform:translate(0,0) scale(1);opacity:0.6}50%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+@keyframes scan-line{0%{top:-2px}100%{top:100%}}
+
+.reveal{opacity:0;transform:translateY(40px);transition:all 0.9s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.15s}
+.reveal-delay-2{transition-delay:0.3s}
+.reveal-delay-3{transition-delay:0.45s}
+
+/* ═══════════════════════════════════════════
+   GRAIN OVERLAY
+   ═══════════════════════════════════════════ */
+body::after{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:10000;opacity:0.018;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ═══════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════ */
+.font-display{font-family:var(--font-display)}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:800;letter-spacing:-0.03em;line-height:1.05}
+
+/* ═══════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════ */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;padding:40px 20px;text-align:center;
+}
+.hero-bg{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,229,255,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 30% 70%, rgba(255,0,110,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 70% 30%, rgba(255,215,0,0.03) 0%, transparent 60%);
+}
+.hero-grid{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 70%);
+}
+.hero-tag{
+  font-family:var(--font-display);font-size:13px;font-weight:600;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:28px;
+  animation:fadeUp 0.8s ease both 0.2s;
+  opacity:0;
+}
+.hero h1{
+  font-size:clamp(42px,8vw,88px);color:#fff;margin-bottom:24px;
+  max-width:900px;line-height:1.0;
+  animation:fadeUp 0.8s ease both 0.4s;opacity:0;
+}
+.hero h1 .gradient-text{
+  background:linear-gradient(135deg, var(--cyan), var(--magenta), var(--gold));
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shimmer 4s linear infinite;
+}
+.hero-sub{
+  font-size:clamp(16px,2.5vw,22px);color:var(--text-dim);max-width:600px;
+  line-height:1.6;margin-bottom:48px;
+  animation:fadeUp 0.8s ease both 0.6s;opacity:0;
+}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:16px 36px;border-radius:100px;
+  background:linear-gradient(135deg, var(--cyan), #00b4d8);
+  color:#000;font-family:var(--font-display);font-weight:700;font-size:16px;
+  text-decoration:none;cursor:pointer;border:none;
+  transition:all 0.3s ease;position:relative;overflow:hidden;
+  animation:fadeUp 0.8s ease both 0.8s;opacity:0;
+}
+.hero-cta:hover{transform:scale(1.05);box-shadow:0 0 40px rgba(0,229,255,0.3)}
+.hero-cta::after{
+  content:'';position:absolute;top:50%;left:50%;width:0;height:0;
+  background:rgba(255,255,255,0.3);border-radius:50%;
+  transform:translate(-50%,-50%);transition:width 0.5s,height 0.5s;
+}
+.hero-cta:active::after{width:300px;height:300px}
+
+.scroll-indicator{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--text-dim);font-size:11px;letter-spacing:0.1em;
+  animation:fadeIn 1s ease both 1.5s, float 2.5s ease-in-out infinite 1.5s;
+  opacity:0;
+}
+.scroll-arrow{width:20px;height:20px;border-right:2px solid var(--text-dim);border-bottom:2px solid var(--text-dim);transform:rotate(45deg)}
+
+/* ═══════════════════════════════════════════
+   SECTIONS
+   ═══════════════════════════════════════════ */
+section{padding:120px 20px;max-width:1000px;margin:0 auto;position:relative}
+.section-label{
+  font-family:var(--font-display);font-size:12px;font-weight:600;
+  letter-spacing:0.18em;text-transform:uppercase;margin-bottom:16px;
+}
+.section-title{font-size:clamp(32px,5vw,56px);color:#fff;margin-bottom:20px}
+.section-desc{font-size:clamp(16px,2vw,20px);color:var(--text-dim);line-height:1.7;max-width:700px}
+
+/* ═══════════════════════════════════════════
+   DIVIDER BEAMS
+   ═══════════════════════════════════════════ */
+.beam-divider{
+  height:1px;max-width:600px;margin:0 auto;position:relative;
+  background:linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.beam-divider::after{
+  content:'';position:absolute;top:-1px;left:0;width:60px;height:3px;
+  background:linear-gradient(90deg, var(--cyan), transparent);
+  border-radius:4px;animation:beam 3s ease-in-out infinite;
+  transform-origin:left;
+}
+
+/* ═══════════════════════════════════════════
+   STORY SECTION — CONQUEST OF LIGHT
+   ═══════════════════════════════════════════ */
+.timeline{position:relative;padding-left:40px;margin-top:48px}
+.timeline::before{
+  content:'';position:absolute;left:14px;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg, var(--cyan), var(--magenta), var(--gold), transparent);
+}
+.timeline-item{position:relative;margin-bottom:48px;padding-left:20px}
+.timeline-dot{
+  position:absolute;left:-33px;top:6px;width:12px;height:12px;
+  border-radius:50%;border:2px solid;
+}
+.timeline-era{font-family:var(--font-display);font-size:13px;font-weight:700;margin-bottom:6px;letter-spacing:0.05em}
+.timeline-title{font-family:var(--font-display);font-size:22px;font-weight:700;color:#fff;margin-bottom:8px}
+.timeline-text{font-size:15px;color:var(--text-dim);line-height:1.7}
+
+/* ═══════════════════════════════════════════
+   COMPARATOR
+   ═══════════════════════════════════════════ */
+.comparator-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:24px;padding:40px;margin-top:48px;position:relative;overflow:hidden;
+}
+.comparator-box::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg, transparent, var(--cyan)44, transparent);
+}
+.race-track{
+  position:relative;height:64px;border-radius:16px;margin-bottom:16px;
+  background:var(--surface2);border:1px solid var(--border);overflow:hidden;
+}
+.race-label{
+  position:absolute;left:16px;top:50%;transform:translateY(-50%);z-index:2;
+  font-family:var(--font-display);font-size:13px;font-weight:700;
+}
+.race-particle{
+  position:absolute;top:50%;transform:translateY(-50%);height:4px;
+  border-radius:4px;left:-10%;
+}
+.race-particle.photon{
+  width:80px;
+  background:linear-gradient(90deg, transparent, var(--cyan), #fff, var(--cyan), transparent);
+  box-shadow:0 0 20px var(--cyan), 0 0 60px rgba(0,229,255,0.3);
+  filter:blur(0.5px);
+}
+.race-particle.electron{
+  width:16px;height:8px;border-radius:50%;
+  background:var(--magenta);
+  box-shadow:0 0 8px var(--magenta);
+}
+.race-speed{
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);z-index:2;
+  font-family:var(--font-display);font-size:12px;font-weight:600;
+  opacity:0;transition:opacity 0.3s;
+}
+.race-track.running .race-speed{opacity:1}
+.race-track.running .photon{animation:photon-race 0.6s linear forwards}
+.race-track.running .electron{animation:electron-crawl 4s linear forwards}
+
+.launch-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 32px;border-radius:16px;
+  background:transparent;border:1px solid var(--cyan);
+  color:var(--cyan);font-family:var(--font-display);font-weight:700;font-size:15px;
+  cursor:pointer;transition:all 0.3s ease;margin-top:20px;
+}
+.launch-btn:hover{background:rgba(0,229,255,0.08);box-shadow:0 0 30px rgba(0,229,255,0.15)}
+.launch-btn:active{transform:scale(0.97)}
+
+.comparator-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px;
+}
+.stat-card{
+  background:var(--surface2);border:1px solid var(--border);border-radius:16px;
+  padding:20px;text-align:center;
+}
+.stat-num{font-family:var(--font-display);font-size:28px;font-weight:800;margin-bottom:4px}
+.stat-label{font-size:12px;color:var(--text-dim)}
+
+/* ═══════════════════════════════════════════
+   ANALOGY SECTION
+   ═══════════════════════════════════════════ */
+.analogy-grid{display:grid;grid-template-columns:1fr 60px 1fr;gap:0;align-items:center;margin-top:48px}
+.analogy-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:24px;
+  padding:36px;position:relative;overflow:hidden;
+}
+.analogy-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  border-radius:24px;opacity:0;transition:opacity 0.4s;
+}
+.analogy-card.old::after{background:radial-gradient(circle at 30% 30%, rgba(255,0,110,0.08), transparent 70%)}
+.analogy-card.new::after{background:radial-gradient(circle at 70% 30%, rgba(0,229,255,0.08), transparent 70%)}
+.analogy-card:hover::after{opacity:1}
+.analogy-icon{font-size:40px;margin-bottom:16px;display:block}
+.analogy-title{font-family:var(--font-display);font-size:20px;font-weight:700;color:#fff;margin-bottom:8px}
+.analogy-text{font-size:14px;color:var(--text-dim);line-height:1.7}
+.analogy-arrow{
+  text-align:center;font-size:24px;color:var(--text-dim);
+  font-family:var(--font-display);font-weight:300;
+}
+
+/* ═══════════════════════════════════════════
+   CURIOSITY CARDS
+   ═══════════════════════════════════════════ */
+.curiosity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:48px}
+.curiosity-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:28px;cursor:pointer;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);
+  position:relative;overflow:hidden;
+}
+.curiosity-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  border-radius:20px 20px 0 0;transition:opacity 0.3s;opacity:0;
+}
+.curiosity-card:hover{transform:translateY(-4px);border-color:#2a2a3e}
+.curiosity-card:hover::before{opacity:1}
+.curiosity-emoji{font-size:28px;margin-bottom:12px;display:block}
+.curiosity-title{font-family:var(--font-display);font-size:16px;font-weight:700;color:#fff;margin-bottom:8px}
+.curiosity-fact{font-size:13px;color:var(--text-dim);line-height:1.6}
+.curiosity-reveal{
+  max-height:0;overflow:hidden;transition:max-height 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.curiosity-card.open .curiosity-reveal{max-height:200px}
+.curiosity-reveal-inner{
+  padding-top:12px;margin-top:12px;border-top:1px solid var(--border);
+  font-size:13px;line-height:1.7;
+}
+.curiosity-tap{font-size:11px;color:var(--text-dim);margin-top:10px;opacity:0.6}
+.curiosity-card.open .curiosity-tap{display:none}
+
+/* ═══════════════════════════════════════════
+   SCALE SECTION
+   ═══════════════════════════════════════════ */
+.scale-visual{
+  margin-top:48px;background:var(--surface);border:1px solid var(--border);
+  border-radius:24px;padding:48px 40px;position:relative;overflow:hidden;
+}
+.scale-bar{
+  height:8px;border-radius:4px;background:var(--surface2);
+  margin:16px 0 8px;position:relative;overflow:hidden;
+}
+.scale-fill{
+  height:100%;border-radius:4px;width:0;transition:width 1.5s cubic-bezier(0.16,1,0.3,1);
+}
+.scale-row{margin-bottom:28px}
+.scale-label{display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.scale-name{font-family:var(--font-display);font-weight:600;color:#fff}
+.scale-value{font-family:var(--font-display);font-weight:700;font-size:13px}
+
+/* ═══════════════════════════════════════════
+   QUIZ
+   ═══════════════════════════════════════════ */
+.quiz-box{
+  background:var(--surface);border:1px solid var(--border);border-radius:24px;
+  padding:40px;margin-top:48px;text-align:center;
+}
+.quiz-question{font-family:var(--font-display);font-size:clamp(18px,3vw,24px);font-weight:700;color:#fff;margin-bottom:28px;line-height:1.3}
+.quiz-options{display:flex;flex-direction:column;gap:10px;max-width:500px;margin:0 auto}
+.quiz-option{
+  padding:14px 20px;border-radius:14px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);font-size:15px;text-align:left;
+  cursor:pointer;transition:all 0.3s;font-family:var(--font-body);
+}
+.quiz-option:hover{border-color:#3a3a52;background:#16161f}
+.quiz-option.correct{border-color:var(--cyan);background:rgba(0,229,255,0.08);color:var(--cyan)}
+.quiz-option.wrong{border-color:var(--magenta);background:rgba(255,0,110,0.08);color:var(--magenta)}
+.quiz-option.disabled{pointer-events:none;opacity:0.5}
+.quiz-option.correct.disabled,.quiz-option.wrong.disabled{opacity:1}
+.quiz-progress{display:flex;gap:6px;justify-content:center;margin-bottom:24px}
+.quiz-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all 0.3s}
+.quiz-dot.active{background:var(--cyan);box-shadow:0 0 8px rgba(0,229,255,0.4)}
+.quiz-dot.done{background:var(--gold)}
+.quiz-score{
+  font-family:var(--font-display);margin-top:24px;
+}
+.quiz-score .big{font-size:48px;font-weight:900}
+.quiz-next{
+  margin-top:20px;padding:12px 28px;border-radius:12px;
+  background:var(--cyan);color:#000;font-family:var(--font-display);
+  font-weight:700;font-size:14px;border:none;cursor:pointer;
+  transition:all 0.3s;
+}
+.quiz-next:hover{box-shadow:0 0 20px rgba(0,229,255,0.3);transform:scale(1.03)}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
+footer{
+  text-align:center;padding:60px 20px 40px;
+  border-top:1px solid var(--border);
+}
+footer p{font-size:12px;color:var(--text-dim)}
+footer .brand{font-family:var(--font-display);font-weight:700;font-size:14px;color:#fff;margin-bottom:8px}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media(max-width:768px){
+  section{padding:80px 20px}
+  .analogy-grid{grid-template-columns:1fr;gap:16px}
+  .analogy-arrow{transform:rotate(90deg)}
+  .comparator-stats{grid-template-columns:1fr}
+  .comparator-box{padding:24px}
+  .scale-visual{padding:28px 20px}
+  .quiz-box{padding:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     HERO
+     ══════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div style="position:relative;z-index:1">
+    <div class="hero-tag">Bienvenue dans l'ère de la lumière</div>
+    <h1>La fin de l'ère<br>de <span class="gradient-text">l'Électron</span></h1>
+    <p class="hero-sub">L'électricité est trop lente. Elle chauffe trop. Le photon — particule de lumière — est le nouveau héros de l'informatique. Voici pourquoi tout va changer.</p>
+    <button class="hero-cta" onclick="document.getElementById('story').scrollIntoView({behavior:'smooth'})">
+      <span>Explorer la révolution</span>
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+  <div class="scroll-indicator">
+    <span>SCROLL</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     THE PROBLEM
+     ══════════════════════════════════════════════ -->
+<div class="beam-divider"></div>
+<section>
+  <div class="reveal">
+    <div class="section-label" style="color:var(--magenta)">Le problème</div>
+    <h2 class="section-title">L'électron a atteint<br>ses limites.</h2>
+  </div>
+  <div class="reveal reveal-delay-1">
+    <p class="section-desc">Chaque puce de votre téléphone contient des milliards de transistors, et chacun d'entre eux chauffe. Additionnez : les data centers mondiaux consomment autant d'énergie que certains pays. L'électron, fidèle serviteur depuis 80 ans, est à bout de souffle.</p>
+  </div>
+  <div class="comparator-stats reveal reveal-delay-2" style="margin-top:40px">
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--magenta)">~2%</div>
+      <div class="stat-label">de l'électricité mondiale<br>consommée par les data centers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--gold)">30%</div>
+      <div class="stat-label">de l'énergie d'une puce<br>perdue en chaleur</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--cyan)">0</div>
+      <div class="stat-label">chaleur produite<br>par un photon en transit</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     STORY — CONQUEST OF LIGHT
+     ══════════════════════════════════════════════ -->
+<div class="beam-divider"></div>
+<section id="story">
+  <div class="reveal">
+    <div class="section-label" style="color:var(--gold)">L'histoire</div>
+    <h2 class="section-title">La conquête<br>de la lumière</h2>
+    <p class="section-desc">Pas de dates ennuyeuses. Juste une aventure humaine incroyable.</p>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-dot" style="border-color:var(--magenta);background:rgba(255,0,110,0.3)"></div>
+      <div class="timeline-era" style="color:var(--magenta)">Chapitre 1</div>
+      <div class="timeline-title">« Une solution en quête d'un problème »</div>
+      <div class="timeline-text">Quand le premier laser est inventé, personne ne sait à quoi il sert. Un faisceau de lumière ultra-concentré ? Amusant, mais inutile, pensent les sceptiques. Ils avaient tort. Spectaculairement tort.</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot" style="border-color:var(--cyan);background:rgba(0,229,255,0.3)"></div>
+      <div class="timeline-era" style="color:var(--cyan)">Chapitre 2</div>
+      <div class="timeline-title">La fibre optique : emprisonner la lumière</div>
+      <div class="timeline-text">Des chercheurs découvrent qu'on peut piéger la lumière dans un fil de verre fin comme un cheveu. L'information voyage désormais à 299 792 km/s. Les câbles sous-marins connectent les continents. Internet naît.</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot" style="border-color:var(--gold);background:rgba(255,215,0,0.3)"></div>
+      <div class="timeline-era" style="color:var(--gold)">Chapitre 3</div>
+      <div class="timeline-title">Le Saint-Graal : la puce photonique</div>
+      <div class="timeline-text">Et si on remplaçait les fils de cuivre à l'intérieur même des puces par des guides de lumière ? C'est la promesse de la photonique intégrée. Des processeurs qui calculent avec des photons au lieu d'électrons. Zéro chaleur. Vitesse absolue.</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot" style="border-color:#fff;background:rgba(255,255,255,0.3)"></div>
+      <div class="timeline-era" style="color:#aaa">Chapitre 4 — Maintenant</div>
+      <div class="timeline-title">La révolution est en cours</div>
+      <div class="timeline-text">NVIDIA, Intel, TSMC, des dizaines de startups — tous investissent massivement. Les premières puces photoniques arrivent dans les data centers. L'IA, qui dévore l'énergie, en a désespérément besoin. Le timing est parfait.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SPEED COMPARATOR
+     ══════════════════════════════════════════════ -->
+<div class="beam-divider"></div>
+<section>
+  <div class="reveal">
+    <div class="section-label" style="color:var(--cyan)">Le comparateur</div>
+    <h2 class="section-title">Voyez la différence.</h2>
+    <p class="section-desc">Un bouton. Deux mondes. Regardez la lumière écraser l'électron.</p>
+  </div>
+  <div class="comparator-box reveal reveal-delay-1">
+    <div class="race-track" id="track-photon">
+      <div class="race-label" style="color:var(--cyan)">⚡ PHOTON</div>
+      <div class="race-particle photon"></div>
+      <div class="race-speed" style="color:var(--cyan)">299 792 km/s</div>
+    </div>
+    <div class="race-track" id="track-electron">
+      <div class="race-label" style="color:var(--magenta)">● ÉLECTRON</div>
+      <div class="race-particle electron"></div>
+      <div class="race-speed" style="color:var(--magenta)">~0.02% c</div>
+    </div>
+    <div style="text-align:center">
+      <button class="launch-btn" id="race-btn" onclick="launchRace()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Lancer la course
+      </button>
+    </div>
+    <div class="comparator-stats">
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--cyan)">1000×</div>
+        <div class="stat-label">plus rapide en<br>bande passante</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--gold)">80%</div>
+        <div class="stat-label">de consommation<br>en moins</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--magenta)">0°C</div>
+        <div class="stat-label">de chaleur ajoutée<br>par la lumière</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SUPPLY CHAIN ANALOGY
+     ══════════════════════════════════════════════ -->
+<div class="beam-divider"></div>
+<section>
+  <div class="reveal">
+    <div class="section-label" style="color:var(--gold)">La supply chain</div>
+    <h2 class="section-title">Le super-pouvoir<br>logistique.</h2>
+    <p class="section-desc">La photonique ne change pas seulement l'informatique. Elle va transformer la façon dont on gère chaque colis sur Terre.</p>
+  </div>
+  <div class="analogy-grid reveal reveal-delay-1">
+    <div class="analogy-card old">
+      <span class="analogy-icon">🚗</span>
+      <div class="analogy-title" style="color:var(--magenta)">L'ancien monde</div>
+      <div class="analogy-text">
+        <strong style="color:#fff">Une autoroute bouchée.</strong><br><br>
+        Les électrons se bousculent dans des fils de cuivre. Chaque croisement génère de la chaleur, chaque embouteillage crée du retard. Pour gérer un million de colis, il faut un million de calculs lents, énergivores, approximatifs.<br><br>
+        <span style="color:var(--magenta)">Résultat : erreurs, retards, gaspillage énergétique.</span>
+      </div>
+    </div>
+    <div class="analogy-arrow">→</div>
+    <div class="analogy-card new">
+      <span class="analogy-icon">✨</span>
+      <div class="analogy-title" style="color:var(--cyan)">Le monde photonique</div>
+      <div class="analogy-text">
+        <strong style="color:#fff">La téléportation de l'information.</strong><br><br>
+        Les photons voyagent sans friction, sans chaleur, en parallèle sur des dizaines de longueurs d'onde simultanées. Un seul câble gère ce qui nécessitait mille. Chaque colis est tracé en temps réel, sans latence.<br><br>
+        <span style="color:var(--cyan)">Résultat : milliards de colis, zéro erreur, énergie quasi nulle.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     CURIOSITY CARDS
+     ══════════════════════════════════════════════ -->
+<div class="beam-divider"></div>
+<section>
+  <div class="reveal">
+    <div class="section-label" style="color:var(--cyan)">Le saviez-vous ?</div>
+    <h2 class="section-title">Faits de lumière.</h2>
+    <p class="section-desc">Cliquez pour révéler des faits qui vont vous retourner le cerveau.</p>
+  </div>
+  <div class="curiosity-grid">
+    <div class="curiosity-card reveal" onclick="this.classList.toggle('open')" style="--accent:var(--cyan)">
+      <div class="curiosity-card" style="background:none;border:none;padding:0"></div>
+      <span class="curiosity-emoji">🎬</span>
+      <div class="curiosity-title">Tous les films. Une seconde.</div>
+      <div class="curiosity-fact">Une seule fibre optique moderne peut atteindre des débits de centaines de térabits par seconde.</div>
+      <div class="curiosity-tap">↓ Toucher pour en savoir plus</div>
+      <div class="curiosity-reveal"><div class="curiosity-reveal-inner" style="color:var(--cyan)">
+        C'est assez pour transporter l'intégralité de Netflix — tous les films et séries qui existent — en moins d'une seconde. Et une seule fibre fait la taille d'un cheveu humain.
+      </div></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;border-radius:20px 20px 0 0;background:var(--cyan);opacity:0;transition:opacity 0.3s" class="card-bar-inner"></div>
+    </div>
+    <div class="curiosity-card reveal reveal-delay-1" onclick="this.classList.toggle('open')">
+      <span class="curiosity-emoji">🌊</span>
+      <div class="curiosity-title">Le fond des océans.</div>
+      <div class="curiosity-fact">99% du trafic internet intercontinental passe par des câbles sous-marins en fibre optique.</div>
+      <div class="curiosity-tap">↓ Toucher pour en savoir plus</div>
+      <div class="curiosity-reveal"><div class="curiosity-reveal-inner" style="color:var(--gold)">
+        Plus de 550 câbles tapissent le fond des océans sur 1,4 million de kilomètres. Chaque message WhatsApp que vous envoyez à l'étranger traverse un fil de lumière posé sur le plancher océanique.
+      </div></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;border-radius:20px 20px 0 0;background:var(--gold);opacity:0;transition:opacity 0.3s" class="card-bar-inner"></div>
+    </div>
+    <div class="curiosity-card reveal reveal-delay-2" onclick="this.classList.toggle('open')">
+      <span class="curiosity-emoji">🧊</span>
+      <div class="curiosity-title">Froid absolu.</div>
+      <div class="curiosity-fact">Contrairement aux transistors classiques, une puce photonique ne produit presque aucune chaleur.</div>
+      <div class="curiosity-tap">↓ Toucher pour en savoir plus</div>
+      <div class="curiosity-reveal"><div class="curiosity-reveal-inner" style="color:var(--magenta)">
+        Les photons n'ont pas de masse et ne créent pas de résistance électrique. Conséquence : plus besoin de refroidisseurs géants dans les data centers. La facture énergétique de l'IA pourrait s'effondrer.
+      </div></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;border-radius:20px 20px 0 0;background:var(--magenta);opacity:0;transition:opacity 0.3s" class="card-bar-inner"></div>
+    </div>
+    <div class="curiosity-card reveal reveal-delay-3" onclick="this.classList.toggle('open')">
+      <span class="curiosity-emoji">🔀</span>
+      <div class="curiosity-title">Le WDM : magie des couleurs.</div>
+      <div class="curiosity-fact">La lumière a un superpouvoir : on peut envoyer des centaines de flux simultanés dans une seule fibre.</div>
+      <div class="curiosity-tap">↓ Toucher pour en savoir plus</div>
+      <div class="curiosity-reveal"><div class="curiosity-reveal-inner" style="color:var(--cyan)">
+        C'est le WDM (Wavelength Division Multiplexing). Chaque couleur de lumière porte un canal de données différent. Imaginez une autoroute où chaque couleur de voiture occupe sa propre dimension parallèle. Pas d'embouteillage possible.
+      </div></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;border-radius:20px 20px 0 0;background:var(--cyan);opacity:0;transition:opacity 0.3s" class="card-bar-inner"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     THE SCALE
+     ══════════════════════════════════════════════ -->
+<div class="beam-divider"></div>
+<section id="scale-section">
+  <div class="reveal">
+    <div class="section-label" style="color:var(--gold)">Le scale</div>
+    <h2 class="section-title">La seule limite :<br>la vitesse de la lumière.</h2>
+    <p class="section-desc">La photonique est le seul système qui peut scaler à l'infini sans brûler la planète. Voici la comparaison.</p>
+  </div>
+  <div class="scale-visual reveal reveal-delay-1" id="scale-box">
+    <div class="scale-row">
+      <div class="scale-label">
+        <span class="scale-name">🔌 Électronique classique</span>
+        <span class="scale-value" style="color:var(--magenta)">1×</span>
+      </div>
+      <div class="scale-bar"><div class="scale-fill" data-width="8" style="background:var(--magenta)"></div></div>
+      <div style="font-size:12px;color:var(--text-dim)">Chauffe → ralentit → mur physique</div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-label">
+        <span class="scale-name">⚡ Électronique optimisée</span>
+        <span class="scale-value" style="color:var(--gold)">5×</span>
+      </div>
+      <div class="scale-bar"><div class="scale-fill" data-width="25" style="background:var(--gold)"></div></div>
+      <div style="font-size:12px;color:var(--text-dim)">Architectures avancées (3nm, GAA) — gains marginaux</div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-label">
+        <span class="scale-name">✦ Photonique intégrée</span>
+        <span class="scale-value" style="color:var(--cyan)">1000×+</span>
+      </div>
+      <div class="scale-bar"><div class="scale-fill" data-width="100" style="background:linear-gradient(90deg, var(--cyan), var(--gold))"></div></div>
+      <div style="font-size:12px;color:var(--text-dim)">Pas de chaleur → pas de limite pratique → scale infini</div>
+    </div>
+    <div style="margin-top:28px;padding:20px;background:var(--surface2);border-radius:16px;text-align:center;border:1px solid var(--border)">
+      <div style="font-family:var(--font-display);font-weight:800;font-size:20px;color:#fff;margin-bottom:4px">c = 299 792 458 m/s</div>
+      <div style="font-size:13px;color:var(--text-dim)">La constante ultime. La seule barrière. Et on y est déjà.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     QUIZ
+     ══════════════════════════════════════════════ -->
+<div class="beam-divider"></div>
+<section>
+  <div class="reveal">
+    <div class="section-label" style="color:var(--magenta)">Le test</div>
+    <h2 class="section-title">Es-tu prêt pour<br>la révolution ?</h2>
+    <p class="section-desc">4 questions pour tester si tu es un futuriste en herbe ou un maître de la lumière.</p>
+  </div>
+  <div class="quiz-box reveal reveal-delay-1" id="quiz-box">
+    <div class="quiz-progress" id="quiz-progress"></div>
+    <div id="quiz-content"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+     ══════════════════════════════════════════════ -->
+<footer>
+  <div class="brand">⚡ Saad's Lab</div>
+  <p>La photonique, vulgarisée. Fait avec Claude × curiosité.</p>
+  <p style="margin-top:8px;font-size:11px;color:#1e1e2e">griftic.github.io/HUB-learning</p>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     SCRIPTS
+     ══════════════════════════════════════════════ -->
+<script>
+// ── Scroll reveal ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── Curiosity card hover bar ──
+document.querySelectorAll('.curiosity-card').forEach(card => {
+  const bar = card.querySelector('.card-bar-inner');
+  if(bar){
+    card.addEventListener('mouseenter', () => bar.style.opacity = '1');
+    card.addEventListener('mouseleave', () => bar.style.opacity = '0');
+  }
+});
+
+// ── Speed comparator race ──
+let raceRunning = false;
+function launchRace() {
+  if(raceRunning) return;
+  raceRunning = true;
+  const btn = document.getElementById('race-btn');
+  btn.textContent = '⏱ En cours…';
+  btn.style.pointerEvents = 'none';
+
+  const tp = document.getElementById('track-photon');
+  const te = document.getElementById('track-electron');
+
+  // Reset
+  tp.classList.remove('running');
+  te.classList.remove('running');
+  void tp.offsetWidth; // Force reflow
+
+  tp.classList.add('running');
+  te.classList.add('running');
+
+  setTimeout(() => {
+    raceRunning = false;
+    btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg> Relancer';
+    btn.style.pointerEvents = 'auto';
+    tp.classList.remove('running');
+    te.classList.remove('running');
+  }, 4500);
+}
+
+// ── Scale bars animation ──
+const scaleObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      document.querySelectorAll('.scale-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+    }
+  });
+}, { threshold: 0.3 });
+scaleObs.observe(document.getElementById('scale-box'));
+
+// ── Quiz ──
+const quizData = [
+  {
+    q: "Pourquoi l'électron est-il devenu un problème ?",
+    opts: ["Il est trop cher", "Il produit trop de chaleur et atteint ses limites de vitesse", "Il est radioactif", "Il manque d'électrons sur Terre"],
+    correct: 1,
+    explain: "Les transistors chauffent de plus en plus en rétrécissant. C'est le mur thermique de l'électronique."
+  },
+  {
+    q: "Que signifie WDM en photonique ?",
+    opts: ["World Data Management", "Wavelength Division Multiplexing", "Wireless Digital Modem", "Wave Density Measure"],
+    correct: 1,
+    explain: "Le WDM permet d'envoyer des centaines de flux de données sur des longueurs d'onde différentes dans une seule fibre."
+  },
+  {
+    q: "Quelle est la vitesse de la lumière ?",
+    opts: ["150 000 km/s", "299 792 km/s", "1 000 000 km/s", "3 000 km/s"],
+    correct: 1,
+    explain: "c ≈ 299 792 km/s. C'est la limite absolue de l'univers — et c'est à cette vitesse que voyagent les données photoniques."
+  },
+  {
+    q: "Quel avantage clé la photonique apporte-t-elle à la supply chain ?",
+    opts: ["Des cartons plus légers", "Le traitement en temps réel de milliards d'objets sans chaleur ni latence", "Des camions autonomes", "Des codes-barres plus précis"],
+    correct: 1,
+    explain: "La photonique permet le calcul massif sans chaleur — idéal pour tracer des milliards de colis en temps réel."
+  }
+];
+
+let quizIndex = 0;
+let quizScore = 0;
+
+function renderQuiz() {
+  const box = document.getElementById('quiz-content');
+  const prog = document.getElementById('quiz-progress');
+
+  if(quizIndex >= quizData.length) {
+    prog.innerHTML = '';
+    const pct = Math.round((quizScore / quizData.length) * 100);
+    const title = pct >= 75 ? '🌟 Maître de la Lumière' : pct >= 50 ? '⚡ Futuriste en herbe' : '🔋 Encore dans l\'ère de l\'Électron';
+    const color = pct >= 75 ? 'var(--gold)' : pct >= 50 ? 'var(--cyan)' : 'var(--magenta)';
+    box.innerHTML = `
+      <div class="quiz-score">
+        <div class="big" style="color:${color}">${quizScore}/${quizData.length}</div>
+        <div style="font-size:20px;font-weight:700;color:#fff;margin-top:8px">${title}</div>
+        <p style="font-size:14px;color:var(--text-dim);margin-top:12px;line-height:1.6">
+          ${pct >= 75 ? 'Tu es prêt. La révolution peut compter sur toi.' : pct >= 50 ? 'Pas mal ! Relis les sections au-dessus et tu seras inarrêtable.' : 'Le voyage ne fait que commencer. Remonte explorer les sections !'}
+        </p>
+        <button class="quiz-next" onclick="quizIndex=0;quizScore=0;renderQuiz();" style="margin-top:20px">↺ Recommencer</button>
+      </div>
+    `;
+    return;
+  }
+
+  const q = quizData[quizIndex];
+  prog.innerHTML = quizData.map((_, i) =>
+    `<div class="quiz-dot ${i === quizIndex ? 'active' : ''} ${i < quizIndex ? 'done' : ''}"></div>`
+  ).join('');
+
+  box.innerHTML = `
+    <div class="quiz-question">${q.q}</div>
+    <div class="quiz-options">
+      ${q.opts.map((o, i) => `<div class="quiz-option" data-idx="${i}" onclick="handleAnswer(this, ${i}, ${q.correct})">${o}</div>`).join('')}
+    </div>
+    <div id="quiz-explain" style="margin-top:20px;font-size:14px;color:var(--text-dim);line-height:1.6;display:none"></div>
+  `;
+}
+
+function handleAnswer(el, idx, correct) {
+  const options = document.querySelectorAll('.quiz-option');
+  options.forEach(o => o.classList.add('disabled'));
+  
+  if(idx === correct) {
+    el.classList.add('correct');
+    quizScore++;
+  } else {
+    el.classList.add('wrong');
+    options[correct].classList.add('correct');
+  }
+
+  const explain = document.getElementById('quiz-explain');
+  explain.style.display = 'block';
+  explain.innerHTML = `💡 ${quizData[quizIndex].explain}<br><br><button class="quiz-next" onclick="quizIndex++;renderQuiz()">Question suivante →</button>`;
+}
+
+renderQuiz();
+</script>
+</body>
+</html>
