@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide Tennis — Tout savoir sur le matos</title>
+<meta property="og:title" content="Guide Tennis — Tout savoir sur le matos">
+<meta property="og:description" content="Raquettes, cordages, chaussures, balles — le guide ultime pour ne plus jamais se tromper.">
+<meta property="og:image" content="https://griftic.github.io/HUB-learning/og-tennis.png">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   RESET & VARIABLES
+   ═══════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+:root{
+  --green:#2D8B4E;--green-light:#e8f5ed;--green-dark:#1a5c33;
+  --clay:#D4763A;--clay-light:#fdf0e8;
+  --ball:#C8E630;--ball-dark:#8fa620;
+  --navy:#1A1A2E;--navy-light:#2a2a42;
+  --bg:#FAFAF8;--bg-alt:#F2F1EE;--bg-dark:#E8E7E3;
+  --text:#1A1A2E;--text-dim:#6b6b80;--text-light:#9898a8;
+  --border:#e0dfd8;
+  --font-display:'Bebas Neue',system-ui,sans-serif;
+  --font-body:'Instrument Sans','Helvetica Neue',sans-serif;
+  --radius:16px;--radius-sm:10px;
+}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(45,139,78,0.15);color:var(--navy)}
+img{max-width:100%}
+a{color:inherit;text-decoration:none}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes bounce-ball{0%,100%{transform:translateY(0)}40%{transform:translateY(-18px)}60%{transform:translateY(-8px)}}
+@keyframes spin-ball{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.7s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:0.1s}.reveal-d2{transition-delay:0.2s}.reveal-d3{transition-delay:0.3s}.reveal-d4{transition-delay:0.4s}
+
+/* ═══════════════════════════════════════════
+   TENNIS BALL SVG decoration
+   ═══════════════════════════════════════════ */
+.ball-deco{position:absolute;opacity:0.06;pointer-events:none}
+
+/* ═══════════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════════ */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,250,248,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  transition:box-shadow 0.3s;
+}
+.nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.06)}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;padding:0 20px;height:56px;gap:8px;overflow-x:auto}
+.nav-brand{font-family:var(--font-display);font-size:22px;letter-spacing:0.04em;color:var(--green);margin-right:auto;white-space:nowrap;flex-shrink:0}
+.nav-link{
+  font-size:13px;font-weight:600;color:var(--text-dim);padding:6px 12px;
+  border-radius:8px;white-space:nowrap;transition:all 0.2s;flex-shrink:0;
+}
+.nav-link:hover{color:var(--green);background:var(--green-light)}
+
+/* ═══════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════ */
+.hero{
+  min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:80px 20px 60px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg, #f0f7f2 0%, var(--bg) 100%);
+}
+.hero-court{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:500px;height:300px;opacity:0.05;pointer-events:none;
+}
+.hero-tag{
+  display:inline-block;padding:6px 16px;border-radius:100px;
+  background:var(--green-light);color:var(--green);
+  font-size:13px;font-weight:600;letter-spacing:0.04em;
+  margin-bottom:24px;animation:fadeUp 0.6s ease both 0.1s;opacity:0;
+}
+.hero h1{
+  font-family:var(--font-display);font-size:clamp(48px,10vw,100px);
+  color:var(--navy);letter-spacing:0.02em;line-height:0.95;
+  margin-bottom:20px;animation:fadeUp 0.6s ease both 0.2s;opacity:0;
+}
+.hero h1 .accent{color:var(--green)}
+.hero-sub{
+  font-size:clamp(16px,2.5vw,20px);color:var(--text-dim);max-width:560px;
+  line-height:1.6;margin-bottom:36px;
+  animation:fadeUp 0.6s ease both 0.35s;opacity:0;
+}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 32px;border-radius:100px;
+  background:var(--green);color:#fff;
+  font-weight:700;font-size:15px;border:none;cursor:pointer;
+  transition:all 0.3s;animation:fadeUp 0.6s ease both 0.5s;opacity:0;
+}
+.hero-cta:hover{background:var(--green-dark);transform:scale(1.04);box-shadow:0 8px 30px rgba(45,139,78,0.25)}
+.hero-scroll{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  font-size:11px;color:var(--text-light);letter-spacing:0.1em;text-transform:uppercase;
+  animation:fadeIn 1s ease both 1.2s;opacity:0;
+}
+
+/* ═══════════════════════════════════════════
+   SECTIONS
+   ═══════════════════════════════════════════ */
+section{padding:80px 20px;max-width:1000px;margin:0 auto}
+.section-alt{background:var(--bg-alt)}
+.section-full{max-width:100%;padding-left:0;padding-right:0}
+.section-inner{max-width:1000px;margin:0 auto;padding:0 20px}
+.stag{
+  display:inline-block;padding:4px 12px;border-radius:100px;
+  font-size:12px;font-weight:600;letter-spacing:0.05em;margin-bottom:12px;
+}
+.stitle{font-family:var(--font-display);font-size:clamp(36px,6vw,56px);color:var(--navy);letter-spacing:0.02em;line-height:0.95;margin-bottom:12px}
+.sdesc{font-size:clamp(15px,2vw,18px);color:var(--text-dim);max-width:640px;line-height:1.7}
+.section-divider{height:1px;max-width:200px;margin:0 auto;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+
+/* ═══════════════════════════════════════════
+   CARDS
+   ═══════════════════════════════════════════ */
+.card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px;transition:all 0.3s ease;
+}
+.card:hover{box-shadow:0 8px 30px rgba(0,0,0,0.06);transform:translateY(-2px)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:36px}
+.card-icon{font-size:32px;margin-bottom:12px;display:block}
+.card-title{font-family:var(--font-display);font-size:22px;color:var(--navy);letter-spacing:0.02em;margin-bottom:6px}
+.card-text{font-size:14px;color:var(--text-dim);line-height:1.7}
+
+/* ═══════════════════════════════════════════
+   SPEC ROWS
+   ═══════════════════════════════════════════ */
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:32px}
+.spec-item{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:20px;text-align:center;transition:all 0.3s;
+}
+.spec-item:hover{border-color:var(--green);box-shadow:0 4px 16px rgba(45,139,78,0.08)}
+.spec-emoji{font-size:28px;margin-bottom:8px;display:block}
+.spec-label{font-family:var(--font-display);font-size:18px;color:var(--navy);letter-spacing:0.02em}
+.spec-value{font-size:13px;color:var(--text-dim);margin-top:4px;line-height:1.5}
+
+/* ═══════════════════════════════════════════
+   BRAND PILLS
+   ═══════════════════════════════════════════ */
+.brand-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.brand-pill{
+  padding:10px 18px;border-radius:12px;background:#fff;border:1px solid var(--border);
+  font-size:14px;font-weight:600;color:var(--navy);cursor:pointer;transition:all 0.3s;position:relative;
+}
+.brand-pill:hover,.brand-pill.active{border-color:var(--green);background:var(--green-light);color:var(--green)}
+.brand-info{
+  margin-top:16px;padding:20px;border-radius:var(--radius-sm);
+  background:#fff;border:1px solid var(--border);
+  font-size:14px;color:var(--text-dim);line-height:1.7;
+  display:none;animation:fadeIn 0.3s ease;
+}
+.brand-info.active{display:block}
+
+/* ═══════════════════════════════════════════
+   RACKET SELECTOR
+   ═══════════════════════════════════════════ */
+.selector-box{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:36px;margin-top:36px;
+}
+.selector-step{display:none}
+.selector-step.active{display:block;animation:fadeIn 0.3s ease}
+.selector-q{font-family:var(--font-display);font-size:28px;color:var(--navy);margin-bottom:20px;letter-spacing:0.02em}
+.selector-opts{display:flex;flex-direction:column;gap:10px}
+.selector-opt{
+  padding:14px 20px;border-radius:12px;background:var(--bg);
+  border:2px solid var(--border);font-size:15px;font-weight:500;
+  cursor:pointer;transition:all 0.25s;text-align:left;color:var(--text);
+}
+.selector-opt:hover{border-color:var(--green);background:var(--green-light);color:var(--green)}
+.selector-result{
+  padding:24px;border-radius:var(--radius-sm);background:var(--green-light);
+  border:1px solid rgba(45,139,78,0.2);animation:fadeUp 0.4s ease;
+}
+.selector-result h4{font-family:var(--font-display);font-size:24px;color:var(--green);margin-bottom:8px;letter-spacing:0.02em}
+.selector-result p{font-size:14px;color:var(--text-dim);line-height:1.7}
+.selector-restart{
+  margin-top:16px;padding:10px 20px;border-radius:10px;
+  background:var(--green);color:#fff;border:none;
+  font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;
+}
+.selector-restart:hover{background:var(--green-dark)}
+
+/* ═══════════════════════════════════════════
+   TENSION COMPARATOR
+   ═══════════════════════════════════════════ */
+.tension-box{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:36px;margin-top:36px;
+}
+.tension-slider-wrap{display:flex;align-items:center;gap:16px;margin:24px 0}
+.tension-label{font-size:13px;font-weight:600;color:var(--text-dim);white-space:nowrap;min-width:40px}
+.tension-slider{
+  -webkit-appearance:none;appearance:none;width:100%;height:8px;
+  border-radius:4px;background:linear-gradient(90deg,var(--clay),var(--green));
+  outline:none;cursor:pointer;
+}
+.tension-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:24px;height:24px;border-radius:50%;
+  background:#fff;border:3px solid var(--green);cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,0.15);transition:all 0.2s;
+}
+.tension-slider::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.tension-value{
+  font-family:var(--font-display);font-size:36px;color:var(--navy);text-align:center;
+  letter-spacing:0.02em;margin-bottom:4px;
+}
+.gauge-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.gauge{text-align:center}
+.gauge-label{font-size:12px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em}
+.gauge-bar{height:10px;border-radius:5px;background:var(--bg-alt);overflow:hidden}
+.gauge-fill{height:100%;border-radius:5px;transition:width 0.4s cubic-bezier(0.16,1,0.3,1)}
+.gauge-val{font-family:var(--font-display);font-size:18px;margin-top:4px;letter-spacing:0.02em}
+
+/* ═══════════════════════════════════════════
+   FUN FACTS
+   ═══════════════════════════════════════════ */
+.facts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:36px}
+.fact-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:24px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;
+}
+.fact-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--radius) var(--radius) 0 0;opacity:0;transition:opacity 0.3s;
+}
+.fact-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.06)}
+.fact-card:hover::before{opacity:1}
+.fact-emoji{font-size:26px;margin-bottom:10px;display:block}
+.fact-title{font-family:var(--font-display);font-size:20px;color:var(--navy);margin-bottom:6px;letter-spacing:0.02em}
+.fact-teaser{font-size:13px;color:var(--text-dim);line-height:1.6}
+.fact-reveal{
+  max-height:0;overflow:hidden;transition:max-height 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.fact-card.open .fact-reveal{max-height:200px}
+.fact-reveal-inner{
+  padding-top:12px;margin-top:12px;border-top:1px solid var(--border);
+  font-size:13px;color:var(--text-dim);line-height:1.7;
+}
+.fact-tap{font-size:11px;color:var(--text-light);margin-top:8px}
+.fact-card.open .fact-tap{display:none}
+
+/* ═══════════════════════════════════════════
+   BUDGET
+   ═══════════════════════════════════════════ */
+.budget-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:36px}
+.budget-card{
+  background:#fff;border:2px solid var(--border);border-radius:var(--radius);
+  padding:28px;text-align:center;transition:all 0.3s;
+}
+.budget-card:hover{border-color:var(--green)}
+.budget-tier{font-family:var(--font-display);font-size:16px;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px}
+.budget-price{font-family:var(--font-display);font-size:42px;color:var(--navy);letter-spacing:0.02em}
+.budget-items{list-style:none;margin-top:16px;text-align:left;font-size:13px;color:var(--text-dim)}
+.budget-items li{padding:6px 0;border-bottom:1px solid var(--bg-alt);display:flex;align-items:center;gap:8px}
+.budget-items li::before{content:'✓';color:var(--green);font-weight:700;font-size:14px}
+
+/* ═══════════════════════════════════════════
+   QUIZ
+   ═══════════════════════════════════════════ */
+.quiz-box{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:40px;margin-top:36px;text-align:center;
+}
+.quiz-progress{display:flex;gap:6px;justify-content:center;margin-bottom:20px}
+.quiz-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all 0.3s}
+.quiz-dot.active{background:var(--green);box-shadow:0 0 8px rgba(45,139,78,0.3)}
+.quiz-dot.done{background:var(--ball-dark)}
+.quiz-q{font-family:var(--font-display);font-size:clamp(22px,4vw,30px);color:var(--navy);margin-bottom:24px;letter-spacing:0.02em}
+.quiz-opts{display:flex;flex-direction:column;gap:10px;max-width:480px;margin:0 auto}
+.quiz-opt{
+  padding:14px 20px;border-radius:12px;background:var(--bg);
+  border:2px solid var(--border);font-size:15px;text-align:left;
+  cursor:pointer;transition:all 0.25s;color:var(--text);font-family:var(--font-body);
+}
+.quiz-opt:hover{border-color:var(--green);background:var(--green-light)}
+.quiz-opt.selected{border-color:var(--green);background:var(--green-light);color:var(--green);font-weight:600}
+.quiz-opt.disabled{pointer-events:none;opacity:0.4}
+.quiz-opt.selected.disabled{opacity:1}
+.quiz-next-btn{
+  margin-top:20px;padding:12px 28px;border-radius:12px;
+  background:var(--green);color:#fff;font-weight:700;font-size:14px;
+  border:none;cursor:pointer;transition:all 0.2s;
+}
+.quiz-next-btn:hover{background:var(--green-dark);transform:scale(1.03)}
+.quiz-result{animation:fadeUp 0.5s ease}
+.quiz-result .profile-icon{font-size:56px;margin-bottom:12px;display:block}
+.quiz-result .profile-name{font-family:var(--font-display);font-size:36px;color:var(--green);letter-spacing:0.02em}
+.quiz-result .profile-desc{font-size:15px;color:var(--text-dim);line-height:1.7;margin-top:8px;max-width:500px;margin-inline:auto}
+.quiz-result .profile-gear{
+  margin-top:20px;padding:16px;border-radius:var(--radius-sm);
+  background:var(--green-light);border:1px solid rgba(45,139,78,0.15);
+  font-size:14px;color:var(--text);line-height:1.7;text-align:left;max-width:500px;margin-inline:auto;
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
+footer{text-align:center;padding:48px 20px 32px;border-top:1px solid var(--border);background:var(--bg-alt)}
+footer .brand{font-family:var(--font-display);font-size:18px;color:var(--green);letter-spacing:0.04em;margin-bottom:6px}
+footer p{font-size:12px;color:var(--text-light)}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media(max-width:700px){
+  section{padding:60px 16px}
+  .gauge-row{grid-template-columns:1fr}
+  .nav-link{font-size:12px;padding:5px 8px}
+  .comparator-stats,.analogy-grid{grid-template-columns:1fr}
+  .budget-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">🎾 TENNIS GUIDE</div>
+    <a class="nav-link" href="#raquettes">Raquettes</a>
+    <a class="nav-link" href="#cordages">Cordages</a>
+    <a class="nav-link" href="#chaussures">Chaussures</a>
+    <a class="nav-link" href="#balles">Balles</a>
+    <a class="nav-link" href="#accessoires">Accessoires</a>
+    <a class="nav-link" href="#budget">Budget</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<header class="hero">
+  <!-- Court lines decoration -->
+  <svg class="hero-court" viewBox="0 0 500 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="50" y="20" width="400" height="260" stroke="#2D8B4E" stroke-width="3"/>
+    <line x1="250" y1="20" x2="250" y2="280" stroke="#2D8B4E" stroke-width="2"/>
+    <rect x="125" y="20" width="250" height="260" stroke="#2D8B4E" stroke-width="2"/>
+    <line x1="125" y1="150" x2="375" y2="150" stroke="#2D8B4E" stroke-width="2"/>
+  </svg>
+  <div class="hero-tag">Le guide que j'aurais voulu avoir</div>
+  <h1>LE TENNIS NE PARDONNE PAS<br>LE MAUVAIS <span class="accent">MATOS</span></h1>
+  <p class="hero-sub">Un mauvais cordage ou une raquette trop lourde peut te bousiller le coude en quelques semaines. Je suis ton pote qui bosse en magasin — laisse-moi t'éviter toutes les erreurs de débutant.</p>
+  <button class="hero-cta" onclick="document.getElementById('raquettes').scrollIntoView({behavior:'smooth'})">
+    Commencer le guide
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </button>
+  <div class="hero-scroll">↓ SCROLL</div>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     1. RAQUETTES
+     ══════════════════════════════════════════════ -->
+<div class="section-divider"></div>
+<section id="raquettes">
+  <div class="reveal">
+    <div class="stag" style="color:var(--green);background:var(--green-light)">01 — Raquettes</div>
+    <h2 class="stitle">L'EXTENSION DE TON BRAS</h2>
+    <p class="sdesc">Le choix le plus important. Pas la plus chère, pas la plus cool — celle qui correspond à <strong>ton</strong> jeu. Voici les 5 critères qui comptent vraiment.</p>
+  </div>
+
+  <!-- Spec grid -->
+  <div class="spec-grid">
+    <div class="spec-item reveal reveal-d1">
+      <span class="spec-emoji">🎯</span>
+      <div class="spec-label">TAMIS</div>
+      <div class="spec-value"><strong>Petit</strong> (630cm²) = contrôle, sniper<br><strong>Grand</strong> (680cm²+) = tolérance, shotgun</div>
+    </div>
+    <div class="spec-item reveal reveal-d2">
+      <span class="spec-emoji">⚖️</span>
+      <div class="spec-label">POIDS</div>
+      <div class="spec-value"><strong>&lt;280g</strong> = maniable, bras fragile<br><strong>&gt;300g</strong> = puissance, stabilité</div>
+    </div>
+    <div class="spec-item reveal reveal-d3">
+      <span class="spec-emoji">⚡</span>
+      <div class="spec-label">ÉQUILIBRE</div>
+      <div class="spec-value"><strong>En tête</strong> = puissance<br><strong>En manche</strong> = contrôle<br><strong>Neutre</strong> = polyvalent</div>
+    </div>
+    <div class="spec-item reveal reveal-d4">
+      <span class="spec-emoji">🔧</span>
+      <div class="spec-label">RIGIDITÉ (RA)</div>
+      <div class="spec-value"><strong>Souple</strong> (&lt;63) = confort, effets<br><strong>Rigide</strong> (&gt;67) = puissance brute</div>
+    </div>
+    <div class="spec-item reveal reveal-d1">
+      <span class="spec-emoji">🕸️</span>
+      <div class="spec-label">PLAN CORDAGE</div>
+      <div class="spec-value"><strong>16×19</strong> = effets, accroche<br><strong>18×20</strong> = contrôle, durabilité</div>
+    </div>
+  </div>
+
+  <!-- Brands -->
+  <h3 style="font-family:var(--font-display);font-size:28px;color:var(--navy);margin-top:48px;letter-spacing:0.02em" class="reveal">LES MARQUES ET LEUR ADN</h3>
+  <div class="brand-row reveal" id="brand-row">
+    <div class="brand-pill" data-brand="wilson" onclick="showBrand('wilson',this)">🇺🇸 Wilson</div>
+    <div class="brand-pill" data-brand="babolat" onclick="showBrand('babolat',this)">🇫🇷 Babolat</div>
+    <div class="brand-pill" data-brand="head" onclick="showBrand('head',this)">🇦🇹 HEAD</div>
+    <div class="brand-pill" data-brand="yonex" onclick="showBrand('yonex',this)">🇯🇵 Yonex</div>
+    <div class="brand-pill" data-brand="tecnifibre" onclick="showBrand('tecnifibre',this)">🇫🇷 Tecnifibre</div>
+  </div>
+  <div class="brand-info" id="brand-wilson">🎩 <strong>Wilson</strong> — La polyvalence incarnée. Le Pro Staff de Federer est une légende. Des raquettes pour tous les niveaux, fiables, bien équilibrées. Le choix sûr.</div>
+  <div class="brand-info" id="brand-babolat">💪 <strong>Babolat</strong> — L'arme de Nadal. Spécialiste de la puissance et du lift. La Pure Aero est devenue un symbole. ADN français, innovation constante dans les cordages aussi.</div>
+  <div class="brand-info" id="brand-head">🎯 <strong>HEAD</strong> — La précision autrichienne. Djokovic, Zverev, Murray. Des raquettes chirurgicales, souvent un peu plus rigides. Le contrôle avant tout.</div>
+  <div class="brand-info" id="brand-yonex">🔬 <strong>Yonex</strong> — L'innovation japonaise. Tamis isométrique (forme unique), confort exceptionnel. Osaka, Wawrinka. Moins mainstream mais adoré des connaisseurs.</div>
+  <div class="brand-info" id="brand-tecnifibre">🏅 <strong>Tecnifibre</strong> — Made in France, précision et confort. Medvedev. Historiquement le roi du cordage, leurs raquettes montent en gamme. Excellent rapport qualité/prix.</div>
+
+  <!-- Racket Selector -->
+  <h3 style="font-family:var(--font-display);font-size:28px;color:var(--navy);margin-top:48px;letter-spacing:0.02em" class="reveal">🎾 QUELLE RAQUETTE POUR TOI ?</h3>
+  <div class="selector-box reveal" id="selector">
+    <div class="selector-step active" data-step="0">
+      <div class="selector-q">QUEL EST TON NIVEAU ?</div>
+      <div class="selector-opts">
+        <div class="selector-opt" onclick="selectorNext(0,'deb')">🌱 Débutant — Je commence ou je reprends</div>
+        <div class="selector-opt" onclick="selectorNext(0,'inter')">⚡ Intermédiaire — Je joue régulièrement</div>
+        <div class="selector-opt" onclick="selectorNext(0,'avance')">🔥 Avancé — Compétition, classé</div>
+      </div>
+    </div>
+    <div class="selector-step" data-step="1">
+      <div class="selector-q">COMMENT TU JOUES ?</div>
+      <div class="selector-opts">
+        <div class="selector-opt" onclick="selectorNext(1,'power')">💥 Je tape fort du fond de court</div>
+        <div class="selector-opt" onclick="selectorNext(1,'vary')">🎨 Je varie, je monte au filet</div>
+        <div class="selector-opt" onclick="selectorNext(1,'defend')">🛡️ Je défends, je ramène tout</div>
+      </div>
+    </div>
+    <div class="selector-step" data-step="2">
+      <div class="selector-q">TON BUDGET ?</div>
+      <div class="selector-opts">
+        <div class="selector-opt" onclick="selectorNext(2,'low')">💰 Moins de 100€</div>
+        <div class="selector-opt" onclick="selectorNext(2,'mid')">💰💰 100 — 200€</div>
+        <div class="selector-opt" onclick="selectorNext(2,'high')">💰💰💰 200€+</div>
+      </div>
+    </div>
+    <div class="selector-step" data-step="result" id="selector-result"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     2. CORDAGES
+     ══════════════════════════════════════════════ -->
+<div class="section-alt">
+<div class="section-divider"></div>
+<section id="cordages">
+  <div class="reveal">
+    <div class="stag" style="color:var(--clay);background:var(--clay-light)">02 — Cordages</div>
+    <h2 class="stitle">L'ÂME SECRÈTE DE LA RAQUETTE</h2>
+    <p class="sdesc">90% des joueurs négligent leurs cordages. C'est pourtant le seul élément qui touche la balle. Changer de cordage, c'est changer de raquette.</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="card reveal">
+      <span class="card-icon">🧵</span>
+      <div class="card-title">MONOFILAMENT (POLY)</div>
+      <div class="card-text">Le plus populaire chez les compétiteurs. Durable, bon contrôle, beaucoup de spin. Moins de confort — déconseillé aux bras fragiles. Ex : Luxilon ALU Power.</div>
+    </div>
+    <div class="card reveal reveal-d1">
+      <span class="card-icon">☁️</span>
+      <div class="card-title">MULTIFILAMENT</div>
+      <div class="card-text">Le roi du confort. Des centaines de micro-fibres tissées. Puissance, toucher agréable. Se détend plus vite. Parfait pour les bras sensibles. Ex : Tecnifibre NRG².</div>
+    </div>
+    <div class="card reveal reveal-d2">
+      <span class="card-icon">🐄</span>
+      <div class="card-title">BOYAU NATUREL</div>
+      <div class="card-text">Le luxe ultime. Intestin de vache (~40€ le jeu). Puissance + confort imbattables. Craint l'humidité. Les pros l'adorent. Ex : Babolat VS Touch.</div>
+    </div>
+    <div class="card reveal reveal-d3">
+      <span class="card-icon">🔀</span>
+      <div class="card-title">HYBRIDE</div>
+      <div class="card-text">Le best of both worlds. Poly en montants (durabilité) + multi ou boyau en travers (confort). Le setup de beaucoup de pros. Ex : Poly + Boyau naturel.</div>
+    </div>
+  </div>
+
+  <!-- Tension comparator -->
+  <h3 style="font-family:var(--font-display);font-size:28px;color:var(--navy);margin-top:48px;letter-spacing:0.02em" class="reveal">⚖️ LE COMPARATEUR DE TENSION</h3>
+  <div class="tension-box reveal">
+    <p style="font-size:14px;color:var(--text-dim);margin-bottom:16px">Déplace le curseur pour voir comment la tension affecte les caractéristiques de jeu :</p>
+    <div class="tension-value" id="tension-val">24 kg</div>
+    <div class="tension-slider-wrap">
+      <div class="tension-label">18 kg</div>
+      <input type="range" min="18" max="30" value="24" class="tension-slider" id="tension-slider" oninput="updateTension(this.value)">
+      <div class="tension-label">30 kg</div>
+    </div>
+    <div class="gauge-row">
+      <div class="gauge">
+        <div class="gauge-label">Puissance</div>
+        <div class="gauge-bar"><div class="gauge-fill" id="g-power" style="width:50%;background:var(--clay)"></div></div>
+        <div class="gauge-val" id="g-power-val" style="color:var(--clay)">50%</div>
+      </div>
+      <div class="gauge">
+        <div class="gauge-label">Contrôle</div>
+        <div class="gauge-bar"><div class="gauge-fill" id="g-control" style="width:50%;background:var(--green)"></div></div>
+        <div class="gauge-val" id="g-control-val" style="color:var(--green)">50%</div>
+      </div>
+      <div class="gauge">
+        <div class="gauge-label">Confort</div>
+        <div class="gauge-bar"><div class="gauge-fill" id="g-comfort" style="width:50%;background:var(--navy)"></div></div>
+        <div class="gauge-val" id="g-comfort-val" style="color:var(--navy)">50%</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text-light);margin-top:16px;text-align:center">💡 Règle : tendre plus = plus de contrôle mais moins de puissance. L'inverse est vrai aussi.</p>
+  </div>
+
+  <div style="margin-top:28px;padding:16px 20px;border-radius:12px;background:var(--clay-light);border:1px solid rgba(212,118,58,0.15)" class="reveal">
+    <p style="font-size:14px;color:var(--text-dim);line-height:1.7">🔄 <strong style="color:var(--clay)">Quand changer ?</strong> La règle simple : autant de fois par an que tu joues de fois par semaine. Tu joues 3×/semaine ? Change tes cordages au minimum 3×/an.</p>
+  </div>
+</section>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     3. CHAUSSURES
+     ══════════════════════════════════════════════ -->
+<div class="section-divider"></div>
+<section id="chaussures">
+  <div class="reveal">
+    <div class="stag" style="color:var(--navy);background:#e8e8f0">03 — Chaussures</div>
+    <h2 class="stitle">LE FONDEMENT DE TOUT</h2>
+    <p class="sdesc">Le tennis est un sport de déplacements latéraux. Porter des running ? C'est la cheville pétée garantie. Voici ce qu'il faut savoir.</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="card reveal">
+      <span class="card-icon">🟤</span>
+      <div class="card-title">TERRE BATTUE</div>
+      <div class="card-text">Semelle à chevrons (zigzag). Permet de glisser de manière contrôlée. Sans ça, tu glisses n'importe comment ou tu restes collé. La semelle se nettoie avec le pied entre les points.</div>
+    </div>
+    <div class="card reveal reveal-d1">
+      <span class="card-icon">⬜</span>
+      <div class="card-title">DUR / INDOOR</div>
+      <div class="card-text">Semelle lisse avec beaucoup d'amorti. Le dur est impitoyable pour les articulations. On ne glisse pas, on s'arrête net — l'amorti compense les chocs.</div>
+    </div>
+    <div class="card reveal reveal-d2">
+      <span class="card-icon">🟢</span>
+      <div class="card-title">GAZON</div>
+      <div class="card-text">Petits picots pour accrocher l'herbe. Rare en France mais indispensable si tu joues sur gazon. Surface rapide et glissante, la chaussure doit mordre.</div>
+    </div>
+    <div class="card reveal reveal-d3">
+      <span class="card-icon">🔄</span>
+      <div class="card-title">TOUTES SURFACES</div>
+      <div class="card-text">Le compromis. Acceptable partout, optimal nulle part. Correct si tu alternes les surfaces et que tu ne veux pas 3 paires. Le choix pragmatique.</div>
+    </div>
+  </div>
+
+  <h3 style="font-family:var(--font-display);font-size:22px;color:var(--navy);margin-top:36px;letter-spacing:0.02em" class="reveal">LES MARQUES CLÉS</h3>
+  <div class="spec-grid reveal">
+    <div class="spec-item"><span class="spec-emoji">🏆</span><div class="spec-label">ASICS</div><div class="spec-value">La référence confort. Gel Resolution = légende. Amorti imbattable.</div></div>
+    <div class="spec-item"><span class="spec-emoji">✓</span><div class="spec-label">NIKE</div><div class="spec-value">Style + performance. Vapor = légèreté. Air Zoom = amorti. Les plus belles.</div></div>
+    <div class="spec-item"><span class="spec-emoji">⚡</span><div class="spec-label">ADIDAS</div><div class="spec-value">Polyvalence. Barricade = tank indestructible. Bon maintien latéral.</div></div>
+    <div class="spec-item"><span class="spec-emoji">🦶</span><div class="spec-label">NEW BALANCE</div><div class="spec-value">Pieds larges ? C'est ta marque. Fresh Foam excellent. Sous-cotée.</div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     4. BALLES
+     ══════════════════════════════════════════════ -->
+<div class="section-alt">
+<div class="section-divider"></div>
+<section id="balles">
+  <div class="reveal">
+    <div class="stag" style="color:var(--ball-dark);background:#f4f8d8">04 — Balles</div>
+    <h2 class="stitle">PAS TOUTES LES MÊMES</h2>
+    <p class="sdesc">Tu pensais qu'une balle jaune = une balle jaune ? Détrompe-toi. Le type de balle change tout : rebond, vitesse, durée de vie.</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="card reveal">
+      <span class="card-icon">💨</span>
+      <div class="card-title">PRESSURISÉES</div>
+      <div class="card-text">Les « vraies » balles. Rebond vif, toucher net. Mais elles perdent leur pression dès l'ouverture du tube. En 2-3 semaines, c'est fini. La norme en compétition.</div>
+    </div>
+    <div class="card reveal reveal-d1">
+      <span class="card-icon">🧱</span>
+      <div class="card-title">NON-PRESSURISÉES</div>
+      <div class="card-text">Rebond via le caoutchouc lui-même. Durent des mois. Moins de feeling, plus lourdes. Parfaites pour l'entraînement et les lanceurs de balles.</div>
+    </div>
+    <div class="card reveal reveal-d2">
+      <span class="card-icon">🧒</span>
+      <div class="card-title">PROGRESSION ENFANT</div>
+      <div class="card-text"><strong style="color:#e53e3e">● Rouge</strong> = 75% plus lente. <strong style="color:#dd6b20">● Orange</strong> = 50%. <strong style="color:var(--green)">● Vert</strong> = 25%. Le système officiel pour apprendre sans frustration.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     5. ACCESSOIRES
+     ══════════════════════════════════════════════ -->
+<div class="section-divider"></div>
+<section id="accessoires">
+  <div class="reveal">
+    <div class="stag" style="color:var(--green);background:var(--green-light)">05 — Accessoires</div>
+    <h2 class="stitle">LES DÉTAILS QUI FONT LA DIFFÉRENCE</h2>
+    <p class="sdesc">Les trucs que personne n'explique et qui changent ton confort au quotidien.</p>
+  </div>
+  <div class="card-grid">
+    <div class="card reveal"><span class="card-icon">✋</span><div class="card-title">GRIPS & SURGRIPS</div><div class="card-text">Le <strong>grip de base</strong> se remplace quand il est usé. Le <strong>surgrip</strong> se met par-dessus, absorbe la sueur, coûte ~2€. Change-le toutes les 3-5 sessions. Le surgrip blanc qui vire au gris = à changer.</div></div>
+    <div class="card reveal reveal-d1"><span class="card-icon">〰️</span><div class="card-title">ANTIVIBRATEURS</div><div class="card-text">Le petit caoutchouc au milieu des cordes. <strong>Verdict honnête</strong> : ça réduit un peu la vibration de la corde, mais pas le choc au bras. C'est surtout du confort psychologique. Si t'aimes le « pok » sourd, mets-en un.</div></div>
+    <div class="card reveal reveal-d2"><span class="card-icon">🎒</span><div class="card-title">SACS / THERMOBAG</div><div class="card-text">Un <strong>thermobag</strong> protège tes cordages de la chaleur (le coffre de la voiture en été = cordages morts). Investis dans un vrai sac à 2-3 raquettes minimum.</div></div>
+    <div class="card reveal reveal-d3"><span class="card-icon">👕</span><div class="card-title">TEXTILES TECHNIQUES</div><div class="card-text"><strong>Le coton est l'ennemi du tennis.</strong> Il absorbe la sueur, alourdit le vêtement, ne sèche pas. Le polyester technique évacue et garde le corps au sec. Ça change tout en été.</div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     6. BUDGET
+     ══════════════════════════════════════════════ -->
+<div class="section-alt">
+<div class="section-divider"></div>
+<section id="budget">
+  <div class="reveal">
+    <div class="stag" style="color:var(--clay);background:var(--clay-light)">06 — Budget</div>
+    <h2 class="stitle">LE BUDGET RÉALISTE</h2>
+    <p class="sdesc">Combien ça coûte vraiment ? Trois packs honnêtes. Et un secret : le cordage est l'investissement récurrent le plus sous-estimé.</p>
+  </div>
+  <div class="budget-grid">
+    <div class="budget-card reveal">
+      <div class="budget-tier" style="color:var(--green)">DÉBUTANT</div>
+      <div class="budget-price">150-250€</div>
+      <ul class="budget-items">
+        <li>Raquette entrée de gamme (60-120€)</li>
+        <li>Cordage synthétique pré-monté</li>
+        <li>Chaussures toutes surfaces (50-80€)</li>
+        <li>Tube de 4 balles (5-8€)</li>
+        <li>Surgrips x3 (~5€)</li>
+      </ul>
+    </div>
+    <div class="budget-card reveal reveal-d1" style="border-color:var(--green)">
+      <div class="budget-tier" style="color:var(--clay)">INTERMÉDIAIRE</div>
+      <div class="budget-price">300-500€</div>
+      <ul class="budget-items">
+        <li>Raquette milieu de gamme (120-200€)</li>
+        <li>Cordage multifilament (~15€ + pose)</li>
+        <li>Chaussures surface spécifique (80-130€)</li>
+        <li>Balles compétition x2 tubes</li>
+        <li>Sac thermobag (40-80€)</li>
+      </ul>
+    </div>
+    <div class="budget-card reveal reveal-d2">
+      <div class="budget-tier" style="color:var(--navy)">COMPÉTITEUR</div>
+      <div class="budget-price">600-1000€+</div>
+      <ul class="budget-items">
+        <li>Raquette haut de gamme (200-300€)</li>
+        <li>Cordage poly ou hybride + poses régulières</li>
+        <li>2 paires de chaussures (surfaces diff.)</li>
+        <li>Sac 6-9 raquettes</li>
+        <li>Textiles techniques complets</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     FUN FACTS
+     ══════════════════════════════════════════════ -->
+<div class="section-divider"></div>
+<section id="facts">
+  <div class="reveal">
+    <div class="stag" style="color:var(--ball-dark);background:#f4f8d8">Bonus</div>
+    <h2 class="stitle">FAITS FOUS</h2>
+    <p class="sdesc">Des anecdotes pour briller en soirée. Clique pour révéler.</p>
+  </div>
+  <div class="facts-grid">
+    <div class="fact-card reveal" onclick="this.classList.toggle('open')">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0;background:var(--green)" class="fact-bar"></div>
+      <span class="fact-emoji">🐕</span>
+      <div class="fact-title">LE GOLDEN RETRIEVER</div>
+      <div class="fact-teaser">Le cordage de Nadal est tendu à 25kg…</div>
+      <div class="fact-tap">↓ Toucher pour révéler</div>
+      <div class="fact-reveal"><div class="fact-reveal-inner">C'est comme accrocher un golden retriever à chaque corde. Et il a 16 montants et 19 travers. Soit 35 chiens suspendus à ta raquette. Quand même.</div></div>
+    </div>
+    <div class="fact-card reveal reveal-d1" onclick="this.classList.toggle('open')">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0;background:var(--clay)" class="fact-bar"></div>
+      <span class="fact-emoji">🧬</span>
+      <div class="fact-title">20 ANS DE FIDÉLITÉ</div>
+      <div class="fact-teaser">Federer a joué avec le même modèle de raquette…</div>
+      <div class="fact-tap">↓ Toucher pour révéler</div>
+      <div class="fact-reveal"><div class="fact-reveal-inner">Le Wilson Pro Staff 90, pendant presque 20 ans, avant de passer au RF97. Il changeait le cordage, le grip, le poids — mais jamais le cadre. La constance d'un génie.</div></div>
+    </div>
+    <div class="fact-card reveal reveal-d2" onclick="this.classList.toggle('open')">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0;background:var(--navy)" class="fact-bar"></div>
+      <span class="fact-emoji">🫁</span>
+      <div class="fact-title">LA BALLE QUI MEURT</div>
+      <div class="fact-teaser">Une balle pressurisée neuve a une espérance de vie de…</div>
+      <div class="fact-tap">↓ Toucher pour révéler</div>
+      <div class="fact-reveal"><div class="fact-reveal-inner">2 à 3 semaines une fois le tube ouvert. Elle perd 50% de son rebond. En Grand Chelem, on change de balles tous les 7 jeux (9 pour le premier set, à cause de l'échauffement).</div></div>
+    </div>
+    <div class="fact-card reveal reveal-d3" onclick="this.classList.toggle('open')">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0;background:var(--ball-dark)" class="fact-bar"></div>
+      <span class="fact-emoji">🏔️</span>
+      <div class="fact-title">LE TENNIS EN ALTITUDE</div>
+      <div class="fact-teaser">À Mexico ou Bogotá, les balles sont différentes…</div>
+      <div class="fact-tap">↓ Toucher pour révéler</div>
+      <div class="fact-reveal"><div class="fact-reveal-inner">L'air est moins dense en altitude → la balle vole plus vite et rebondit plus haut. Il existe des balles spéciales « haute altitude » avec moins de pression interne pour compenser. La physique ne ment pas.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     QUIZ
+     ══════════════════════════════════════════════ -->
+<div class="section-alt">
+<div class="section-divider"></div>
+<section id="quiz">
+  <div class="reveal">
+    <div class="stag" style="color:var(--green);background:var(--green-light)">Le test</div>
+    <h2 class="stitle">QUEL JOUEUR ES-TU ?</h2>
+    <p class="sdesc">5 questions pour déterminer ton profil et tes recommandations matos.</p>
+  </div>
+  <div class="quiz-box reveal" id="quiz-box">
+    <div class="quiz-progress" id="quiz-progress"></div>
+    <div id="quiz-content"></div>
+  </div>
+</section>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="brand">🎾 TENNIS GUIDE — SAAD'S LAB</div>
+  <p>Fait avec passion et Claude × curiosité</p>
+  <p style="margin-top:6px">griftic.github.io/HUB-learning</p>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     SCRIPTS
+     ══════════════════════════════════════════════ -->
+<script>
+// ── Scroll reveal ──
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible') });
+}, {threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ── Nav scroll shadow ──
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// ── Fact card bar hover ──
+document.querySelectorAll('.fact-card').forEach(c => {
+  const bar = c.querySelector('.fact-bar');
+  if(bar){
+    c.addEventListener('mouseenter', () => bar.style.opacity = '1');
+    c.addEventListener('mouseleave', () => { if(!c.classList.contains('open')) bar.style.opacity = '0'; });
+  }
+});
+
+// ── Brand pills ──
+function showBrand(id, el) {
+  document.querySelectorAll('.brand-pill').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.brand-info').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('brand-' + id).classList.add('active');
+}
+
+// ── Racket Selector ──
+const selectorAnswers = [];
+function selectorNext(step, val) {
+  selectorAnswers[step] = val;
+  const steps = document.querySelectorAll('.selector-step');
+  steps.forEach(s => s.classList.remove('active'));
+  if(step < 2) {
+    steps[step + 1].classList.add('active');
+  } else {
+    showSelectorResult();
+  }
+}
+function showSelectorResult() {
+  const [level, style, budget] = selectorAnswers;
+  let reco = '';
+  
+  // Simple recommendation engine
+  if(level === 'deb') {
+    if(budget === 'low') reco = `<h4>BABOLAT BOOST AERO</h4><p>Raquette légère (~260g), grand tamis, très tolérante. Parfaite pour commencer sans se blesser. ~70€. Pré-cordée, tu peux jouer direct en sortant de la boîte.</p>`;
+    else if(budget === 'mid') reco = `<h4>WILSON CLASH 108</h4><p>Grand tamis, souple (confort++), légère. Pardonne les erreurs et protège le bras. ~150€. Un investissement qui dure 3-4 ans facilement.</p>`;
+    else reco = `<h4>YONEX EZONE 108</h4><p>La Rolls du débutant. Confort exceptionnel, technologie isométrique, puissante et tolérante. ~200€+. Tu n'auras pas besoin de changer de sitôt.</p>`;
+  } else if(level === 'inter') {
+    if(style === 'power') reco = `<h4>BABOLAT PURE AERO</h4><p>La raquette de Nadal (en version grand public). Aérodynamique, conçue pour le lift et la puissance depuis le fond. Plan 16×19. ~180-220€.</p>`;
+    else if(style === 'vary') reco = `<h4>WILSON BLADE 100</h4><p>Polyvalente, bon toucher, souple. Permet de varier les coups et de sentir la balle. Le choix du joueur complet. ~170-200€.</p>`;
+    else reco = `<h4>HEAD SPEED MP</h4><p>Contrôle et précision. Parfaite pour replacer la balle avec régularité. Djokovic-approved (modèle similaire). ~180-220€.</p>`;
+  } else {
+    if(style === 'power') reco = `<h4>BABOLAT PURE AERO VS</h4><p>Version pro de la Pure Aero. Plus lourde, plus de matière, lift dévastateur. Cordage poly 16×19. Pour les cogneurs sérieux. ~250€.</p>`;
+    else if(style === 'vary') reco = `<h4>WILSON PRO STAFF 97</h4><p>L'héritage de Federer. Précision chirurgicale, toucher sublime, 315g. Demande de la technique mais récompense chaque beau geste. ~230€.</p>`;
+    else reco = `<h4>TECNIFIBRE TF-40</h4><p>Made in France. Contrôle absolu, stabilité, cadre précis. Le choix de Medvedev. Pour les défenseurs qui transforment la régularité en arme. ~220€.</p>`;
+  }
+
+  const resultEl = document.getElementById('selector-result');
+  resultEl.innerHTML = `<div class="selector-result">${reco}<button class="selector-restart" onclick="resetSelector()">↺ Recommencer</button></div>`;
+  document.querySelector('[data-step="result"]').classList.add('active');
+}
+function resetSelector() {
+  selectorAnswers.length = 0;
+  document.querySelectorAll('.selector-step').forEach(s => s.classList.remove('active'));
+  document.querySelector('[data-step="0"]').classList.add('active');
+}
+
+// ── Tension Comparator ──
+function updateTension(val) {
+  const v = parseInt(val);
+  document.getElementById('tension-val').textContent = v + ' kg';
+  const range = 30 - 18; // 12
+  const normalized = (v - 18) / range; // 0 to 1 (low to high)
+  
+  const power = Math.round((1 - normalized) * 90 + 10);
+  const control = Math.round(normalized * 90 + 10);
+  const comfort = Math.round((1 - normalized) * 70 + 20);
+  
+  document.getElementById('g-power').style.width = power + '%';
+  document.getElementById('g-power-val').textContent = power + '%';
+  document.getElementById('g-control').style.width = control + '%';
+  document.getElementById('g-control-val').textContent = control + '%';
+  document.getElementById('g-comfort').style.width = comfort + '%';
+  document.getElementById('g-comfort-val').textContent = comfort + '%';
+}
+updateTension(24);
+
+// ── Quiz ──
+const quizQuestions = [
+  {
+    q: "En match, tu préfères…",
+    opts: ["💥 Frapper des winners du fond", "🎨 Construire le point avec des variations", "🛡️ Ramener toutes les balles et fatiguer l'adversaire", "🏃 Monter au filet dès que possible"],
+    scores: [[3,0,0,0],[0,2,1,0],[0,0,3,0],[0,1,0,2]]
+  },
+  {
+    q: "Ton point fort naturel ?",
+    opts: ["Le coup droit surpuissant", "Le revers slicé qui rase le filet", "Les jambes : je cours tout", "La volée et le toucher"],
+    scores: [[3,0,0,0],[0,2,0,1],[0,0,3,0],[0,1,0,2]]
+  },
+  {
+    q: "Quand tu perds, c'est souvent parce que…",
+    opts: ["Je fais trop de fautes directes (je tape trop)", "Je manque de puissance pour conclure", "Je me fais déborder par les joueurs rapides", "Je n'arrive pas à varier assez"],
+    scores: [[3,0,0,0],[0,0,2,1],[0,1,0,2],[0,2,1,0]]
+  },
+  {
+    q: "Ton joueur/joueuse préféré(e) ?",
+    opts: ["Nadal / Osaka — puissance brute", "Federer / Henin — élégance et toucher", "Djokovic / Halep — régularité machine", "McEnroe / Mouratoglou — créativité au filet"],
+    scores: [[3,0,0,0],[0,2,0,1],[0,0,3,0],[0,1,0,2]]
+  },
+  {
+    q: "Ton rapport au matos ?",
+    opts: ["Raquette lourde + poly tendu fort = contrôle absolu", "Cordage confort + raquette légère = sensations", "Durabilité avant tout, j'use le matos", "Le dernier modèle hype, toujours"],
+    scores: [[2,0,1,0],[0,2,0,1],[0,0,3,0],[1,1,0,1]]
+  }
+];
+
+const profiles = [
+  { name: "LE COGNEUR", icon: "💥", color: "var(--clay)", desc: "Tu frappes d'abord, tu réfléchis après. Ton coup droit fait peur. Tu vis pour le winner.", gear: "🎾 <strong>Raquette</strong> : Babolat Pure Aero ou HEAD Extreme — puissance et lift.<br>🧵 <strong>Cordage</strong> : Poly (RPM Blast, Luxilon ALU Power) tendu à 22-24kg.<br>👟 <strong>Chaussures</strong> : Asics Gel Resolution — amorti pour absorber tes appuis violents." },
+  { name: "LE STRATÈGE", icon: "🎨", color: "var(--green)", desc: "Tu construis chaque point comme une partie d'échecs. Tu varies les rythmes, les angles, les effets.", gear: "🎾 <strong>Raquette</strong> : Wilson Blade ou Tecnifibre TF-40 — toucher et contrôle.<br>🧵 <strong>Cordage</strong> : Multifilament ou hybride, tension moyenne (23-25kg).<br>👟 <strong>Chaussures</strong> : Nike Vapor — légères pour tes changements de direction." },
+  { name: "LE MARATHONIEN", icon: "🛡️", color: "var(--navy)", desc: "Tu cours tout. Tu ramènes tout. Tu gagnes par l'usure. L'adversaire craque avant toi.", gear: "🎾 <strong>Raquette</strong> : HEAD Speed ou Yonex EZONE — stabilité et régularité.<br>🧵 <strong>Cordage</strong> : Poly durable (Solinco Hyper-G), tension 24-26kg.<br>👟 <strong>Chaussures</strong> : Asics ou Adidas Barricade — durabilité maximale pour tes milliers de pas." },
+  { name: "LE TOUCHER D'ARTISTE", icon: "✨", color: "var(--ball-dark)", desc: "Volées, amortis, passing shots — tu joues au feeling. Le filet est ton jardin secret.", gear: "🎾 <strong>Raquette</strong> : Wilson Pro Staff ou Yonex VCORE Pro — contrôle et toucher.<br>🧵 <strong>Cordage</strong> : Boyau naturel ou multifilament premium, 24-25kg.<br>👟 <strong>Chaussures</strong> : Nike Air Zoom GP — réactivité pour tes montées au filet." }
+];
+
+let quizIdx = 0;
+let quizScores = [0,0,0,0]; // cogneur, stratège, marathonien, artiste
+
+function renderQuiz() {
+  const box = document.getElementById('quiz-content');
+  const prog = document.getElementById('quiz-progress');
+
+  if(quizIdx >= quizQuestions.length) {
+    prog.innerHTML = '';
+    const maxScore = Math.max(...quizScores);
+    const profileIdx = quizScores.indexOf(maxScore);
+    const p = profiles[profileIdx];
+    box.innerHTML = `
+      <div class="quiz-result">
+        <span class="profile-icon">${p.icon}</span>
+        <div class="profile-name" style="color:${p.color}">${p.name}</div>
+        <p class="profile-desc">${p.desc}</p>
+        <div class="profile-gear"><strong>Ton matos recommandé :</strong><br><br>${p.gear}</div>
+        <button class="quiz-next-btn" onclick="quizIdx=0;quizScores=[0,0,0,0];renderQuiz();" style="margin-top:20px">↺ Recommencer</button>
+      </div>
+    `;
+    return;
+  }
+
+  const q = quizQuestions[quizIdx];
+  prog.innerHTML = quizQuestions.map((_, i) =>
+    `<div class="quiz-dot ${i === quizIdx ? 'active' : ''} ${i < quizIdx ? 'done' : ''}"></div>`
+  ).join('');
+
+  box.innerHTML = `
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">
+      ${q.opts.map((o, i) => `<div class="quiz-opt" onclick="quizAnswer(${i})">${o}</div>`).join('')}
+    </div>
+  `;
+}
+
+function quizAnswer(idx) {
+  const q = quizQuestions[quizIdx];
+  const scores = q.scores[idx];
+  scores.forEach((s, i) => quizScores[i] += s);
+  
+  document.querySelectorAll('.quiz-opt').forEach((o, i) => {
+    o.classList.add('disabled');
+    if(i === idx) o.classList.add('selected');
+  });
+
+  setTimeout(() => {
+    quizIdx++;
+    renderQuiz();
+  }, 600);
+}
+
+renderQuiz();
+</script>
+</body>
+</html>
