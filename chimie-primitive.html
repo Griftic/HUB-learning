@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chimie Primitive — Du Big Bang à la Vie</title>
+<meta property="og:title" content="Chimie Primitive — Du Big Bang à la Vie">
+<meta property="og:description" content="Comment la matière inerte est devenue vivante. Le plus grand thriller de l'univers, vulgarisé.">
+<meta property="og:image" content="https://griftic.github.io/HUB-learning/og-chimie.png">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:56px}
+:root{
+  --cyan:#00D4FF;--orange:#FF6B35;--green:#00E676;--violet:#7C4DFF;--gold:#FFD740;
+  --bg:#05050A;--surface:#0a0b14;--surface2:#10111f;--border:#1a1b2e;
+  --text:#d8d8e8;--dim:#6a6a88;--faint:#3a3a52;
+  --fd:'Outfit',system-ui,sans-serif;
+  --fb:'Source Sans 3',system-ui,sans-serif;
+  --r:16px;
+}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.65}
+::selection{background:rgba(0,212,255,0.2);color:#fff}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.02;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+h1,h2,h3,h4{font-family:var(--fd);font-weight:800;letter-spacing:-.03em;line-height:1.05}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes spark{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2)}}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 8px var(--c)}50%{box-shadow:0 0 24px var(--c)}}
+.rv{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(.16,1,.3,1)}.rv.vis{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.12s}.d2{transition-delay:.24s}.d3{transition-delay:.36s}.d4{transition-delay:.48s}
+.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;transition:all .3s}
+.card:hover{border-color:var(--faint);box-shadow:0 8px 30px rgba(0,0,0,.3);transform:translateY(-2px)}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(5,5,10,.8);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;padding:0 16px;height:52px;gap:4px;overflow-x:auto}
+.nav-b{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--cyan);margin-right:auto;white-space:nowrap;flex-shrink:0;letter-spacing:-.02em}
+.nav-a{font-size:12px;font-weight:600;color:var(--dim);padding:5px 10px;border-radius:8px;white-space:nowrap;transition:all .2s;text-decoration:none;flex-shrink:0}
+.nav-a:hover{color:var(--cyan);background:rgba(0,212,255,.08)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 20px 60px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(0,212,255,.06) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 70% 70%,rgba(124,77,255,.04) 0%,transparent 60%)}
+.hero-stars{position:absolute;inset:0}
+.hero-star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%}
+.hero-tag{font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);margin-bottom:24px;animation:fadeUp .7s ease both .2s;opacity:0}
+.hero h1{font-size:clamp(38px,8vw,80px);color:#fff;margin-bottom:20px;max-width:850px;animation:fadeUp .7s ease both .35s;opacity:0}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--cyan),var(--violet),var(--gold));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 5s linear infinite}
+.hero-sub{font-size:clamp(15px,2.2vw,20px);color:var(--dim);max-width:560px;line-height:1.7;margin-bottom:36px;animation:fadeUp .7s ease both .5s;opacity:0}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:100px;background:var(--cyan);color:#000;font-family:var(--fd);font-weight:700;font-size:15px;border:none;cursor:pointer;transition:all .3s;animation:fadeUp .7s ease both .65s;opacity:0;text-decoration:none}
+.hero-cta:hover{transform:scale(1.05);box-shadow:0 0 40px rgba(0,212,255,.3)}
+.hero-scroll{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--faint);letter-spacing:.1em;animation:fadeIn 1s ease both 1.5s,float 2.5s ease-in-out infinite 1.5s;opacity:0}
+
+/* SECTIONS */
+section{padding:100px 20px;max-width:960px;margin:0 auto;position:relative}
+.stag{margin-bottom:12px}.stitle{font-size:clamp(30px,5.5vw,52px);color:#fff;margin-bottom:14px}
+.sdesc{font-size:clamp(15px,1.8vw,18px);color:var(--dim);max-width:640px;line-height:1.7}
+.beam{height:1px;max-width:500px;margin:0 auto;background:linear-gradient(90deg,transparent,var(--border),transparent);position:relative}
+
+/* PERIODIC TABLE */
+.ptable{display:flex;flex-wrap:wrap;gap:4px;margin-top:32px;justify-content:center}
+.pelem{width:56px;padding:6px 4px;border-radius:8px;text-align:center;cursor:pointer;transition:all .25s;border:1px solid transparent;position:relative}
+.pelem:hover{transform:scale(1.15);z-index:2;border-color:currentColor}
+.pelem .sym{font-family:var(--fd);font-size:18px;font-weight:800;line-height:1}.pelem .name{font-size:8px;color:var(--dim);margin-top:1px;line-height:1.1}
+.pelem .num{position:absolute;top:2px;right:4px;font-size:7px;color:var(--faint)}
+.plegend{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px;justify-content:center}
+.plegend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--dim)}
+.plegend-dot{width:10px;height:10px;border-radius:3px}
+.pelem-info{margin-top:16px;padding:16px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);font-size:13px;color:var(--dim);line-height:1.7;display:none;animation:fadeIn .3s}
+.pelem-info.show{display:block}
+
+/* MILLER-UREY */
+.miller{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:32px;margin-top:36px;text-align:center;position:relative;overflow:hidden}
+.miller-flask{width:120px;height:140px;margin:0 auto 20px;position:relative}
+.miller-flask svg{width:100%;height:100%}
+.miller-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:12px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:var(--fd);font-weight:700;font-size:14px;cursor:pointer;transition:all .3s}
+.miller-btn:hover{background:rgba(255,215,64,.1);box-shadow:0 0 20px rgba(255,215,64,.15)}
+.miller-molecules{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px;min-height:40px}
+.miller-mol{padding:6px 14px;border-radius:10px;font-size:13px;font-weight:600;animation:fadeUp .4s ease both}
+.miller-spark{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--gold);animation:spark .5s ease-out forwards;pointer-events:none}
+
+/* NUCLEOTIDE BUILDER */
+.nbuild{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:32px;margin-top:36px}
+.nbuild-slots{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:20px 0}
+.nbuild-slot{width:130px;padding:16px 12px;border-radius:12px;border:2px dashed var(--border);text-align:center;transition:all .3s}
+.nbuild-slot.filled{border-style:solid}
+.nbuild-slot .slot-label{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.nbuild-slot .slot-value{font-family:var(--fd);font-size:18px;font-weight:700;min-height:24px}
+.nbuild-opts{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.nbuild-opt{padding:8px 16px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);font-size:13px;font-weight:600;cursor:pointer;transition:all .25s}
+.nbuild-opt:hover{border-color:var(--green);color:var(--green)}
+.nbuild-opt.picked{opacity:.4;pointer-events:none}
+.nbuild-result{margin-top:16px;padding:16px;border-radius:12px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);font-size:14px;color:var(--text);line-height:1.7;display:none;animation:fadeUp .4s}
+.nbuild-result.show{display:block}
+.nbuild-reset{margin-top:12px;padding:8px 18px;border-radius:8px;background:var(--green);color:#000;font-weight:700;font-size:12px;border:none;cursor:pointer}
+
+/* TIMELINE */
+.tl{position:relative;padding-left:32px;margin-top:40px}
+.tl::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--cyan),var(--orange),var(--green),var(--violet))}
+.tl-item{position:relative;margin-bottom:36px;cursor:pointer}
+.tl-dot{position:absolute;left:-28px;top:6px;width:12px;height:12px;border-radius:50%;border:2px solid;transition:transform .3s}
+.tl-item:hover .tl-dot{transform:scale(1.4)}
+.tl-date{font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:.04em}
+.tl-title{font-family:var(--fd);font-size:20px;font-weight:700;color:#fff;margin:4px 0}
+.tl-text{font-size:14px;color:var(--dim);line-height:1.7}
+.tl-detail{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.16,1,.3,1)}
+.tl-item.open .tl-detail{max-height:200px}
+.tl-detail-inner{padding-top:10px;font-size:13px;color:var(--dim);line-height:1.7;border-top:1px solid var(--border);margin-top:8px}
+
+/* QUIZ */
+.quiz-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:36px;margin-top:36px;text-align:center}
+.quiz-prog{display:flex;gap:6px;justify-content:center;margin-bottom:20px}
+.quiz-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all .3s}
+.quiz-dot.on{background:var(--cyan);box-shadow:0 0 8px rgba(0,212,255,.4)}.quiz-dot.done{background:var(--gold)}
+.quiz-q{font-family:var(--fd);font-size:clamp(18px,3.5vw,26px);color:#fff;margin-bottom:20px;letter-spacing:-.02em}
+.quiz-opts{display:flex;flex-direction:column;gap:10px;max-width:500px;margin:0 auto}
+.quiz-o{padding:14px 18px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);font-size:14px;text-align:left;cursor:pointer;transition:all .25s;color:var(--text)}
+.quiz-o:hover{border-color:var(--cyan);background:rgba(0,212,255,.06)}
+.quiz-o.ok{border-color:var(--green);background:rgba(0,230,118,.08);color:var(--green)}
+.quiz-o.no{border-color:var(--orange);background:rgba(255,107,53,.08);color:var(--orange)}
+.quiz-o.off{pointer-events:none;opacity:.4}.quiz-o.ok.off,.quiz-o.no.off{opacity:1}
+.quiz-next{margin-top:16px;padding:10px 24px;border-radius:10px;background:var(--cyan);color:#000;font-family:var(--fd);font-weight:700;font-size:13px;border:none;cursor:pointer;transition:all .2s}
+.quiz-next:hover{box-shadow:0 0 20px rgba(0,212,255,.3)}
+
+/* CARDS GRID */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:32px}
+
+/* FOOTER */
+footer{text-align:center;padding:48px 20px 32px;border-top:1px solid var(--border)}
+footer .fb{font-family:var(--fd);font-size:16px;color:var(--cyan);margin-bottom:6px}
+footer p{font-size:12px;color:var(--faint)}
+
+@media(max-width:700px){section{padding:60px 16px}.cgrid{grid-template-columns:1fr}.nbuild-slots{flex-direction:column;align-items:center}.pelem{width:44px;padding:4px 2px}.pelem .sym{font-size:14px}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav"><div class="nav-inner">
+  <div class="nav-b">✦ CHIMIE PRIMITIVE</div>
+  <a class="nav-a" href="#acte1">Forge</a>
+  <a class="nav-a" href="#acte2">Soupe</a>
+  <a class="nav-a" href="#acte3">Briques</a>
+  <a class="nav-a" href="#acte4">ARN</a>
+  <a class="nav-a" href="#acte5">Mystère</a>
+  <a class="nav-a" href="#timeline">Timeline</a>
+  <a class="nav-a" href="#quiz">Quiz</a>
+</div></nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-stars" id="stars"></div>
+  <div style="position:relative;z-index:1">
+    <div class="hero-tag">Le plus grand thriller de l'univers</div>
+    <h1>Tu es fait de <em>poussière d'étoiles</em> — littéralement</h1>
+    <p class="hero-sub">Chaque atome de carbone dans ton corps a été forgé dans le cœur d'une étoile mourante. Voici l'histoire de comment la matière inerte est devenue <strong style="color:#fff">toi</strong>.</p>
+    <a class="hero-cta" href="#acte1">Commencer le voyage →</a>
+  </div>
+  <div class="hero-scroll">↓ SCROLL</div>
+</header>
+
+<!-- ═══ ACTE I — LA FORGE COSMIQUE ═══ -->
+<div class="beam"></div>
+<section id="acte1">
+  <div class="rv"><div class="pill" style="color:var(--cyan);background:rgba(0,212,255,.1)">Acte I</div>
+  <h2 class="stitle">LA FORGE COSMIQUE</h2>
+  <p class="sdesc">D'où viennent les ingrédients de la vie ? Spoiler : des cadavres d'étoiles.</p></div>
+
+  <div class="cgrid">
+    <div class="card rv"><span style="font-size:28px;display:block;margin-bottom:10px">💥</span>
+      <h4 style="font-family:var(--fd);font-size:20px;color:var(--cyan);margin-bottom:6px">LE BIG BANG</h4>
+      <p style="font-size:14px;color:var(--dim);line-height:1.7">Il y a 13,8 milliards d'années. L'univers ne produit que 3 éléments : <strong style="color:#fff">hydrogène</strong> (H), <strong style="color:#fff">hélium</strong> (He), et un soupçon de <strong style="color:#fff">lithium</strong> (Li). C'est tout. Un univers d'une simplicité ennuyeuse.</p>
+    </div>
+    <div class="card rv d1"><span style="font-size:28px;display:block;margin-bottom:10px">⭐</span>
+      <h4 style="font-family:var(--fd);font-size:20px;color:var(--gold);margin-bottom:6px">LES ÉTOILES-USINES</h4>
+      <p style="font-size:14px;color:var(--dim);line-height:1.7">Les étoiles sont des fournaises nucléaires. La fusion crée le <strong style="color:#fff">carbone</strong> (C), l'<strong style="color:#fff">azote</strong> (N), l'<strong style="color:#fff">oxygène</strong> (O), jusqu'au <strong style="color:#fff">fer</strong> (Fe). Tous les éléments jusqu'au n°26.</p>
+    </div>
+    <div class="card rv d2"><span style="font-size:28px;display:block;margin-bottom:10px">🌟</span>
+      <h4 style="font-family:var(--fd);font-size:20px;color:var(--orange);margin-bottom:6px">LES SUPERNOVAE</h4>
+      <p style="font-size:14px;color:var(--dim);line-height:1.7">Quand une étoile massive meurt, elle explose et crée <strong style="color:#fff">tous</strong> les éléments lourds restants — or, uranium, <strong style="color:var(--green)">phosphore</strong>. Et les disperse dans l'espace. La mort d'une étoile rend la vie possible.</p>
+    </div>
+  </div>
+
+  <p style="font-size:14px;color:var(--dim);margin-top:24px;padding:14px 18px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);line-height:1.7" class="rv d3">🧑‍🍳 <strong style="color:var(--gold)">Analogie</strong> : L'univers est un chef cuisinier qui a mis <strong style="color:#fff">9 milliards d'années</strong> à rassembler ses ingrédients avant de commencer la recette de la vie.</p>
+
+  <!-- PERIODIC TABLE -->
+  <h3 style="font-family:var(--fd);font-size:24px;color:#fff;margin-top:48px;letter-spacing:-.02em" class="rv">LE TABLEAU PÉRIODIQUE DE L'ORIGINE</h3>
+  <p style="font-size:13px;color:var(--dim);margin-top:6px" class="rv">Chaque élément est coloré selon son origine cosmique. Clique pour en savoir plus.</p>
+  
+  <div class="plegend rv">
+    <div class="plegend-item"><div class="plegend-dot" style="background:var(--cyan)"></div>Big Bang</div>
+    <div class="plegend-item"><div class="plegend-dot" style="background:var(--gold)"></div>Étoiles</div>
+    <div class="plegend-item"><div class="plegend-dot" style="background:var(--orange)"></div>Supernovae</div>
+    <div class="plegend-item"><div class="plegend-dot" style="background:var(--violet)"></div>Étoiles à neutrons</div>
+  </div>
+
+  <div class="ptable rv" id="ptable"></div>
+  <div class="pelem-info" id="pelem-info"></div>
+</section>
+
+<!-- ═══ ACTE II — LA SOUPE PRIMORDIALE ═══ -->
+<div class="beam"></div>
+<section id="acte2" style="border-top:1px solid rgba(255,107,53,.08)">
+  <div class="rv"><div class="pill" style="color:var(--orange);background:rgba(255,107,53,.1)">Acte II</div>
+  <h2 class="stitle">LA SOUPE PRIMORDIALE</h2>
+  <p class="sdesc">La Terre il y a ~4 milliards d'années : un laboratoire de chimie géant, sans chimiste. Des milliards d'expériences aléatoires chaque seconde.</p></div>
+
+  <div class="cgrid">
+    <div class="card rv"><span style="font-size:28px;display:block;margin-bottom:10px">🌋</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--orange);margin-bottom:6px">L'ATMOSPHÈRE PRIMITIVE</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7"><strong style="color:#fff">Pas d'oxygène.</strong> L'air : CH<sub>4</sub> (méthane), NH<sub>3</sub> (ammoniac), H<sub>2</sub>O (vapeur), H<sub>2</sub>, CO<sub>2</sub>. Irrespirable pour nous — parfait pour la chimie prébiotique.</p>
+    </div>
+    <div class="card rv d1"><span style="font-size:28px;display:block;margin-bottom:10px">⚡</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--gold);margin-bottom:6px">LES SOURCES D'ÉNERGIE</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">Éclairs, rayons UV (pas de couche d'ozone !), volcans, impacts de météorites, sources hydrothermales. La Terre primitive était un <strong style="color:#fff">réacteur chimique géant</strong>.</p>
+    </div>
+    <div class="card rv d2"><span style="font-size:28px;display:block;margin-bottom:10px">🌊</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--cyan);margin-bottom:6px">FUMEURS NOIRS</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">Des cheminées au fond des océans : eau à 400°C, minéraux, gradient d'énergie constant. Un candidat sérieux pour le <strong style="color:#fff">berceau de la vie</strong>. Protégées des UV.</p>
+    </div>
+    <div class="card rv d3"><span style="font-size:28px;display:block;margin-bottom:10px">☄️</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--violet);margin-bottom:6px">PANSPERMIE</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">Et si les ingrédients venaient de l'espace ? La météorite de Murchison (1969) contenait des <strong style="color:#fff">acides aminés</strong>. La chimie prébiotique est peut-être interstellaire.</p>
+    </div>
+  </div>
+
+  <!-- MILLER-UREY SIMULATOR -->
+  <h3 style="font-family:var(--fd);font-size:24px;color:#fff;margin-top:48px" class="rv">⚗️ SIMULATEUR MILLER-UREY</h3>
+  <p style="font-size:13px;color:var(--dim);margin-top:6px" class="rv">1953 : Stanley Miller simule l'atmosphère primitive et envoie des éclairs. Résultat ? Clique pour voir.</p>
+  
+  <div class="miller rv" id="miller">
+    <div class="miller-flask">
+      <svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M45 10 H75 V45 L100 110 C102 118 96 128 88 128 H32 C24 128 18 118 20 110 L45 45 Z" fill="rgba(0,212,255,.08)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <rect x="45" y="4" width="30" height="8" rx="2" fill="var(--surface2)" stroke="var(--border)"/>
+        <text x="60" y="80" text-anchor="middle" font-size="10" fill="var(--dim)" font-family="var(--fb)">CH₄ NH₃ H₂O</text>
+        <path d="M35 55 L85 55" stroke="var(--border)" stroke-width=".5" stroke-dasharray="3 3"/>
+        <circle id="miller-glow" cx="60" cy="30" r="0" fill="var(--gold)" opacity="0"/>
+      </svg>
+    </div>
+    <div style="font-size:12px;color:var(--faint);margin-bottom:12px">Éclairs envoyés : <strong id="miller-count" style="color:var(--gold)">0</strong></div>
+    <button class="miller-btn" id="miller-btn" onclick="millerStrike()">⚡ Envoyer un éclair</button>
+    <div class="miller-molecules" id="miller-mols"></div>
+  </div>
+</section>
+
+<!-- ═══ ACTE III — LES BRIQUES DU VIVANT ═══ -->
+<div class="beam"></div>
+<section id="acte3">
+  <div class="rv"><div class="pill" style="color:var(--green);background:rgba(0,230,118,.1)">Acte III</div>
+  <h2 class="stitle">LES BRIQUES DU VIVANT</h2>
+  <p class="sdesc">20 acides aminés suffisent pour écrire toutes les protéines. Comme 26 lettres suffisent pour écrire tous les livres jamais écrits.</p></div>
+
+  <div class="cgrid">
+    <div class="card rv"><span style="font-size:28px;display:block;margin-bottom:10px">🔤</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--green);margin-bottom:6px">ACIDES AMINÉS</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">Les "lettres" de l'alphabet du vivant. <strong style="color:#fff">20 lettres → toute la machinerie de la vie.</strong> Chaque protéine est un "mot" écrit avec ces lettres, dans un ordre précis.</p>
+    </div>
+    <div class="card rv d1"><span style="font-size:28px;display:block;margin-bottom:10px">🧬</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--cyan);margin-bottom:6px">NUCLÉOTIDES</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">Les briques de l'ADN et de l'ARN. Chaque nucléotide = <strong style="color:#fff">un sucre + un phosphate + une base</strong> (A, T/U, C, G). 4 bases → tout le code génétique de la vie.</p>
+    </div>
+    <div class="card rv d2"><span style="font-size:28px;display:block;margin-bottom:10px">🫧</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--violet);margin-bottom:6px">LIPIDES</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">Propriété magique : ils <strong style="color:#fff">s'auto-assemblent en sphères</strong> dans l'eau — comme des bulles de savon. La première "frontière" entre intérieur et extérieur. Le début de l'individualité.</p>
+    </div>
+    <div class="card rv d3"><span style="font-size:28px;display:block;margin-bottom:10px">🍬</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--gold);margin-bottom:6px">SUCRES & POLYMÉRISATION</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">Le ribose (sucre de l'ARN) se forme à partir de formaldéhyde — trouvé dans l'espace ! <strong style="color:#fff">Paradoxe</strong> : l'eau aide à créer les briques mais empêche de les assembler. Résolu par les cycles humide/sec.</p>
+    </div>
+  </div>
+
+  <p style="font-size:14px;color:var(--dim);margin-top:24px;padding:14px 18px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);line-height:1.7" class="rv">🧱 <strong style="color:var(--green)">Analogie</strong> : Des millions de pièces de Lego jetées dans un océan agité. Avec assez de temps et d'énergie, certaines s'accrochent. Certaines combinaisons tiennent mieux. La <strong style="color:#fff">sélection chimique</strong> précède la sélection naturelle.</p>
+
+  <!-- NUCLEOTIDE BUILDER -->
+  <h3 style="font-family:var(--fd);font-size:24px;color:#fff;margin-top:48px" class="rv">🧬 CONSTRUIS UN NUCLÉOTIDE</h3>
+  <p style="font-size:13px;color:var(--dim);margin-top:6px" class="rv">Assemble les 3 composants pour créer une brique d'ADN/ARN :</p>
+  
+  <div class="nbuild rv" id="nbuild">
+    <div class="nbuild-slots">
+      <div class="nbuild-slot" id="ns-sugar"><div class="slot-label">Sucre</div><div class="slot-value" id="nsv-sugar" style="color:var(--gold)">?</div></div>
+      <div style="display:flex;align-items:center;font-size:20px;color:var(--faint)">+</div>
+      <div class="nbuild-slot" id="ns-phos"><div class="slot-label">Phosphate</div><div class="slot-value" id="nsv-phos" style="color:var(--orange)">?</div></div>
+      <div style="display:flex;align-items:center;font-size:20px;color:var(--faint)">+</div>
+      <div class="nbuild-slot" id="ns-base"><div class="slot-label">Base</div><div class="slot-value" id="nsv-base" style="color:var(--cyan)">?</div></div>
+    </div>
+    <div class="nbuild-opts" id="nbuild-opts">
+      <div class="nbuild-opt" onclick="nbPick('sugar','Ribose',this)" style="border-color:rgba(255,215,64,.3)">🍬 Ribose</div>
+      <div class="nbuild-opt" onclick="nbPick('phos','PO₄',this)" style="border-color:rgba(255,107,53,.3)">⚛️ Phosphate (PO₄)</div>
+      <div class="nbuild-opt" onclick="nbPick('base','Adénine (A)',this)" style="border-color:rgba(0,212,255,.3)">🔵 Adénine (A)</div>
+      <div class="nbuild-opt" onclick="nbPick('base','Cytosine (C)',this)" style="border-color:rgba(0,212,255,.3)">🟢 Cytosine (C)</div>
+      <div class="nbuild-opt" onclick="nbPick('base','Guanine (G)',this)" style="border-color:rgba(0,212,255,.3)">🟡 Guanine (G)</div>
+      <div class="nbuild-opt" onclick="nbPick('base','Uracile (U)',this)" style="border-color:rgba(0,212,255,.3)">🔴 Uracile (U)</div>
+    </div>
+    <div class="nbuild-result" id="nb-result"></div>
+  </div>
+</section>
+
+<!-- ═══ ACTE IV — LE MONDE ARN ═══ -->
+<div class="beam"></div>
+<section id="acte4">
+  <div class="rv"><div class="pill" style="color:var(--green);background:rgba(0,230,118,.1)">Acte IV</div>
+  <h2 class="stitle">LE MONDE ARN</h2>
+  <p class="sdesc">L'ADN a besoin de protéines. Les protéines ont besoin d'ADN. Qui est apparu en premier ? Réponse : ni l'un ni l'autre.</p></div>
+
+  <div class="cgrid">
+    <div class="card rv"><span style="font-size:28px;display:block;margin-bottom:10px">🥚</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--violet);margin-bottom:6px">L'ŒUF ET LA POULE</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">L'ADN stocke l'info mais ne peut rien faire seul. Les protéines agissent mais ne stockent rien. Un <strong style="color:#fff">cercle vicieux</strong> que seul l'ARN peut briser.</p>
+    </div>
+    <div class="card rv d1"><span style="font-size:28px;display:block;margin-bottom:10px">🔧</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--cyan);margin-bottom:6px">L'ARN, COUTEAU SUISSE</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">L'ARN peut <strong style="color:#fff">stocker l'information</strong> (comme l'ADN) ET <strong style="color:#fff">catalyser des réactions</strong> (comme les protéines). Il fait les deux. Le candidat idéal pour la première molécule auto-réplicante.</p>
+    </div>
+    <div class="card rv d2"><span style="font-size:28px;display:block;margin-bottom:10px">✂️</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--gold);margin-bottom:6px">LES RIBOZYMES</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">Des molécules d'ARN qui fonctionnent comme des enzymes. Preuve que l'ARN peut <strong style="color:#fff">se copier lui-même</strong>. Les erreurs de copie = les premières mutations = le carburant de l'évolution.</p>
+    </div>
+    <div class="card rv d3"><span style="font-size:28px;display:block;margin-bottom:10px">🫧</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--green);margin-bottom:6px">LA PROTOCELLULE</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">ARN auto-répliquant + membrane lipidique = une <strong style="color:#fff">bulle chimique capable de se copier</strong>. Le seuil entre chimie et biologie. La première "chose vivante".</p>
+    </div>
+  </div>
+
+  <p style="font-size:14px;color:var(--dim);margin-top:24px;padding:14px 18px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);line-height:1.7" class="rv">👨‍💼 <strong style="color:var(--cyan)">Analogie</strong> : L'ARN c'est le <strong style="color:#fff">stagiaire qui faisait tout</strong> au début de la startup. Quand l'entreprise a grandi, des spécialistes sont arrivés — ADN pour l'archivage, protéines pour l'exécution — et le stagiaire est devenu coordinateur.</p>
+</section>
+
+<!-- ═══ ACTE V — LE GRAND MYSTÈRE ═══ -->
+<div class="beam"></div>
+<section id="acte5">
+  <div class="rv"><div class="pill" style="color:var(--violet);background:rgba(124,77,255,.1)">Acte V</div>
+  <h2 class="stitle">LE GRAND MYSTÈRE</h2>
+  <p class="sdesc">L'honnêteté scientifique : voici ce qu'on ne sait pas encore. Et c'est ce qui rend la science belle.</p></div>
+
+  <div class="cgrid">
+    <div class="card rv" style="border-color:rgba(124,77,255,.2)"><span style="font-size:28px;display:block;margin-bottom:10px">❓</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--violet);margin-bottom:6px">L'AUTO-RÉPLICATION</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">Comment la première molécule capable de se copier est-elle apparue ? On ne sait toujours pas reproduire ça en laboratoire. C'est <strong style="color:#fff">le</strong> chaînon manquant.</p>
+    </div>
+    <div class="card rv d1" style="border-color:rgba(124,77,255,.2)"><span style="font-size:28px;display:block;margin-bottom:10px">🪞</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--violet);margin-bottom:6px">L'HOMOCHIRALITÉ</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">La vie n'utilise que des acides aminés "gauchers" (L) et des sucres "droitiers" (D). En chimie, les deux formes sont produites à parts égales. <strong style="color:#fff">Pourquoi ce choix ?</strong> Mystère total.</p>
+    </div>
+    <div class="card rv d2" style="border-color:rgba(124,77,255,.2)"><span style="font-size:28px;display:block;margin-bottom:10px">🎲</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--violet);margin-bottom:6px">ACCIDENT OU NÉCESSITÉ ?</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7">Si on refaisait l'expérience de la Terre primitive, la vie apparaîtrait-elle à chaque fois ? Ou était-ce un coup de chance cosmique ? <strong style="color:#fff">C'est LE débat</strong> de l'astrobiologie.</p>
+    </div>
+    <div class="card rv d3" style="border-color:rgba(124,77,255,.2)"><span style="font-size:28px;display:block;margin-bottom:10px">🔭</span>
+      <h4 style="font-family:var(--fd);font-size:18px;color:var(--violet);margin-bottom:6px">OÙ CHERCHER AILLEURS ?</h4>
+      <p style="font-size:13px;color:var(--dim);line-height:1.7"><strong style="color:var(--orange)">Mars</strong> (lacs anciens), <strong style="color:var(--cyan)">Europe</strong> (océan sous la glace de Jupiter), <strong style="color:var(--gold)">Encelade</strong> (geysers de Saturne), <strong style="color:var(--green)">Titan</strong> (chimie au méthane). La vie est peut-être partout.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TIMELINE ═══ -->
+<div class="beam"></div>
+<section id="timeline">
+  <div class="rv"><div class="pill" style="color:var(--gold);background:rgba(255,215,64,.1)">Timeline</div>
+  <h2 class="stitle">DU BIG BANG À LUCA</h2>
+  <p class="sdesc">13,8 milliards d'années compressées. Si l'histoire de l'univers = 1 an, les humains apparaissent dans les dernières secondes du 31 décembre.</p></div>
+
+  <div class="tl">
+    <div class="tl-item rv" onclick="this.classList.toggle('open')"><div class="tl-dot" style="border-color:var(--cyan);background:rgba(0,212,255,.3)"></div><div class="tl-date" style="color:var(--cyan)">-13,8 Ga</div><div class="tl-title">Big Bang</div><div class="tl-text">H, He, Li. C'est tout.</div><div class="tl-detail"><div class="tl-detail-inner">L'univers naît dans une singularité. En quelques minutes, la nucléosynthèse primordiale crée les 3 éléments les plus simples. Pas de carbone, pas d'oxygène. Rien de ce qu'il faut pour la vie. Patience.</div></div></div>
+
+    <div class="tl-item rv d1" onclick="this.classList.toggle('open')"><div class="tl-dot" style="border-color:var(--gold);background:rgba(255,215,64,.3)"></div><div class="tl-date" style="color:var(--gold)">-13,5 Ga</div><div class="tl-title">Premières étoiles</div><div class="tl-text">Les forges cosmiques s'allument.</div><div class="tl-detail"><div class="tl-detail-inner">D'immenses nuages d'hydrogène s'effondrent sous leur propre gravité. La fusion s'amorce. Les premières étoiles — gigantesques, éphémères — commencent à fabriquer du carbone et de l'oxygène.</div></div></div>
+
+    <div class="tl-item rv d2" onclick="this.classList.toggle('open')"><div class="tl-dot" style="border-color:var(--orange);background:rgba(255,107,53,.3)"></div><div class="tl-date" style="color:var(--orange)">-13 à -5 Ga</div><div class="tl-title">Supernovae & enrichissement</div><div class="tl-text">Les étoiles meurent et ensemencent l'espace.</div><div class="tl-detail"><div class="tl-detail-inner">Génération après génération d'étoiles naissent, fusionnent, explosent. Chaque supernova enrichit le milieu interstellaire en éléments lourds. Après des milliards d'années, le cosmos a enfin tous les ingrédients.</div></div></div>
+
+    <div class="tl-item rv d3" onclick="this.classList.toggle('open')"><div class="tl-dot" style="border-color:var(--orange);background:rgba(255,107,53,.3)"></div><div class="tl-date" style="color:var(--orange)">-4,56 Ga</div><div class="tl-title">Formation de la Terre</div><div class="tl-text">Un amas de poussière d'étoile devient une planète.</div><div class="tl-detail"><div class="tl-detail-inner">Un nuage de gaz et de poussière enrichi par des milliards d'années de supernovae s'effondre. Le Soleil s'allume. Les débris s'agrègent. La Terre se forme — une boule de lave bombardée de météorites.</div></div></div>
+
+    <div class="tl-item rv" onclick="this.classList.toggle('open')"><div class="tl-dot" style="border-color:var(--gold);background:rgba(255,215,64,.3)"></div><div class="tl-date" style="color:var(--gold)">-4,1 à -3,8 Ga</div><div class="tl-title">Bombardement tardif</div><div class="tl-text">La pluie cosmique apporte l'eau — et peut-être des acides aminés.</div><div class="tl-detail"><div class="tl-detail-inner">Des comètes et astéroïdes bombardent la jeune Terre pendant 300 millions d'années. Ils apportent d'immenses quantités d'eau et possiblement des molécules organiques venues de l'espace (panspermie).</div></div></div>
+
+    <div class="tl-item rv d1" onclick="this.classList.toggle('open')"><div class="tl-dot" style="border-color:var(--green);background:rgba(0,230,118,.3)"></div><div class="tl-date" style="color:var(--green)">~-4,0 Ga</div><div class="tl-title">Chimie prébiotique</div><div class="tl-text">La soupe primordiale bouillonne. Les premières molécules complexes apparaissent.</div><div class="tl-detail"><div class="tl-detail-inner">Éclairs, UV, volcans, sources hydrothermales — l'énergie ne manque pas. Des acides aminés, des nucléotides, des lipides se forment spontanément. Le plus grand laboratoire du cosmos tourne à plein régime.</div></div></div>
+
+    <div class="tl-item rv d2" onclick="this.classList.toggle('open')"><div class="tl-dot" style="border-color:var(--green);background:rgba(0,230,118,.3)"></div><div class="tl-date" style="color:var(--green)">~-3,8 Ga</div><div class="tl-title">Premiers signes de vie</div><div class="tl-text">Stromatolithes : les plus anciens fossiles connus.</div><div class="tl-detail"><div class="tl-detail-inner">Des structures rocheuses formées par des colonies de micro-organismes. La preuve que la vie existait déjà il y a 3,8 milliards d'années — étonnamment tôt. La fenêtre entre "pas de vie" et "vie" est peut-être très courte (~500 millions d'années).</div></div></div>
+
+    <div class="tl-item rv d3" onclick="this.classList.toggle('open')"><div class="tl-dot" style="border-color:var(--green);background:rgba(0,230,118,.4)"></div><div class="tl-date" style="color:var(--green)">~-3,5 Ga</div><div class="tl-title">LUCA</div><div class="tl-text">Last Universal Common Ancestor — l'ancêtre de tout ce qui vit.</div><div class="tl-detail"><div class="tl-detail-inner">LUCA n'est pas un organisme unique mais une population. Il possède déjà l'ADN, l'ARN, des protéines et une membrane. Tout ce qui vit aujourd'hui — toi, un arbre, une bactérie — descend de LUCA. Tu es sa dernière lettre d'amour à l'univers.</div></div></div>
+  </div>
+</section>
+
+<!-- ═══ QUIZ ═══ -->
+<div class="beam"></div>
+<section id="quiz">
+  <div class="rv"><div class="pill" style="color:var(--gold);background:rgba(255,215,64,.1)">Le test</div>
+  <h2 class="stitle">ES-TU PRÊT POUR L'ASTROBIOLOGIE ?</h2>
+  <p class="sdesc">5 questions. 3 profils possibles. Voyons ce que tu as retenu.</p></div>
+  <div class="quiz-box rv" id="qbox"><div class="quiz-prog" id="qprog"></div><div id="qcontent"></div></div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fb">✦ CHIMIE PRIMITIVE — SAAD'S LAB</div>
+  <p>Du Big Bang à la Vie. Fait avec Claude × émerveillement.</p>
+  <p style="margin-top:6px">griftic.github.io/HUB-learning</p>
+</footer>
+
+<!-- ═══════════════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════════════ -->
+<script>
+// ── Stars ──
+(function(){const c=document.getElementById('stars');for(let i=0;i<80;i++){const s=document.createElement('div');s.className='hero-star';s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*.5+.2};width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;animation:fadeIn ${Math.random()*3+1}s ease both ${Math.random()*2}s`;c.appendChild(s)}})();
+
+// ── Scroll reveal ──
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis')})},{threshold:.1});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+
+// ── Periodic Table ──
+const elements=[
+  {sym:'H',n:'Hydrogène',num:1,origin:'bb',role:'Le plus abondant. Base de l\'eau (H₂O), des acides aminés, de presque toute la chimie du vivant.',color:'var(--cyan)'},
+  {sym:'He',n:'Hélium',num:2,origin:'bb',role:'Gaz noble inerte. Pas de rôle biologique, mais preuve du Big Bang.',color:'var(--cyan)'},
+  {sym:'Li',n:'Lithium',num:3,origin:'bb',role:'Trace du Big Bang. Utilisé en médecine, pas essentiel au vivant primitif.',color:'var(--cyan)'},
+  {sym:'C',n:'Carbone',num:6,origin:'star',role:'L\'échafaudage de la vie. 4 liaisons possibles → molécules infiniment variées. Sans lui, pas de chimie organique.',color:'var(--gold)'},
+  {sym:'N',n:'Azote',num:7,origin:'star',role:'Présent dans les acides aminés, les nucléotides, l\'ADN. Le liant du vivant.',color:'var(--gold)'},
+  {sym:'O',n:'Oxygène',num:8,origin:'star',role:'Composant de l\'eau, des sucres, de l\'ADN. Absent de l\'atmosphère primitive — arrivé plus tard via la photosynthèse.',color:'var(--gold)'},
+  {sym:'Na',n:'Sodium',num:11,origin:'star',role:'Essentiel à la signalisation nerveuse. Canaux ioniques Na⁺/K⁺.',color:'var(--gold)'},
+  {sym:'Mg',n:'Magnésium',num:12,origin:'star',role:'Au cœur de la chlorophylle. Cofacteur de centaines d\'enzymes.',color:'var(--gold)'},
+  {sym:'P',n:'Phosphore',num:15,origin:'sn',role:'Le P de l\'ATP (énergie) et du backbone de l\'ADN/ARN. Sans phosphore, pas de code génétique.',color:'var(--orange)'},
+  {sym:'S',n:'Soufre',num:16,origin:'sn',role:'Ponts disulfure dans les protéines. Présent près des sources hydrothermales.',color:'var(--orange)'},
+  {sym:'K',n:'Potassium',num:19,origin:'sn',role:'Signalisation cellulaire, équilibre osmotique. Essentiel dès les premières cellules.',color:'var(--orange)'},
+  {sym:'Ca',n:'Calcium',num:20,origin:'star',role:'Signalisation, os, coquilles. Messager intracellulaire universel.',color:'var(--gold)'},
+  {sym:'Fe',n:'Fer',num:26,origin:'star',role:'Dernier élément forgé par fusion stellaire. Transport d\'O₂ (hémoglobine). Catalyseur fondamental.',color:'var(--gold)'},
+  {sym:'Zn',n:'Zinc',num:30,origin:'sn',role:'Cofacteur de ~300 enzymes. Les "doigts de zinc" lisent l\'ADN.',color:'var(--orange)'},
+  {sym:'Se',n:'Sélénium',num:34,origin:'sn',role:'Antioxydant. Présent dans les sélénoprotéines. Trace essentielle.',color:'var(--orange)'},
+  {sym:'Mo',n:'Molybdène',num:42,origin:'sn',role:'Fixation de l\'azote. Sans lui, les bactéries ne pourraient pas convertir N₂ en NH₃.',color:'var(--orange)'},
+  {sym:'I',n:'Iode',num:53,origin:'sn',role:'Hormones thyroïdiennes. Créé exclusivement dans les supernovae.',color:'var(--orange)'},
+  {sym:'Au',n:'Or',num:79,origin:'ns',role:'Forgé dans les collisions d\'étoiles à neutrons. Pas biologique, mais preuve des origines les plus violentes de l\'univers.',color:'var(--violet)'},
+];
+const originColors={bb:'var(--cyan)',star:'var(--gold)',sn:'var(--orange)',ns:'var(--violet)'};
+const ptEl=document.getElementById('ptable');
+elements.forEach(el=>{
+  const d=document.createElement('div');d.className='pelem';
+  d.style.color=el.color;d.style.background=el.color.replace(')',',0.08)').replace('var(','rgba(').replace('--cyan','0,212,255').replace('--gold','255,215,64').replace('--orange','255,107,53').replace('--violet','124,77,255');
+  d.innerHTML=`<div class="num">${el.num}</div><div class="sym">${el.sym}</div><div class="name">${el.n}</div>`;
+  d.onclick=()=>{const info=document.getElementById('pelem-info');info.className='pelem-info show';info.innerHTML=`<strong style="color:${el.color}">${el.sym} — ${el.n}</strong> (n°${el.num})<br>${el.role}`;};
+  ptEl.appendChild(d);
+});
+
+// ── Miller-Urey ──
+const millerMols=[
+  {name:'Glycine',role:'L\'acide aminé le plus simple',c:'var(--green)'},
+  {name:'Alanine',role:'Acide aminé hydrophobe',c:'var(--green)'},
+  {name:'Acide aspartique',role:'Acide aminé acide',c:'var(--green)'},
+  {name:'Acide glutamique',role:'Neurotransmetteur',c:'var(--green)'},
+  {name:'Urée',role:'Déchet azoté, mais preuve de synthèse organique',c:'var(--gold)'},
+  {name:'Acide formique',role:'Précurseur de molécules complexes',c:'var(--gold)'},
+  {name:'HCN',role:'Cyanure d\'hydrogène — toxique mais brique clé des nucléotides',c:'var(--orange)'},
+  {name:'Formaldéhyde',role:'HCHO — précurseur des sucres (réaction de formose)',c:'var(--orange)'},
+];
+let millerIdx=0;
+function millerStrike(){
+  if(millerIdx>=millerMols.length)return;
+  const count=document.getElementById('miller-count');
+  count.textContent=millerIdx+1;
+  // Spark effect
+  const box=document.getElementById('miller');
+  for(let i=0;i<5;i++){
+    const sp=document.createElement('div');sp.className='miller-spark';
+    sp.style.cssText=`left:${40+Math.random()*40}%;top:${20+Math.random()*30}%;animation-delay:${Math.random()*.2}s`;
+    box.appendChild(sp);setTimeout(()=>sp.remove(),600);
+  }
+  // Molecule
+  const mol=millerMols[millerIdx];
+  const el=document.createElement('div');el.className='miller-mol';
+  el.style.cssText=`background:${mol.c.replace(')',',0.12)').replace('var(','rgba(').replace('--green','0,230,118').replace('--gold','255,215,64').replace('--orange','255,107,53')};color:${mol.c};border:1px solid ${mol.c.replace(')',',0.3)').replace('var(','rgba(').replace('--green','0,230,118').replace('--gold','255,215,64').replace('--orange','255,107,53')};animation-delay:${millerIdx*0.05}s`;
+  el.innerHTML=`<strong>${mol.name}</strong> <span style="opacity:.7;font-size:11px">— ${mol.role}</span>`;
+  document.getElementById('miller-mols').appendChild(el);
+  millerIdx++;
+  if(millerIdx>=millerMols.length){document.getElementById('miller-btn').textContent='✓ Expérience terminée !';document.getElementById('miller-btn').style.borderColor='var(--green)';document.getElementById('miller-btn').style.color='var(--green)';}
+}
+
+// ── Nucleotide Builder ──
+const nbState={sugar:null,phos:null,base:null};
+function nbPick(type,val,el){
+  if(type==='base'&&nbState.base)return;
+  nbState[type]=val;el.classList.add('picked');
+  const slot=document.getElementById('ns-'+type);slot.classList.add('filled');
+  const sv=document.getElementById('nsv-'+type);
+  sv.textContent=val;
+  slot.style.borderColor=type==='sugar'?'var(--gold)':type==='phos'?'var(--orange)':'var(--cyan)';
+  if(nbState.sugar&&nbState.phos&&nbState.base){
+    const r=document.getElementById('nb-result');r.className='nbuild-result show';
+    const baseLetter=nbState.base.match(/\((\w)\)/)?.[1]||'?';
+    r.innerHTML=`🧬 <strong style="color:var(--green)">Nucléotide assemblé !</strong><br><br>Tu viens de créer un nucléotide d'<strong>ARN</strong> : <strong style="color:var(--cyan)">${nbState.base}</strong> lié à un <strong style="color:var(--gold)">ribose</strong> et un <strong style="color:var(--orange)">phosphate</strong>.<br><br>En enchaînant des milliers de ces briques, tu obtiens un brin d'ARN — la molécule qui a peut-être lancé la vie sur Terre.<br><br><button class="nbuild-reset" onclick="nbReset()">↺ Recommencer</button>`;
+  }
+}
+function nbReset(){
+  nbState.sugar=null;nbState.phos=null;nbState.base=null;
+  ['sugar','phos','base'].forEach(t=>{
+    document.getElementById('ns-'+t).classList.remove('filled');
+    document.getElementById('ns-'+t).style.borderColor='';
+    document.getElementById('nsv-'+t).textContent='?';
+  });
+  document.querySelectorAll('.nbuild-opt').forEach(o=>o.classList.remove('picked'));
+  document.getElementById('nb-result').className='nbuild-result';
+}
+
+// ── Quiz ──
+const qData=[
+  {q:'Quels éléments le Big Bang a-t-il produit ?',opts:['H, He, Li','C, N, O','Tous les éléments','Seulement du fer'],a:0,exp:'Le Big Bang n\'a produit que les 3 éléments les plus simples. Tout le reste vient des étoiles.'},
+  {q:'Que produit l\'expérience de Miller-Urey ?',opts:['De l\'ADN','Des acides aminés','De l\'oxygène pur','Des protéines complètes'],a:1,exp:'Miller a obtenu des acides aminés — les briques des protéines — à partir de gaz simples et d\'éclairs.'},
+  {q:'Pourquoi l\'ARN est-il le candidat favori pour l\'origine de la vie ?',opts:['Il est plus grand que l\'ADN','Il peut stocker l\'info ET catalyser des réactions','Il est plus stable','Il n\'a pas besoin d\'eau'],a:1,exp:'L\'ARN est un "couteau suisse" : il stocke l\'information (comme l\'ADN) et catalyse des réactions (comme les protéines).'},
+  {q:'Qu\'est-ce que l\'homochiralité ?',opts:['La capacité de l\'ARN à se copier','Le fait que la vie n\'utilise qu\'une seule "main" des molécules','La forme des étoiles à neutrons','Un type de météorite'],a:1,exp:'La vie utilise exclusivement des acides aminés gauchers et des sucres droitiers. Pourquoi ? Mystère total.'},
+  {q:'Où pourrait-on chercher de la vie ailleurs dans le système solaire ?',opts:['Vénus (surface)','Le Soleil','Europe (lune de Jupiter)','La Lune'],a:2,exp:'Europe possède un océan d\'eau liquide sous sa croûte de glace. Avec une source d\'énergie, c\'est un candidat très sérieux.'},
+];
+let qIdx=0,qScore=0;
+function renderQ(){
+  const box=document.getElementById('qcontent'),prog=document.getElementById('qprog');
+  if(qIdx>=qData.length){
+    prog.innerHTML='';
+    const t=qScore>=4?'Architecte de la Vie':qScore>=2?'Chimiste Cosmique':'Apprenti Alchimiste';
+    const ic=qScore>=4?'🏗️':qScore>=2?'🔬':'⚗️';
+    const c=qScore>=4?'var(--green)':qScore>=2?'var(--cyan)':'var(--orange)';
+    box.innerHTML=`<div style="animation:fadeUp .5s ease"><div style="font-size:56px;margin-bottom:12px">${ic}</div><div style="font-family:var(--fd);font-size:36px;color:${c};letter-spacing:-.02em">${t}</div><div style="font-family:var(--fd);font-size:48px;color:#fff;margin:8px 0">${qScore}/${qData.length}</div><p style="font-size:14px;color:var(--dim);line-height:1.7;max-width:400px;margin:0 auto">${qScore>=4?'Tu maîtrises l\'histoire de la vie. L\'astrobiologie t\'attend.':qScore>=2?'Bonne base ! Remonte explorer les actes pour devenir imbattable.':'Le voyage ne fait que commencer. Relis les actes et reviens !'}</p><button class="quiz-next" onclick="qIdx=0;qScore=0;renderQ()" style="margin-top:16px">↺ Recommencer</button></div>`;
+    return;
+  }
+  const q=qData[qIdx];
+  prog.innerHTML=qData.map((_,i)=>`<div class="quiz-dot ${i===qIdx?'on':''} ${i<qIdx?'done':''}"></div>`).join('');
+  box.innerHTML=`<div class="quiz-q">${q.q}</div><div class="quiz-opts">${q.opts.map((o,i)=>`<div class="quiz-o" onclick="qAnswer(${i})">${o}</div>`).join('')}</div><div id="qexp" style="margin-top:16px;font-size:13px;color:var(--dim);line-height:1.7;display:none"></div>`;
+}
+function qAnswer(i){
+  const q=qData[qIdx];document.querySelectorAll('.quiz-o').forEach((o,j)=>{o.classList.add('off');if(j===q.a)o.classList.add('ok');else if(j===i)o.classList.add('no');});
+  if(i===q.a)qScore++;
+  const exp=document.getElementById('qexp');exp.style.display='block';
+  exp.innerHTML=`💡 ${q.exp}<br><br><button class="quiz-next" onclick="qIdx++;renderQ()">Suivante →</button>`;
+}
+renderQ();
+</script>
+</body>
+</html>
