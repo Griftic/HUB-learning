@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>普通话 — Mandarin Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #12121a;
+    --bg3: #1a1a28;
+    --surface: #1e1e2e;
+    --border: #2a2a3d;
+    --text: #e8e8f0;
+    --text2: #9999b3;
+    --accent: #ff3b3b;
+    --accent2: #ff6b4a;
+    --gold: #fbbf24;
+    --tone1: #ff4d4d;
+    --tone2: #4dff91;
+    --tone3: #4dc8ff;
+    --tone4: #c77dff;
+    --tone5: #888;
+    --success: #22c55e;
+    --error: #ef4444;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .noise {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+  }
+
+  /* HEADER */
+  header {
+    position: relative;
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #12121a 0%, var(--bg) 100%);
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 300px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .logo {
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--text) 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+  }
+
+  h1 .sub {
+    display: block;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    -webkit-text-fill-color: var(--text2);
+    margin-top: 0.5rem;
+    letter-spacing: 1px;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  nav button {
+    background: none;
+    border: none;
+    color: var(--text2);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  nav button:hover { color: var(--text); }
+  nav button.active { color: var(--accent); }
+
+  nav button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  /* MAIN */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section { display: none; animation: fadeUp 0.4s ease; }
+  .section.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #3a3a55; }
+
+  .card h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card p, .card li {
+    color: var(--text2);
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  .card ul { list-style: none; padding: 0; }
+  .card li { padding: 0.25rem 0; }
+  .card li::before { content: '→ '; color: var(--accent); font-weight: 600; }
+
+  /* TONE CARDS */
+  .tone-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .tone-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tone-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(255, 59, 59, 0.1);
+  }
+
+  .tone-card .tone-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text2);
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+  }
+
+  .tone-card .char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .tone-card .pinyin {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    margin: 0.5rem 0 0.25rem;
+  }
+
+  .tone-card .meaning {
+    font-size: 0.8rem;
+    color: var(--text2);
+  }
+
+  .tone-card .wave {
+    display: block;
+    margin: 0.5rem auto 0;
+    height: 30px;
+    width: 80px;
+  }
+
+  .tone-card[data-tone="1"] .char { color: var(--tone1); }
+  .tone-card[data-tone="2"] .char { color: var(--tone2); }
+  .tone-card[data-tone="3"] .char { color: var(--tone3); }
+  .tone-card[data-tone="4"] .char { color: var(--tone4); }
+  .tone-card[data-tone="5"] .char { color: var(--tone5); }
+
+  /* TONE VISUALIZER */
+  .tone-viz {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    text-align: center;
+  }
+
+  .tone-viz svg { max-width: 100%; }
+
+  /* CHARACTER SECTION */
+  .stroke-area {
+    background: var(--bg);
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem 0;
+    position: relative;
+  }
+
+  .stroke-area .big-char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 8rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.06);
+    user-select: none;
+    position: absolute;
+  }
+
+  .stroke-area canvas {
+    position: relative;
+    z-index: 2;
+    cursor: crosshair;
+    touch-action: none;
+  }
+
+  .char-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .char-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .char-item:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .char-item.selected { border-color: var(--accent); background: rgba(255, 59, 59, 0.08); }
+
+  .char-item .hz {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+
+  .char-item .py {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent2);
+    margin-top: 0.25rem;
+  }
+
+  .char-item .en {
+    font-size: 0.75rem;
+    color: var(--text2);
+    margin-top: 0.15rem;
+  }
+
+  /* QUIZ */
+  .quiz-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    margin: 1.5rem 0;
+  }
+
+  .quiz-char {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .quiz-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .quiz-btn:hover { border-color: var(--accent); background: rgba(255, 59, 59, 0.05); }
+  .quiz-btn.correct { border-color: var(--success); background: rgba(34, 197, 94, 0.12); color: var(--success); }
+  .quiz-btn.wrong { border-color: var(--error); background: rgba(239, 68, 68, 0.12); color: var(--error); }
+
+  .score-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text2);
+  }
+
+  .score-bar span { display: flex; align-items: center; gap: 0.4rem; }
+  .score-bar .ok { color: var(--success); }
+  .score-bar .ko { color: var(--error); }
+
+  /* PROGRESS TRACKER */
+  .progress-strip {
+    display: flex;
+    gap: 4px;
+    margin: 1rem 0;
+  }
+
+  .progress-strip .dot {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .progress-strip .dot.done { background: var(--accent); }
+
+  /* PINYIN TABLE */
+  .pinyin-table-wrap {
+    overflow-x: auto;
+    margin: 1rem 0;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .pinyin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .pinyin-table th {
+    background: var(--bg2);
+    padding: 0.6rem 0.75rem;
+    font-weight: 600;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+  }
+
+  .pinyin-table td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid rgba(42, 42, 61, 0.5);
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text2);
+  }
+
+  .pinyin-table tr:hover td { background: rgba(255, 59, 59, 0.03); }
+
+  /* BUTTONS */
+  .btn {
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: var(--accent2); transform: translateY(-1px); }
+
+  .btn-outline {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .actions { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
+
+  /* HELPERS */
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    background: rgba(255, 59, 59, 0.1);
+    color: var(--accent);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .sep {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .note {
+    background: rgba(251, 191, 36, 0.06);
+    border-left: 3px solid var(--gold);
+    padding: 0.75rem 1rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.9rem;
+    color: var(--text2);
+    margin: 1rem 0;
+  }
+
+  .note strong { color: var(--gold); }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 2.5rem; }
+    .tone-grid { grid-template-columns: 1fr 1fr; }
+    nav button { padding: 0.75rem 0.75rem; font-size: 0.75rem; }
+    main { padding: 1.5rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<header>
+  <div class="logo">Saad's Lab — Module 07</div>
+  <h1>普通话<span class="sub">Mandarin — Les fondamentaux</span></h1>
+</header>
+
+<nav id="nav">
+  <button class="active" data-tab="tones">Les 4 Tons</button>
+  <button data-tab="pinyin">Pinyin</button>
+  <button data-tab="chars">Caractères</button>
+  <button data-tab="practice">Écriture</button>
+  <button data-tab="quiz">Quiz</button>
+</nav>
+
+<main>
+
+  <!-- ===== SECTION: TONES ===== -->
+  <div class="section active" id="sec-tones">
+    <div class="card">
+      <h2>🎵 Le système tonal</h2>
+      <p>En mandarin, chaque syllabe possède un <strong>ton</strong> qui change le sens du mot. Le même son « ma » peut signifier 4 choses totalement différentes selon le ton utilisé. C'est LA difficulté n°1 pour un francophone — et aussi la clé de tout.</p>
+      <div class="note"><strong>Règle d'or :</strong> En mandarin, mal prononcer un ton, c'est comme dire un mot complètement différent. Imagine dire « poisson » au lieu de « poison » en français — sauf que ça arrive à CHAQUE syllabe.</div>
+    </div>
+
+    <div class="tone-viz">
+      <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#ff4d4d"/><stop offset="100%" stop-color="#ff4d4d"/></linearGradient>
+          <linearGradient id="g2" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#4dff91"/><stop offset="100%" stop-color="#4dff91"/></linearGradient>
+          <linearGradient id="g3" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4dc8ff"/><stop offset="100%" stop-color="#4dc8ff"/></linearGradient>
+          <linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#c77dff"/><stop offset="100%" stop-color="#c77dff"/></linearGradient>
+        </defs>
+        <!-- grid -->
+        <line x1="50" y1="40" x2="550" y2="40" stroke="#2a2a3d" stroke-width="0.5" stroke-dasharray="4"/>
+        <line x1="50" y1="90" x2="550" y2="90" stroke="#2a2a3d" stroke-width="0.5" stroke-dasharray="4"/>
+        <line x1="50" y1="140" x2="550" y2="140" stroke="#2a2a3d" stroke-width="0.5" stroke-dasharray="4"/>
+        <text x="30" y="44" fill="#555" font-size="10" font-family="JetBrains Mono" text-anchor="end">5</text>
+        <text x="30" y="94" fill="#555" font-size="10" font-family="JetBrains Mono" text-anchor="end">3</text>
+        <text x="30" y="144" fill="#555" font-size="10" font-family="JetBrains Mono" text-anchor="end">1</text>
+        <!-- Tone 1: high flat -->
+        <line x1="70" y1="40" x2="180" y2="40" stroke="url(#g1)" stroke-width="3.5" stroke-linecap="round"/>
+        <text x="125" y="20" fill="#ff4d4d" font-size="12" font-family="Outfit" font-weight="600" text-anchor="middle">1er ton — haut plat</text>
+        <!-- Tone 2: rising -->
+        <line x1="200" y1="120" x2="310" y2="40" stroke="url(#g2)" stroke-width="3.5" stroke-linecap="round"/>
+        <text x="255" y="20" fill="#4dff91" font-size="12" font-family="Outfit" font-weight="600" text-anchor="middle">2e ton — montant</text>
+        <!-- Tone 3: dip -->
+        <path d="M 330 80 Q 385 155 440 80" fill="none" stroke="url(#g3)" stroke-width="3.5" stroke-linecap="round"/>
+        <text x="385" y="20" fill="#4dc8ff" font-size="12" font-family="Outfit" font-weight="600" text-anchor="middle">3e ton — bas/creux</text>
+        <!-- Tone 4: falling -->
+        <line x1="460" y1="40" x2="570" y2="145" stroke="url(#g4)" stroke-width="3.5" stroke-linecap="round"/>
+        <text x="515" y="20" fill="#c77dff" font-size="12" font-family="Outfit" font-weight="600" text-anchor="middle">4e ton — descendant</text>
+        <!-- labels -->
+        <text x="300" y="190" fill="#555" font-size="11" font-family="JetBrains Mono" text-anchor="middle">hauteur de la voix →  de 1 (grave) à 5 (aigu)</text>
+      </svg>
+    </div>
+
+    <div class="tone-grid">
+      <div class="tone-card" data-tone="1" onclick="playTone(1)">
+        <div class="tone-num">TONE 01</div>
+        <div class="char">妈</div>
+        <div class="pinyin">mā</div>
+        <div class="meaning">mère</div>
+      </div>
+      <div class="tone-card" data-tone="2" onclick="playTone(2)">
+        <div class="tone-num">TONE 02</div>
+        <div class="char">麻</div>
+        <div class="pinyin">má</div>
+        <div class="meaning">chanvre</div>
+      </div>
+      <div class="tone-card" data-tone="3" onclick="playTone(3)">
+        <div class="tone-num">TONE 03</div>
+        <div class="char">马</div>
+        <div class="pinyin">mǎ</div>
+        <div class="meaning">cheval</div>
+      </div>
+      <div class="tone-card" data-tone="4" onclick="playTone(4)">
+        <div class="tone-num">TONE 04</div>
+        <div class="char">骂</div>
+        <div class="pinyin">mà</div>
+        <div class="meaning">insulter</div>
+      </div>
+      <div class="tone-card" data-tone="5" onclick="playTone(5)">
+        <div class="tone-num">NEUTRE</div>
+        <div class="char">吗</div>
+        <div class="pinyin">ma</div>
+        <div class="meaning">particule ?</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>💡 Astuces pour mémoriser</h2>
+      <ul>
+        <li><strong style="color:var(--tone1)">Ton 1 :</strong> Imagine un son de machine plate — « mmmmm » sur une seule note aiguë</li>
+        <li><strong style="color:var(--tone2)">Ton 2 :</strong> Comme quand tu dis « Hein ?! » surpris — ta voix monte</li>
+        <li><strong style="color:var(--tone3)">Ton 3 :</strong> Comme un grognement de doute « mmm… » — ta voix descend puis remonte</li>
+        <li><strong style="color:var(--tone4)">Ton 4 :</strong> Comme un « NON ! » sec et catégorique — ta voix tombe d'un coup</li>
+        <li><strong style="color:var(--tone5)">Neutre :</strong> Court, léger, relâché — comme une syllabe non accentuée</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: PINYIN ===== -->
+  <div class="section" id="sec-pinyin">
+    <div class="card">
+      <h2>🔤 Le Pinyin — L'alphabet phonétique</h2>
+      <p>Le <strong>pīnyīn</strong> (拼音) est le système de romanisation du mandarin. C'est ta passerelle entre l'alphabet latin et les caractères chinois. Chaque syllabe = <strong>initiale</strong> + <strong>finale</strong> + <strong>ton</strong>.</p>
+      <div class="note"><strong>Important :</strong> Le pinyin n'est PAS une transcription phonétique à la française. Les lettres ne se prononcent pas comme en français. « c » = /ts/, « q » = /tch/, « x » = /ch/ (léger).</div>
+    </div>
+
+    <div class="card">
+      <h2>Initiales — Les consonnes</h2>
+      <p style="margin-bottom:1rem">Les sons qui commencent la syllabe. Les pièges pour un francophone sont en rouge.</p>
+      <div class="pinyin-table-wrap">
+        <table class="pinyin-table">
+          <thead><tr><th>PINYIN</th><th>PRONONCIATION</th><th>PIÈGE ?</th></tr></thead>
+          <tbody>
+            <tr><td>b, p, m, f</td><td>Comme en français</td><td>—</td></tr>
+            <tr><td>d, t, n, l</td><td>Comme en français</td><td>—</td></tr>
+            <tr><td style="color:var(--accent)">z</td><td>/dz/ — comme « adze » en anglais</td><td>⚠️ ≠ « z » français</td></tr>
+            <tr><td style="color:var(--accent)">c</td><td>/ts/ — comme « tsé-tsé »</td><td>⚠️ ≠ « c » français</td></tr>
+            <tr><td>s</td><td>Comme en français</td><td>—</td></tr>
+            <tr><td style="color:var(--accent)">zh</td><td>/dj/ rétroflexe (langue recourbée)</td><td>⚠️ N'existe pas en FR</td></tr>
+            <tr><td style="color:var(--accent)">ch</td><td>/tch/ rétroflexe</td><td>⚠️ ≠ « ch » français</td></tr>
+            <tr><td style="color:var(--accent)">sh</td><td>/ch/ rétroflexe</td><td>⚠️ Plus en arrière qu'en FR</td></tr>
+            <tr><td style="color:var(--accent)">r</td><td>/j/ français doux (« je ») rétroflexe</td><td>⚠️ ≠ « r » français du tout</td></tr>
+            <tr><td>j</td><td>/dj/ — comme « Djibouti »</td><td>—</td></tr>
+            <tr><td style="color:var(--accent)">q</td><td>/tch/ — comme « tchat »</td><td>⚠️ ≠ « q » français</td></tr>
+            <tr><td style="color:var(--accent)">x</td><td>/ch/ léger (entre s et ch)</td><td>⚠️ ≠ « x » français</td></tr>
+            <tr><td>g, k, h</td><td>Proches du français (h aspiré)</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Finales — Les voyelles</h2>
+      <div class="pinyin-table-wrap">
+        <table class="pinyin-table">
+          <thead><tr><th>PINYIN</th><th>PRONONCIATION</th><th>EXEMPLE</th></tr></thead>
+          <tbody>
+            <tr><td>a</td><td>/a/ ouvert</td><td>bà (papa)</td></tr>
+            <tr><td>o</td><td>/o/ arrondi</td><td>bō (vague)</td></tr>
+            <tr><td>e</td><td>/eu/ (comme « heure »)</td><td>hē (boire)</td></tr>
+            <tr><td>i</td><td>/i/ normal</td><td>bǐ (stylo)</td></tr>
+            <tr><td style="color:var(--accent)">u</td><td>/ou/ (PAS /u/ français !)</td><td>bù (non)</td></tr>
+            <tr><td style="color:var(--accent)">ü</td><td>/u/ français (de « lune »)</td><td>lǜ (vert)</td></tr>
+            <tr><td>ai</td><td>/aï/ — comme « aïe »</td><td>ài (aimer)</td></tr>
+            <tr><td>ei</td><td>/eï/ — comme « hey »</td><td>méi (pas)</td></tr>
+            <tr><td>ao</td><td>/ao/ — comme « cacao »</td><td>hǎo (bon)</td></tr>
+            <tr><td>ou</td><td>/o-ou/</td><td>gǒu (chien)</td></tr>
+            <tr><td>an</td><td>/an/</td><td>fàn (riz)</td></tr>
+            <tr><td style="color:var(--accent)">en</td><td>/eun/ (e muet + n)</td><td>rén (personne)</td></tr>
+            <tr><td>ang</td><td>/ang/ nasal</td><td>máng (occupé)</td></tr>
+            <tr><td>eng</td><td>/eung/ nasal</td><td>fēng (vent)</td></tr>
+            <tr><td style="color:var(--accent)">ing</td><td>/ying/</td><td>míng (nom)</td></tr>
+            <tr><td>ong</td><td>/oung/</td><td>dōng (est)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: CHARACTERS ===== -->
+  <div class="section" id="sec-chars">
+    <div class="card">
+      <h2>🈶 Les caractères — Hànzì (汉字)</h2>
+      <p>Les caractères chinois ne sont pas un alphabet — chaque caractère = un <strong>morphème</strong> (unité de sens). Mais ils suivent des logiques de construction. On commence par les <strong>radicaux</strong> les plus fréquents et les <strong>traits de base</strong>.</p>
+    </div>
+
+    <div class="card">
+      <h2>Les 8 traits fondamentaux</h2>
+      <p style="margin-bottom:1rem">Tous les caractères sont construits à partir de ces traits. Le caractère 永 (yǒng, « éternel ») les contient tous :</p>
+      <div style="text-align:center; margin: 1rem 0;">
+        <span style="font-family:'Noto Sans SC'; font-size: 7rem; font-weight: 300; color: rgba(255,255,255,0.08);">永</span>
+      </div>
+      <div class="pinyin-table-wrap">
+        <table class="pinyin-table">
+          <thead><tr><th>TRAIT</th><th>NOM</th><th>DIRECTION</th></tr></thead>
+          <tbody>
+            <tr><td>一</td><td>héng (横)</td><td>→ horizontal</td></tr>
+            <tr><td>丨</td><td>shù (竖)</td><td>↓ vertical</td></tr>
+            <tr><td>丿</td><td>piě (撇)</td><td>↙ oblique gauche</td></tr>
+            <tr><td>丶</td><td>diǎn (点)</td><td>↘ point</td></tr>
+            <tr><td>㇀</td><td>nà (捺)</td><td>↘ oblique droit appuyé</td></tr>
+            <tr><td>┐</td><td>zhé (折)</td><td>↱ crochet / angle</td></tr>
+            <tr><td>亅</td><td>gōu (钩)</td><td>↓↰ crochet remontant</td></tr>
+            <tr><td>㇂</td><td>tí (提)</td><td>↗ trait montant</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Premiers caractères essentiels</h2>
+      <p style="margin-bottom:0.5rem">Clique sur un caractère pour le voir en détail dans la section écriture.</p>
+      <div class="char-grid" id="charGrid"></div>
+    </div>
+
+    <div class="card">
+      <h2>Les chiffres 1-10</h2>
+      <div class="char-grid" id="numGrid"></div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: PRACTICE ===== -->
+  <div class="section" id="sec-practice">
+    <div class="card">
+      <h2>✍️ Pratique d'écriture</h2>
+      <p>Sélectionne un caractère et entraîne-toi à le tracer. L'ordre des traits est crucial en chinois — toujours de gauche à droite, de haut en bas.</p>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+        <div>
+          <span class="tag">Caractère actif</span>
+          <span id="activeChar" style="font-family:'Noto Sans SC'; font-size:2rem; font-weight:700; margin-left:0.75rem;">一</span>
+          <span id="activeCharPy" style="font-family:'JetBrains Mono'; font-size:0.9rem; color:var(--accent2); margin-left:0.5rem;">yī</span>
+        </div>
+        <div class="actions" style="margin-top:0;">
+          <button class="btn-outline" onclick="clearCanvas()">Effacer</button>
+        </div>
+      </div>
+
+      <div class="stroke-area">
+        <div class="big-char" id="bgChar">一</div>
+        <canvas id="drawCanvas" width="300" height="300"></canvas>
+      </div>
+
+      <div class="note"><strong>Astuce :</strong> Règles d'ordre des traits → ① gauche avant droite ② haut avant bas ③ horizontal avant vertical ④ extérieur avant intérieur ⑤ fermer en dernier</div>
+    </div>
+
+    <div class="card">
+      <h2>Choisis un caractère</h2>
+      <div class="char-grid" id="practiceGrid"></div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: QUIZ ===== -->
+  <div class="section" id="sec-quiz">
+    <div class="card">
+      <h2>🧠 Quiz — Teste tes connaissances</h2>
+      <p>Identifie le bon sens, le bon pinyin ou le bon ton. Le quiz pioche aléatoirement dans tout ce que tu as appris.</p>
+    </div>
+
+    <div class="score-bar">
+      <span class="ok">✓ <span id="scoreOk">0</span></span>
+      <span class="ko">✗ <span id="scoreKo">0</span></span>
+      <span>Série : <span id="streak">0</span>🔥</span>
+    </div>
+
+    <div class="progress-strip" id="progressStrip"></div>
+
+    <div class="quiz-box" id="quizBox">
+      <div class="tag" id="quizType">QUEL EST LE SENS ?</div>
+      <div class="quiz-char" id="quizChar">大</div>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div style="margin-top:1.25rem;">
+        <button class="btn" id="nextBtn" onclick="nextQuestion()" style="display:none;">Question suivante →</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // ===== DATA =====
+  const basicChars = [
+    { hz: '大', py: 'dà', en: 'grand', tone: 4 },
+    { hz: '小', py: 'xiǎo', en: 'petit', tone: 3 },
+    { hz: '人', py: 'rén', en: 'personne', tone: 2 },
+    { hz: '口', py: 'kǒu', en: 'bouche', tone: 3 },
+    { hz: '手', py: 'shǒu', en: 'main', tone: 3 },
+    { hz: '水', py: 'shuǐ', en: 'eau', tone: 3 },
+    { hz: '火', py: 'huǒ', en: 'feu', tone: 3 },
+    { hz: '山', py: 'shān', en: 'montagne', tone: 1 },
+    { hz: '日', py: 'rì', en: 'soleil/jour', tone: 4 },
+    { hz: '月', py: 'yuè', en: 'lune/mois', tone: 4 },
+    { hz: '木', py: 'mù', en: 'bois/arbre', tone: 4 },
+    { hz: '土', py: 'tǔ', en: 'terre', tone: 3 },
+    { hz: '天', py: 'tiān', en: 'ciel/jour', tone: 1 },
+    { hz: '女', py: 'nǚ', en: 'femme', tone: 3 },
+    { hz: '子', py: 'zǐ', en: 'enfant', tone: 3 },
+    { hz: '心', py: 'xīn', en: 'cœur', tone: 1 },
+    { hz: '中', py: 'zhōng', en: 'milieu', tone: 1 },
+    { hz: '国', py: 'guó', en: 'pays', tone: 2 },
+    { hz: '好', py: 'hǎo', en: 'bon/bien', tone: 3 },
+    { hz: '我', py: 'wǒ', en: 'je/moi', tone: 3 },
+    { hz: '你', py: 'nǐ', en: 'tu/toi', tone: 3 },
+    { hz: '他', py: 'tā', en: 'il/lui', tone: 1 },
+    { hz: '是', py: 'shì', en: 'être/oui', tone: 4 },
+    { hz: '不', py: 'bù', en: 'non/pas', tone: 4 },
+  ];
+
+  const numbers = [
+    { hz: '一', py: 'yī', en: '1', tone: 1 },
+    { hz: '二', py: 'èr', en: '2', tone: 4 },
+    { hz: '三', py: 'sān', en: '3', tone: 1 },
+    { hz: '四', py: 'sì', en: '4', tone: 4 },
+    { hz: '五', py: 'wǔ', en: '5', tone: 3 },
+    { hz: '六', py: 'liù', en: '6', tone: 4 },
+    { hz: '七', py: 'qī', en: '7', tone: 1 },
+    { hz: '八', py: 'bā', en: '8', tone: 1 },
+    { hz: '九', py: 'jiǔ', en: '9', tone: 3 },
+    { hz: '十', py: 'shí', en: '10', tone: 2 },
+  ];
+
+  const allChars = [...basicChars, ...numbers];
+
+  // ===== NAV =====
+  document.querySelectorAll('nav button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('sec-' + btn.dataset.tab).classList.add('active');
+      if (btn.dataset.tab === 'quiz') initQuiz();
+    });
+  });
+
+  // ===== RENDER CHAR GRIDS =====
+  function renderGrid(containerId, data, clickable = false) {
+    const el = document.getElementById(containerId);
+    el.innerHTML = data.map((c, i) => `
+      <div class="char-item" data-idx="${i}" ${clickable ? `onclick="selectChar('${c.hz}','${c.py}')"` : ''}>
+        <div class="hz">${c.hz}</div>
+        <div class="py">${c.py}</div>
+        <div class="en">${c.en}</div>
+      </div>
+    `).join('');
+  }
+
+  renderGrid('charGrid', basicChars);
+  renderGrid('numGrid', numbers);
+  renderGrid('practiceGrid', [...basicChars.slice(0, 12), ...numbers.slice(0, 5)], true);
+
+  // ===== PRACTICE CANVAS =====
+  const canvas = document.getElementById('drawCanvas');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+  let lastX = 0, lastY = 0;
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return [t.clientX - rect.left, t.clientY - rect.top];
+  }
+
+  canvas.addEventListener('mousedown', e => { drawing = true; [lastX, lastY] = getPos(e); });
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; [lastX, lastY] = getPos(e); });
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); draw(e); });
+  canvas.addEventListener('mouseup', () => drawing = false);
+  canvas.addEventListener('mouseleave', () => drawing = false);
+  canvas.addEventListener('touchend', () => drawing = false);
+
+  function draw(e) {
+    if (!drawing) return;
+    const [x, y] = getPos(e);
+    ctx.strokeStyle = '#ff3b3b';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    lastX = x; lastY = y;
+  }
+
+  function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function selectChar(hz, py) {
+    document.getElementById('activeChar').textContent = hz;
+    document.getElementById('activeCharPy').textContent = py;
+    document.getElementById('bgChar').textContent = hz;
+    clearCanvas();
+    // Highlight selected
+    document.querySelectorAll('#practiceGrid .char-item').forEach(el => el.classList.remove('selected'));
+    document.querySelectorAll('#practiceGrid .char-item').forEach(el => {
+      if (el.querySelector('.hz').textContent === hz) el.classList.add('selected');
+    });
+  }
+
+  // ===== TONE AUDIO (Web Audio API) =====
+  function playTone(tone) {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    const dur = 0.6;
+    const t = audioCtx.currentTime;
+
+    switch(tone) {
+      case 1: // High flat
+        osc.frequency.setValueAtTime(350, t);
+        break;
+      case 2: // Rising
+        osc.frequency.setValueAtTime(250, t);
+        osc.frequency.linearRampToValueAtTime(380, t + dur);
+        break;
+      case 3: // Dip
+        osc.frequency.setValueAtTime(280, t);
+        osc.frequency.linearRampToValueAtTime(200, t + dur * 0.4);
+        osc.frequency.linearRampToValueAtTime(320, t + dur);
+        break;
+      case 4: // Falling
+        osc.frequency.setValueAtTime(380, t);
+        osc.frequency.linearRampToValueAtTime(180, t + dur * 0.7);
+        break;
+      case 5: // Neutral
+        osc.frequency.setValueAtTime(250, t);
+        gain.gain.setValueAtTime(0.15, t);
+        break;
+    }
+
+    gain.gain.setValueAtTime(0.3, t + dur - 0.05);
+    gain.gain.linearRampToValueAtTime(0, t + dur);
+
+    osc.start(t);
+    osc.stop(t + dur);
+  }
+
+  // ===== QUIZ =====
+  let quizScore = { ok: 0, ko: 0, streak: 0, total: 0 };
+  const QUIZ_LENGTH = 10;
+
+  function initQuiz() {
+    quizScore = { ok: 0, ko: 0, streak: 0, total: 0 };
+    updateScore();
+    renderProgress();
+    nextQuestion();
+  }
+
+  function updateScore() {
+    document.getElementById('scoreOk').textContent = quizScore.ok;
+    document.getElementById('scoreKo').textContent = quizScore.ko;
+    document.getElementById('streak').textContent = quizScore.streak;
+  }
+
+  function renderProgress() {
+    const strip = document.getElementById('progressStrip');
+    strip.innerHTML = Array.from({ length: QUIZ_LENGTH }, (_, i) =>
+      `<div class="dot ${i < quizScore.total ? 'done' : ''}"></div>`
+    ).join('');
+  }
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function nextQuestion() {
+    if (quizScore.total >= QUIZ_LENGTH) {
+      document.getElementById('quizBox').innerHTML = `
+        <div style="font-size:3rem; margin-bottom:1rem;">${quizScore.ok >= 8 ? '🎉' : quizScore.ok >= 5 ? '👍' : '💪'}</div>
+        <h2 style="margin-bottom:0.5rem;">${quizScore.ok}/${QUIZ_LENGTH}</h2>
+        <p style="color:var(--text2);">${quizScore.ok >= 8 ? 'Excellent ! Tu maîtrises bien les bases.' : quizScore.ok >= 5 ? 'Pas mal ! Continue à pratiquer.' : 'Continue l\'effort, ça va venir !'}</p>
+        <button class="btn" style="margin-top:1.5rem;" onclick="initQuiz()">Recommencer</button>
+      `;
+      return;
+    }
+
+    document.getElementById('nextBtn').style.display = 'none';
+
+    const types = ['meaning', 'pinyin', 'tone'];
+    const type = types[Math.floor(Math.random() * types.length)];
+    const correct = allChars[Math.floor(Math.random() * allChars.length)];
+    let options, question;
+
+    if (type === 'meaning') {
+      question = 'QUEL EST LE SENS ?';
+      const wrongs = shuffle(allChars.filter(c => c.en !== correct.en)).slice(0, 3);
+      options = shuffle([
+        { text: correct.en, correct: true },
+        ...wrongs.map(w => ({ text: w.en, correct: false }))
+      ]);
+    } else if (type === 'pinyin') {
+      question = 'QUEL EST LE PINYIN ?';
+      const wrongs = shuffle(allChars.filter(c => c.py !== correct.py)).slice(0, 3);
+      options = shuffle([
+        { text: correct.py, correct: true },
+        ...wrongs.map(w => ({ text: w.py, correct: false }))
+      ]);
+    } else {
+      question = 'QUEL TON ?';
+      const toneNames = { 1: '1er ton (plat ⎯)', 2: '2e ton (montant ↗)', 3: '3e ton (creux ↘↗)', 4: '4e ton (descendant ↘)' };
+      const allTones = [1, 2, 3, 4];
+      const wrongTones = shuffle(allTones.filter(t => t !== correct.tone)).slice(0, 3);
+      options = shuffle([
+        { text: toneNames[correct.tone], correct: true },
+        ...wrongTones.map(t => ({ text: toneNames[t], correct: false }))
+      ]);
+    }
+
+    document.getElementById('quizType').textContent = question;
+    document.getElementById('quizChar').textContent = correct.hz;
+    const optEl = document.getElementById('quizOptions');
+    optEl.innerHTML = options.map((o, i) => `
+      <button class="quiz-btn" data-correct="${o.correct}" onclick="checkAnswer(this)">${o.text}</button>
+    `).join('');
+  }
+
+  function checkAnswer(btn) {
+    const isCorrect = btn.dataset.correct === 'true';
+    const allBtns = document.querySelectorAll('.quiz-btn');
+    allBtns.forEach(b => {
+      b.style.pointerEvents = 'none';
+      if (b.dataset.correct === 'true') b.classList.add('correct');
+    });
+    if (!isCorrect) {
+      btn.classList.add('wrong');
+      quizScore.ko++;
+      quizScore.streak = 0;
+    } else {
+      quizScore.ok++;
+      quizScore.streak++;
+    }
+    quizScore.total++;
+    updateScore();
+    renderProgress();
+    document.getElementById('nextBtn').style.display = 'inline-block';
+  }
+</script>
+</body>
+</html>
