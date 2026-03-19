@@ -12,230 +12,465 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://griftic.github.io/HUB-learning/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',system-ui,sans-serif;background:#060a14;color:#e2e8f0;min-height:100vh;overflow-x:hidden}
-::selection{background:rgba(129,140,248,0.3);color:#fff}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:#060a14}
-::-webkit-scrollbar-thumb{background:#1a2240;border-radius:4px}
-body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-.wrapper{max-width:840px;margin:0 auto;padding:0 20px}
-.header{padding:60px 0 40px;text-align:center;position:relative}
-.header::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(90deg,transparent,#1e2a4a,transparent)}
-.logo-mark{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#ff6b4a22,#818cf822,#22d3ee22);border:1px solid #1e2a4a;margin-bottom:20px;font-size:24px;animation:float 4s ease-in-out infinite}
-.header h1{font-family:'Syne',sans-serif;font-size:clamp(28px,5vw,40px);font-weight:800;line-height:1.1;margin-bottom:10px;background:linear-gradient(135deg,#ff6b4a,#818cf8,#22d3ee,#34d399);background-size:300% 300%;animation:gradient-shift 8s ease infinite;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.header .subtitle{color:#64748b;font-size:14px;max-width:400px;margin:0 auto;line-height:1.6}
-.header .subtitle span{color:#94a3b8}
-.stats{display:flex;justify-content:center;gap:32px;padding:24px 0;margin:24px 0 40px;border-top:1px solid #0f1629;border-bottom:1px solid #0f1629}
-.stat{text-align:center}
-.stat-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#818cf8}
-.stat-label{font-size:11px;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:0.08em}
-.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:60px}
-.project-card{background:#0a0f1e;border:1px solid #141c33;border-radius:20px;padding:24px;cursor:pointer;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden;text-decoration:none;display:block;color:#e2e8f0}
-.project-card:hover{transform:translateY(-4px);border-color:#1e2a4a;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
-.project-card:hover .card-bar{opacity:1 !important}
-.project-card:hover .card-icon{transform:scale(1.1)}
-.card-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0;opacity:0;transition:opacity 0.3s}
-.card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px;transition:transform 0.3s}
-.card-tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:10px}
-.card-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:#e2e8f0;margin-bottom:6px;line-height:1.3}
-.card-desc{font-size:12px;color:#64748b;line-height:1.6}
-.card-meta{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:11px;color:#475569;flex-wrap:wrap}
-.card-meta .dot{width:3px;height:3px;border-radius:50%;background:#475569}
-.empty-slot{border-style:dashed !important;border-color:#141c33 !important;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;cursor:default !important}
-.empty-slot:hover{transform:none !important;box-shadow:none !important;border-color:#1e2a4a !important}
-.empty-slot .plus{width:40px;height:40px;border-radius:12px;background:#0f1629;border:1px solid #1e2a4a;display:flex;align-items:center;justify-content:center;font-size:18px;color:#475569;margin-bottom:10px}
-.empty-slot p{color:#475569;font-size:12px;text-align:center;line-height:1.5}
-.footer{text-align:center;padding:30px 0 50px;border-top:1px solid #0f1629}
-.footer p{font-size:11px;color:#334155}
-.footer a{color:#64748b;text-decoration:none;transition:color 0.2s}
-.footer a:hover{color:#818cf8}
-.footer .made-with{font-family:'JetBrains Mono',monospace;font-size:10px;color:#1e293b;margin-top:6px}
-@media(max-width:600px){
-  .header{padding:40px 0 28px}
-  .stats{gap:20px}
-  .projects-grid{grid-template-columns:1fr}
+:root{
+  --bg:#020409;
+  --surface:rgba(6,10,22,0.72);
+  --border:rgba(255,255,255,0.05);
+  --border-hi:rgba(255,255,255,0.1);
+  --text:#BCC5DC;
+  --text-hi:#E4E9F7;
+  --text-dim:#556080;
+  --text-faint:#283050;
+  --accent:#7C8AEA;
+  --accent2:#4DD9C0;
 }
-.project-card:nth-child(1){animation:fadeUp 0.6s ease both;animation-delay:0.1s}
-.project-card:nth-child(2){animation:fadeUp 0.6s ease both;animation-delay:0.2s}
-.project-card:nth-child(3){animation:fadeUp 0.6s ease both;animation-delay:0.3s}
-.project-card:nth-child(4){animation:fadeUp 0.6s ease both;animation-delay:0.4s}
-.project-card:nth-child(5){animation:fadeUp 0.6s ease both;animation-delay:0.5s}
-.project-card:nth-child(6){animation:fadeUp 0.6s ease both;animation-delay:0.6s}
-.project-card:nth-child(7){animation:fadeUp 0.6s ease both;animation-delay:0.7s}
+body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::selection{background:rgba(124,138,234,0.3);color:#fff}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:10px}
+
+canvas#bg{position:fixed;inset:0;z-index:0}
+.app{position:relative;z-index:1}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:50;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;background:rgba(2,4,9,0.6);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#7C8AEA,#5B6AD0);display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 0 16px rgba(124,138,234,0.2)}
+.brand-name{font-weight:700;font-size:13px;color:var(--text-hi);letter-spacing:-0.01em}
+.brand-tag{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;padding:2px 7px;border-radius:4px;border:1px solid var(--border);background:rgba(255,255,255,0.02)}
+.topbar-r{display:flex;align-items:center;gap:8px}
+.search-box{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);transition:all 0.3s}
+.search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,138,234,0.08)}
+.search-box input{background:none;border:none;outline:none;font-family:inherit;font-size:11px;color:var(--text);width:130px}
+.search-box input::placeholder{color:var(--text-faint)}
+.search-box .si{font-size:11px;color:var(--text-dim)}
+.cnt{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border-radius:5px;background:rgba(124,138,234,0.08);border:1px solid rgba(124,138,234,0.15);color:var(--accent);letter-spacing:0.05em}
+
+/* HERO */
+.hero{padding:72px 32px 32px;text-align:center;max-width:640px;margin:0 auto;animation:fu .8s ease both}
+.hero h1{font-size:clamp(30px,5vw,48px);font-weight:800;line-height:1.08;letter-spacing:-0.03em;color:#fff;margin-bottom:12px}
+.hero h1 .gw{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:13px;line-height:1.7;color:var(--text-dim);max-width:400px;margin:0 auto}
+
+/* FILTERS */
+.filters{display:flex;justify-content:center;gap:4px;padding:0 24px 28px;flex-wrap:wrap;animation:fu .7s .1s ease both}
+.fb{padding:5px 13px;border-radius:100px;background:transparent;border:1px solid var(--border);color:var(--text-dim);font-family:inherit;font-size:10.5px;font-weight:500;cursor:pointer;transition:all .25s;letter-spacing:.02em}
+.fb:hover{border-color:var(--border-hi);color:var(--text)}
+.fb.on{background:rgba(124,138,234,0.08);border-color:rgba(124,138,234,0.25);color:var(--accent)}
+
+/* GRID */
+.gw{max-width:1100px;margin:0 auto;padding:0 24px 80px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;position:relative;overflow:hidden;transition:all .45s cubic-bezier(.16,1,.3,1);backdrop-filter:blur(10px);cursor:pointer}
+.card::before{content:'';position:absolute;inset:0;border-radius:14px;background:radial-gradient(350px circle at var(--mx,50%) var(--my,50%),var(--cg,rgba(124,138,234,0.05)),transparent 50%);opacity:0;transition:opacity .4s;pointer-events:none}
+.card:hover::before{opacity:1}
+.card:hover{transform:translateY(-4px) scale(1.008);border-color:var(--border-hi);box-shadow:0 16px 48px rgba(0,0,0,.45)}
+.card:hover .ca{opacity:1;height:2px}
+.card:hover .ci{transform:scale(1.1) rotate(-3deg)}
+.card:hover .go{opacity:1;transform:translateX(0)}
+
+.ca{position:absolute;top:0;left:0;right:0;height:1px;opacity:.3;transition:all .3s}
+.ct{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.ci{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;transition:transform .4s cubic-bezier(.16,1,.3,1);flex-shrink:0}
+.go{width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-dim);opacity:0;transform:translateX(-6px);transition:all .3s}
+.tg{display:inline-block;padding:2px 7px;border-radius:4px;font-size:8.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px;width:fit-content}
+.cn{font-size:14px;font-weight:700;color:var(--text-hi);margin-bottom:5px;line-height:1.35}
+.cd{font-size:11px;color:var(--text-dim);line-height:1.6;flex:1}
+.cf{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:13px;padding-top:11px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text-faint)}
+.cf .d{width:2px;height:2px;border-radius:50%;background:var(--text-faint)}
+
+/* FEATURED */
+.card.ft{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr;gap:24px;padding:28px;background:linear-gradient(135deg,rgba(6,10,22,0.8),rgba(124,138,234,0.03));border-color:rgba(124,138,234,0.1)}
+.fv{width:150px;height:150px;border-radius:12px;background:radial-gradient(circle at 40% 40%,rgba(124,138,234,0.1),transparent 70%);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0}
+.fv .fi{font-size:44px;opacity:.6;animation:fl 5s ease-in-out infinite}
+.fv .rg{position:absolute;border:1px solid rgba(124,138,234,0.06);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
+.fv .rg:nth-child(1){width:70px;height:70px}.fv .rg:nth-child(2){width:110px;height:110px}.fv .rg:nth-child(3){width:150px;height:150px}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.nb{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:4px;background:rgba(124,138,234,0.08);border:1px solid rgba(124,138,234,0.18);font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;width:fit-content}
+.nb::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.card.ft .cn{font-size:18px}.card.ft .cd{font-size:12.5px;line-height:1.7}
+
+/* EMPTY */
+.card.em{border-style:dashed;display:flex;align-items:center;justify-content:center;min-height:160px;cursor:default;background:transparent;backdrop-filter:none}
+.card.em:hover{transform:none;box-shadow:none;border-color:var(--border-hi)}
+.card.em .inner{text-align:center}
+.card.em .plus{width:32px;height:32px;border-radius:8px;margin:0 auto 6px;background:rgba(255,255,255,.02);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-faint)}
+.card.em p{color:var(--text-faint);font-size:10px}
+
+.footer{text-align:center;padding:20px 24px 36px;border-top:1px solid var(--border)}
+.footer p{font-size:10px;color:var(--text-faint)}.footer a{color:var(--text-dim);text-decoration:none}.footer a:hover{color:var(--accent)}
+.footer .s{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text-faint);margin-top:5px;opacity:.4}
+
+.nr{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--text-faint);font-size:12px;display:none}
+
+@keyframes fu{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:fu .5s ease both}
+
+@media(max-width:640px){
+  .hero{padding:50px 20px 24px}
+  .grid{grid-template-columns:1fr}
+  .card.ft{grid-template-columns:1fr}.fv{width:100%;height:110px}
+  .search-box input{width:90px}.brand-tag{display:none}
+}
 </style>
 </head>
 <body>
 
-<div class="wrapper">
+<canvas id="bg"></canvas>
 
-  <header class="header">
-    <div class="logo-mark">⚡</div>
-    <h1>Saad's Lab</h1>
-    <p class="subtitle">
-      Projets interactifs, infographies & outils.<br>
-      <span>Tout est gratuit, open source, et fait avec Claude.</span>
-    </p>
-  </header>
+<div class="app">
 
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-num" id="project-count">7</div>
-      <div class="stat-label">Projets</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">∞</div>
-      <div class="stat-label">Curiosité</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">0€</div>
-      <div class="stat-label">Budget</div>
-    </div>
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-icon">⚡</div>
+    <span class="brand-name">Saad's Lab</span>
+    <span class="brand-tag">Open Source</span>
   </div>
-
-  <!-- ══════════════════════════════════════════════
-       PROJETS — Pour en ajouter un nouveau :
-       1. Copie un bloc <a class="project-card">
-       2. Modifie href, icône, titre, description, tag
-       3. Upload le nouveau .html dans le repo
-       ══════════════════════════════════════════════ -->
-  <div class="projects-grid">
-
-    <!-- ── Projet 1 : Phonologie ── -->
-    <a class="project-card" href="phonologie.html">
-      <div class="card-bar" style="background:linear-gradient(90deg,#ff6b4a,#818cf8,#22d3ee)"></div>
-      <div class="card-icon" style="background:rgba(129,140,248,0.12);border:1px solid rgba(129,140,248,0.2)">🔊</div>
-      <div class="card-tag" style="color:#818cf8;background:rgba(129,140,248,0.12)">Linguistique</div>
-      <div class="card-title">La chaîne de valeur de la phonologie</div>
-      <div class="card-desc">6 infographies interactives — du signal acoustique au sens. Pipeline, phonèmes, traits distinctifs, règles, applications.</div>
-      <div class="card-meta">
-        <span>6 infographies</span>
-        <span class="dot"></span>
-        <span>Quiz intégré</span>
-        <span class="dot"></span>
-        <span>2026</span>
-      </div>
-    </a>
-
-    <!-- ── Projet 2 : Zoroastrisme ── -->
-    <a class="project-card" href="zoroastrisme.html">
-      <div class="card-bar" style="background:linear-gradient(90deg,#f59e0b,#ef4444,#f97316)"></div>
-      <div class="card-icon" style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.2)">🔥</div>
-      <div class="card-tag" style="color:#f59e0b;background:rgba(245,158,11,0.12)">Religion & Histoire</div>
-      <div class="card-title">Le Zoroastrisme</div>
-      <div class="card-desc">Exploration de l'une des plus anciennes religions monothéistes — origines, croyances, influence sur les traditions abrahamiques.</div>
-      <div class="card-meta">
-        <span>Histoire</span>
-        <span class="dot"></span>
-        <span>Théologie comparée</span>
-        <span class="dot"></span>
-        <span>2026</span>
-      </div>
-    </a>
-
-    <!-- ── Projet 3 : Photonique ── -->
-    <a class="project-card" href="photonique.html">
-      <div class="card-bar" style="background:linear-gradient(90deg,#00e5ff,#ff006e,#ffd700)"></div>
-      <div class="card-icon" style="background:rgba(0,229,255,0.12);border:1px solid rgba(0,229,255,0.2)">💡</div>
-      <div class="card-tag" style="color:#00e5ff;background:rgba(0,229,255,0.12)">Science & Tech</div>
-      <div class="card-title">Photonique — La Révolution de la Lumière</div>
-      <div class="card-desc">La fin de l'ère de l'Électron. Comparateur de vitesse, faits fous, quiz futuriste. Pourquoi la lumière va tout remplacer.</div>
-      <div class="card-meta">
-        <span>Interactif</span>
-        <span class="dot"></span>
-        <span>Quiz intégré</span>
-        <span class="dot"></span>
-        <span>2026</span>
-      </div>
-    </a>
-
-    <!-- ── Projet 4 : Tennis ── -->
-    <a class="project-card" href="tennis.html">
-      <div class="card-bar" style="background:linear-gradient(90deg,#2D8B4E,#D4763A,#C8E630)"></div>
-      <div class="card-icon" style="background:rgba(45,139,78,0.12);border:1px solid rgba(45,139,78,0.2)">🎾</div>
-      <div class="card-tag" style="color:#2D8B4E;background:rgba(45,139,78,0.12)">Sport & Matos</div>
-      <div class="card-title">Guide Tennis — Tout savoir sur le matos</div>
-      <div class="card-desc">Raquettes, cordages, chaussures, balles — le guide ultime. Sélecteur interactif, comparateur de tension, quiz profil joueur.</div>
-      <div class="card-meta">
-        <span>7 sections</span>
-        <span class="dot"></span>
-        <span>Quiz intégré</span>
-        <span class="dot"></span>
-        <span>2026</span>
-      </div>
-    </a>
-
-    <!-- ── Projet 5 : Chimie Primitive ── -->
-    <a class="project-card" href="chimie-primitive.html">
-      <div class="card-bar" style="background:linear-gradient(90deg,#00D4FF,#FF6B35,#00E676,#7C4DFF)"></div>
-      <div class="card-icon" style="background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.2)">✦</div>
-      <div class="card-tag" style="color:#00D4FF;background:rgba(0,212,255,0.12)">Science & Origines</div>
-      <div class="card-title">Chimie Primitive — Du Big Bang à la Vie</div>
-      <div class="card-desc">Comment la matière inerte est devenue vivante. Simulateur Miller-Urey, constructeur de nucléotide, tableau périodique cosmique, quiz.</div>
-      <div class="card-meta">
-        <span>5 actes</span>
-        <span class="dot"></span>
-        <span>4 outils interactifs</span>
-        <span class="dot"></span>
-        <span>2026</span>
-      </div>
-    </a>
-
-    <!-- ── Projet 6 : BTC Power Law ── -->
-    <a class="project-card" href="btc-dashboard.html">
-      <div class="card-bar" style="background:linear-gradient(90deg,#00ffa3,#f59e0b,#ff3b5c)"></div>
-      <div class="card-icon" style="background:rgba(0,255,163,0.12);border:1px solid rgba(0,255,163,0.2)">₿</div>
-      <div class="card-tag" style="color:#00ffa3;background:rgba(0,255,163,0.12)">Finance & Crypto</div>
-      <div class="card-title">BTC Power Law Dashboard</div>
-      <div class="card-desc">Dashboard Bitcoin basé sur le modèle Power Law — visualisation des cycles, prix modélisé, zones de valorisation.</div>
-      <div class="card-meta">
-        <span>Dashboard</span>
-        <span class="dot"></span>
-        <span>Power Law</span>
-        <span class="dot"></span>
-        <span>2026</span>
-      </div>
-    </a>
-
-    <!-- ── Projet 7 : Mandarin ── -->
-    <a class="project-card" href="mandarin-lab.html">
-      <div class="card-bar" style="background:linear-gradient(90deg,#ff3b3b,#ff6b4a,#fbbf24)"></div>
-      <div class="card-icon" style="background:rgba(255,59,59,0.12);border:1px solid rgba(255,59,59,0.2)">🈶</div>
-      <div class="card-tag" style="color:#ff3b3b;background:rgba(255,59,59,0.12)">Langue</div>
-      <div class="card-title">普通话 — Mandarin Lab</div>
-      <div class="card-desc">Apprendre le mandarin de zéro. Système tonal interactif, pinyin, 34 caractères essentiels, canvas d'écriture, quiz.</div>
-      <div class="card-meta">
-        <span>5 sections</span>
-        <span class="dot"></span>
-        <span>Quiz intégré</span>
-        <span class="dot"></span>
-        <span>2026</span>
-      </div>
-    </a>
-
-    <!-- ── Slot vide ── -->
-    <div class="project-card empty-slot">
-      <div class="plus">+</div>
-      <p>Prochain projet<br><span style="color:#334155">Drop ton .html ici</span></p>
-    </div>
-
+  <div class="topbar-r">
+    <div class="search-box"><span class="si">⌕</span><input type="text" id="search" placeholder="Rechercher..." oninput="filterCards()"></div>
+    <span class="cnt" id="cnt">8 projets</span>
   </div>
+</div>
 
-  <footer class="footer">
-    <p>Hébergé gratuitement sur <a href="https://pages.github.com" target="_blank">GitHub Pages</a></p>
-    <div class="made-with">built with claude × curiosité</div>
-  </footer>
+<div class="hero">
+  <h1>Explore. Build.<br><span class="gw">Understand.</span></h1>
+  <p>Projets interactifs, infographies & outils — gratuit, open source, construit avec Claude.</p>
+</div>
 
+<div class="filters" id="filters">
+  <button class="fb on" data-cat="all" onclick="sf('all',this)">Tout</button>
+  <button class="fb" data-cat="science" onclick="sf('science',this)">Science</button>
+  <button class="fb" data-cat="religion" onclick="sf('religion',this)">Religion</button>
+  <button class="fb" data-cat="langue" onclick="sf('langue',this)">Langues</button>
+  <button class="fb" data-cat="finance" onclick="sf('finance',this)">Finance</button>
+  <button class="fb" data-cat="sport" onclick="sf('sport',this)">Sport</button>
+</div>
+
+<div class="gw"><div class="grid" id="grid">
+
+  <!-- FEATURED -->
+  <a class="card ft" href="fils-de-leau.html" data-cat="religion" data-t="fils eau jean baptiste mandéens gnose zarathoustra">
+    <div class="ca" style="background:linear-gradient(90deg,#C4993B,#3B7EA1,#7B5EA7)"></div>
+    <div class="fv"><div class="rg"></div><div class="rg"></div><div class="rg"></div><div class="fi">𐡀</div></div>
+    <div><div class="nb">Nouveau</div><div class="tg" style="color:#C4993B;background:rgba(196,153,59,.1)">Religion & Gnose</div><div class="cn">Les Fils de l'Eau — Jean le Baptiste & l'Héritage Baptiste</div><div class="cd">De Zarathoustra aux Mandéens : chronologie interactive, graphe de réseau des filiations baptistes, fiches concepts. Du Jourdain aux marais de Mésopotamie.</div><div class="cf"><span>5 sections</span><span class="d"></span><span>Graphe</span><span class="d"></span><span>2026</span></div></div>
+  </a>
+
+  <!-- PHONOLOGIE -->
+  <a class="card" href="phonologie.html" data-cat="langue" data-t="phonologie linguistique phonèmes acoustique signal" style="--cg:rgba(129,140,248,.07)">
+    <div class="ca" style="background:linear-gradient(90deg,#818CF8,#22D3EE)"></div>
+    <div class="ct"><div class="ci" style="background:rgba(129,140,248,.07);border:1px solid rgba(129,140,248,.14)">🔊</div><div class="go">→</div></div>
+    <div class="tg" style="color:#818CF8;background:rgba(129,140,248,.07)">Linguistique</div>
+    <div class="cn">La chaîne de valeur de la phonologie</div>
+    <div class="cd">6 infographies interactives — du signal acoustique au sens. Phonèmes, traits distinctifs, règles.</div>
+    <div class="cf"><span>6 infographies</span><span class="d"></span><span>Quiz</span><span class="d"></span><span>2026</span></div>
+  </a>
+
+  <!-- ZOROASTRISME -->
+  <a class="card" href="zoroastrisme.html" data-cat="religion" data-t="zoroastrisme mazdéisme zarathoustra perse religion feu" style="--cg:rgba(245,158,11,.07)">
+    <div class="ca" style="background:linear-gradient(90deg,#f59e0b,#ef4444)"></div>
+    <div class="ct"><div class="ci" style="background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.14)">🔥</div><div class="go">→</div></div>
+    <div class="tg" style="color:#f59e0b;background:rgba(245,158,11,.07)">Religion & Histoire</div>
+    <div class="cn">Le Zoroastrisme</div>
+    <div class="cd">L'une des plus anciennes religions monothéistes — origines, croyances, influence sur les traditions abrahamiques.</div>
+    <div class="cf"><span>Histoire</span><span class="d"></span><span>Théologie</span><span class="d"></span><span>2026</span></div>
+  </a>
+
+  <!-- PHOTONIQUE -->
+  <a class="card" href="photonique.html" data-cat="science" data-t="photonique lumière physique optique révolution electron" style="--cg:rgba(0,229,255,.07)">
+    <div class="ca" style="background:linear-gradient(90deg,#00e5ff,#ff006e)"></div>
+    <div class="ct"><div class="ci" style="background:rgba(0,229,255,.07);border:1px solid rgba(0,229,255,.14)">💡</div><div class="go">→</div></div>
+    <div class="tg" style="color:#00e5ff;background:rgba(0,229,255,.07)">Science & Tech</div>
+    <div class="cn">Photonique — La Révolution de la Lumière</div>
+    <div class="cd">La fin de l'ère de l'Électron. Comparateur de vitesse, faits fous, quiz futuriste.</div>
+    <div class="cf"><span>Interactif</span><span class="d"></span><span>Quiz</span><span class="d"></span><span>2026</span></div>
+  </a>
+
+  <!-- TENNIS -->
+  <a class="card" href="tennis.html" data-cat="sport" data-t="tennis raquette cordage sport matos chaussure" style="--cg:rgba(45,139,78,.07)">
+    <div class="ca" style="background:linear-gradient(90deg,#2D8B4E,#C8E630)"></div>
+    <div class="ct"><div class="ci" style="background:rgba(45,139,78,.07);border:1px solid rgba(45,139,78,.14)">🎾</div><div class="go">→</div></div>
+    <div class="tg" style="color:#2D8B4E;background:rgba(45,139,78,.07)">Sport & Matos</div>
+    <div class="cn">Guide Tennis — Tout savoir sur le matos</div>
+    <div class="cd">Raquettes, cordages, chaussures, balles — le guide ultime. Sélecteur interactif.</div>
+    <div class="cf"><span>7 sections</span><span class="d"></span><span>Quiz</span><span class="d"></span><span>2026</span></div>
+  </a>
+
+  <!-- CHIMIE -->
+  <a class="card" href="chimie-primitive.html" data-cat="science" data-t="chimie primitive big bang vie origines miller urey nucleotide" style="--cg:rgba(0,212,255,.07)">
+    <div class="ca" style="background:linear-gradient(90deg,#00D4FF,#FF6B35,#7C4DFF)"></div>
+    <div class="ct"><div class="ci" style="background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.14)">✦</div><div class="go">→</div></div>
+    <div class="tg" style="color:#00D4FF;background:rgba(0,212,255,.07)">Science & Origines</div>
+    <div class="cn">Chimie Primitive — Du Big Bang à la Vie</div>
+    <div class="cd">Comment la matière inerte est devenue vivante. Simulateur Miller-Urey, constructeur de nucléotide.</div>
+    <div class="cf"><span>5 actes</span><span class="d"></span><span>4 outils</span><span class="d"></span><span>2026</span></div>
+  </a>
+
+  <!-- BTC -->
+  <a class="card" href="btc-dashboard.html" data-cat="finance" data-t="bitcoin btc power law crypto finance dashboard cycles" style="--cg:rgba(0,255,163,.07)">
+    <div class="ca" style="background:linear-gradient(90deg,#00ffa3,#f59e0b)"></div>
+    <div class="ct"><div class="ci" style="background:rgba(0,255,163,.07);border:1px solid rgba(0,255,163,.14)">₿</div><div class="go">→</div></div>
+    <div class="tg" style="color:#00ffa3;background:rgba(0,255,163,.07)">Finance & Crypto</div>
+    <div class="cn">BTC Power Law Dashboard</div>
+    <div class="cd">Dashboard Bitcoin basé sur le modèle Power Law — cycles, prix modélisé, zones de valorisation.</div>
+    <div class="cf"><span>Dashboard</span><span class="d"></span><span>Power Law</span><span class="d"></span><span>2026</span></div>
+  </a>
+
+  <!-- MANDARIN -->
+  <a class="card" href="mandarin-lab.html" data-cat="langue" data-t="mandarin chinois langue pinyin caractères tonal" style="--cg:rgba(255,59,59,.07)">
+    <div class="ca" style="background:linear-gradient(90deg,#ff3b3b,#fbbf24)"></div>
+    <div class="ct"><div class="ci" style="background:rgba(255,59,59,.07);border:1px solid rgba(255,59,59,.14)">🈶</div><div class="go">→</div></div>
+    <div class="tg" style="color:#ff3b3b;background:rgba(255,59,59,.07)">Langue</div>
+    <div class="cn">普通话 — Mandarin Lab</div>
+    <div class="cd">Apprendre le mandarin de zéro. Système tonal, pinyin, 34 caractères essentiels, canvas d'écriture.</div>
+    <div class="cf"><span>5 sections</span><span class="d"></span><span>Quiz</span><span class="d"></span><span>2026</span></div>
+  </a>
+
+  <div class="card em" data-cat="all" data-t=""><div class="inner"><div class="plus">+</div><p>Prochain projet</p></div></div>
+  <div class="nr" id="nr">Aucun projet trouvé.</div>
+
+</div></div>
+
+<footer class="footer"><p>Hébergé sur <a href="https://pages.github.com" target="_blank">GitHub Pages</a></p><div class="s">built with claude × curiosité</div></footer>
 </div>
 
 <script>
-const count=document.querySelectorAll('.project-card:not(.empty-slot) .card-title').length;
-document.getElementById('project-count').textContent=count;
+// ═══════════════════════════════════════
+//  THREE-LAYER ORGANIC SWARM
+// ═══════════════════════════════════════
+const C = document.getElementById('bg');
+const X = C.getContext('2d');
+let W, H;
+const mouse = {x:-9999,y:-9999,t:0};
+
+function resize(){
+  const d = Math.min(devicePixelRatio,2);
+  W = C.width = innerWidth * d;
+  H = C.height = innerHeight * d;
+  C.style.width = innerWidth+'px';
+  C.style.height = innerHeight+'px';
+  X.setTransform(d,0,0,d,0,0);
+}
+resize();
+addEventListener('resize', resize);
+addEventListener('mousemove', e=>{mouse.x=e.clientX;mouse.y=e.clientY;mouse.t=performance.now()});
+
+// ── LAYER 1: Deep nebula blobs (very slow, big, blurry) ──
+const nebulae = Array.from({length:6},()=>({
+  x:Math.random()*innerWidth,
+  y:Math.random()*innerHeight,
+  r:Math.random()*180+120,
+  vx:(Math.random()-.5)*.08,
+  vy:(Math.random()-.5)*.06,
+  hue:[220,260,180,200,170,280][~~(Math.random()*6)],
+  phase:Math.random()*Math.PI*2
+}));
+
+// ── LAYER 2: Swarm nodes (medium, form tree) ──
+const SN = 70;
+const swarm = Array.from({length:SN},()=>({
+  x:Math.random()*innerWidth,
+  y:Math.random()*innerHeight,
+  vx:(Math.random()-.5)*.2,
+  vy:(Math.random()-.5)*.2,
+  r:Math.random()*1.6+.6,
+  alpha:Math.random()*.3+.08,
+  hue:[220,175,45,280,340,200][~~(Math.random()*6)],
+  sat:Math.random()*30+50,
+  lit:Math.random()*20+55,
+  phase:Math.random()*Math.PI*2,
+  breathSpeed:.3+Math.random()*.4
+}));
+
+// ── LAYER 3: Firefly particles (tiny, bright, fast twinkle) ──
+const FF = 50;
+const flies = Array.from({length:FF},()=>({
+  x:Math.random()*innerWidth,
+  y:Math.random()*innerHeight,
+  vx:(Math.random()-.5)*.4,
+  vy:(Math.random()-.5)*.4,
+  r:Math.random()*.8+.2,
+  phase:Math.random()*Math.PI*2,
+  speed:1+Math.random()*2,
+  hue:Math.random()>.5?175:220,
+  maxAlpha:Math.random()*.5+.2
+}));
+
+// Prim's MST
+function buildMST(nodes, maxDist){
+  const n=nodes.length, inTree=new Uint8Array(n), edges=[];
+  inTree[0]=1;let sz=1;
+  while(sz<n){
+    let bd=1e9,bi=-1,bj=-1;
+    for(let i=0;i<n;i++){if(!inTree[i])continue;
+      for(let j=0;j<n;j++){if(inTree[j])continue;
+        const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y,d=dx*dx+dy*dy;
+        if(d<bd){bd=d;bi=i;bj=j}
+    }}
+    if(bj<0)break;
+    inTree[bj]=1;sz++;
+    const dist=Math.sqrt(bd);
+    if(dist<maxDist)edges.push([bi,bj,dist]);
+  }
+  return edges;
+}
+
+let mst=[];
+let frame=0;
+const now=()=>performance.now()*.001;
+
+function draw(){
+  const w=innerWidth, h=innerHeight, t=now();
+  X.clearRect(0,0,w,h);
+
+  // ─── LAYER 1: Nebulae ───
+  for(const n of nebulae){
+    n.x+=n.vx; n.y+=n.vy;
+    if(n.x<-n.r)n.x=w+n.r; if(n.x>w+n.r)n.x=-n.r;
+    if(n.y<-n.r)n.y=h+n.r; if(n.y>h+n.r)n.y=-n.r;
+    const pulse=.5+.5*Math.sin(t*.3+n.phase);
+    const g=X.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);
+    g.addColorStop(0,`hsla(${n.hue},60%,30%,${.022*pulse})`);
+    g.addColorStop(.5,`hsla(${n.hue},50%,20%,${.01*pulse})`);
+    g.addColorStop(1,'transparent');
+    X.fillStyle=g;
+    X.beginPath();X.arc(n.x,n.y,n.r,0,Math.PI*2);X.fill();
+  }
+
+  // ─── LAYER 2: Swarm update ───
+  for(const s of swarm){
+    // gentle attraction to mouse
+    const dx=mouse.x-s.x, dy=mouse.y-s.y;
+    const md=Math.sqrt(dx*dx+dy*dy);
+    if(md<250&&md>1){
+      const f=.0004*(250-md)/250;
+      s.vx+=dx/md*f;
+      s.vy+=dy/md*f;
+    }
+    // gentle center gravity
+    s.vx+=(w/2-s.x)*.000015;
+    s.vy+=(h/2-s.y)*.000015;
+    // organic oscillation
+    s.vx+=Math.sin(t*s.breathSpeed+s.phase)*.003;
+    s.vy+=Math.cos(t*s.breathSpeed*.7+s.phase)*.003;
+    s.vx*=.997; s.vy*=.997;
+    s.x+=s.vx; s.y+=s.vy;
+    if(s.x<-30)s.x=w+30;if(s.x>w+30)s.x=-30;
+    if(s.y<-30)s.y=h+30;if(s.y>h+30)s.y=-30;
+  }
+
+  // rebuild tree
+  if(frame%25===0) mst=buildMST(swarm, 220);
+  frame++;
+
+  // ─── draw tree edges (bezier) ───
+  for(const [i,j,d] of mst){
+    const a=swarm[i],b=swarm[j];
+    const op=Math.max(0,(1-d/220))*.09;
+    const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+    // offset for organic curve
+    const off=Math.sin(t*.5+i+j)*12;
+    X.beginPath();
+    X.moveTo(a.x,a.y);
+    X.quadraticCurveTo(mx+off, my-off, b.x, b.y);
+    X.strokeStyle=`hsla(220,50%,65%,${op})`;
+    X.lineWidth=.6;
+    X.stroke();
+  }
+
+  // proximity connections (softer, cyan)
+  for(let i=0;i<SN;i++){
+    for(let j=i+1;j<SN;j++){
+      const dx=swarm[i].x-swarm[j].x,dy=swarm[i].y-swarm[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<110){
+        const op=(1-d/110)*.04;
+        X.beginPath();X.moveTo(swarm[i].x,swarm[i].y);X.lineTo(swarm[j].x,swarm[j].y);
+        X.strokeStyle=`hsla(175,60%,60%,${op})`;X.lineWidth=.4;X.stroke();
+      }
+    }
+  }
+
+  // draw swarm nodes
+  for(const s of swarm){
+    const breath=.6+.4*Math.sin(t*s.breathSpeed+s.phase);
+    const a=s.alpha*breath;
+    // soft glow
+    const g=X.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*5);
+    g.addColorStop(0,`hsla(${s.hue},${s.sat}%,${s.lit}%,${a*.4})`);
+    g.addColorStop(1,'transparent');
+    X.fillStyle=g;
+    X.beginPath();X.arc(s.x,s.y,s.r*5,0,Math.PI*2);X.fill();
+    // core
+    X.beginPath();X.arc(s.x,s.y,s.r,0,Math.PI*2);
+    X.fillStyle=`hsla(${s.hue},${s.sat}%,${s.lit}%,${a})`;
+    X.fill();
+  }
+
+  // ─── LAYER 3: Fireflies ───
+  for(const f of flies){
+    f.x+=f.vx;f.y+=f.vy;
+    f.vx+=Math.sin(t*f.speed+f.phase)*.008;
+    f.vy+=Math.cos(t*f.speed*.8+f.phase)*.008;
+    f.vx*=.99;f.vy*=.99;
+    if(f.x<-10)f.x=w+10;if(f.x>w+10)f.x=-10;
+    if(f.y<-10)f.y=h+10;if(f.y>h+10)f.y=-10;
+    const twinkle=Math.max(0,Math.sin(t*f.speed*1.5+f.phase));
+    const a=f.maxAlpha*twinkle;
+    if(a>.01){
+      const g=X.createRadialGradient(f.x,f.y,0,f.x,f.y,f.r*4);
+      g.addColorStop(0,`hsla(${f.hue},70%,75%,${a})`);
+      g.addColorStop(1,'transparent');
+      X.fillStyle=g;
+      X.beginPath();X.arc(f.x,f.y,f.r*4,0,Math.PI*2);X.fill();
+      X.beginPath();X.arc(f.x,f.y,f.r*.6,0,Math.PI*2);
+      X.fillStyle=`hsla(${f.hue},80%,85%,${a*1.5})`;
+      X.fill();
+    }
+  }
+
+  // ─── Mouse glow ───
+  if(performance.now()-mouse.t<3000){
+    const g=X.createRadialGradient(mouse.x,mouse.y,0,mouse.x,mouse.y,180);
+    g.addColorStop(0,'rgba(124,138,234,0.025)');
+    g.addColorStop(.5,'rgba(77,217,192,0.01)');
+    g.addColorStop(1,'transparent');
+    X.fillStyle=g;
+    X.beginPath();X.arc(mouse.x,mouse.y,180,0,Math.PI*2);X.fill();
+  }
+
+  requestAnimationFrame(draw);
+}
+draw();
+
+// ═══ FILTERING ═══
+let cf='all';
+function sf(c,b){cf=c;document.querySelectorAll('.fb').forEach(x=>x.classList.remove('on'));b.classList.add('on');filterCards()}
+function filterCards(){
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  const cards=document.querySelectorAll('.card:not(.em)');
+  let v=0;
+  cards.forEach(c=>{
+    const cat=c.dataset.cat,t=(c.dataset.t||'').toLowerCase();
+    const ok=(cf==='all'||cat===cf)&&(!q||t.includes(q));
+    c.style.display=ok?'':'none';
+    if(ok){c.style.animation=`fu .4s ${v*.04}s ease both`;v++}
+  });
+  document.querySelector('.card.em').style.display=(cf==='all'&&!q)?'':'none';
+  document.getElementById('nr').style.display=v?'none':'block';
+  document.getElementById('cnt').textContent=v+' projet'+(v>1?'s':'');
+}
+// spotlight
+document.querySelectorAll('.card:not(.em)').forEach(c=>{
+  c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');c.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%')})
+});
+document.querySelectorAll('.card').forEach((c,i)=>{c.style.animationDelay=(.08+i*.05)+'s'});
+filterCards();
 </script>
 </body>
 </html>

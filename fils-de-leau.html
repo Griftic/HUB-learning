@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Fils de l'Eau — Jean le Baptiste & l'Héritage Baptiste</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@300;400&family=Noto+Sans:wght@300;400;600&display=swap');
+
+:root {
+  --ink: #E8E0D0;
+  --ink-dim: #9B917E;
+  --ink-faint: #5A5347;
+  --deep: #0A0908;
+  --deep-warm: #12100E;
+  --gold: #C4993B;
+  --gold-dim: #8A6B28;
+  --water: #3B7EA1;
+  --water-glow: #5AADD0;
+  --fire: #C45A3B;
+  --fire-glow: #E07050;
+  --spirit: #7B5EA7;
+  --spirit-glow: #A080D0;
+  --sand: #D4B896;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dim) var(--deep);
+}
+
+body {
+  background: var(--deep);
+  color: var(--ink);
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* GRAIN OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* NAVIGATION */
+#nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to bottom, var(--deep) 60%, transparent);
+  transition: opacity 0.4s;
+}
+
+#nav .logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+#nav .tabs {
+  display: flex;
+  gap: 0.3rem;
+}
+
+#nav .tab {
+  background: none;
+  border: 1px solid var(--ink-faint);
+  color: var(--ink-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.3s;
+  text-transform: uppercase;
+}
+
+#nav .tab:hover, #nav .tab.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(196, 153, 59, 0.06);
+}
+
+/* HERO */
+#hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#hero canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#hero .content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+}
+
+#hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 1.5s 0.5s forwards;
+}
+
+#hero h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+#hero .subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  opacity: 0;
+  animation: fadeUp 1.5s 1s forwards;
+}
+
+#hero .scroll-hint {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  animation: fadeUp 1.5s 1.5s forwards;
+}
+
+#hero .scroll-hint span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+#hero .scroll-hint .line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--gold-dim), transparent);
+  animation: pulse 2s infinite;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* SECTIONS */
+.section {
+  min-height: 100vh;
+  padding: 8rem 2rem 4rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s, transform 0.8s;
+}
+
+.section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--gold-dim), transparent);
+}
+
+.section h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 300;
+  line-height: 1.25;
+  margin-bottom: 2rem;
+  color: var(--ink);
+}
+
+.section h2 em { color: var(--gold); font-style: italic; }
+
+.section p {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--ink-dim);
+  max-width: 700px;
+  margin-bottom: 1.5rem;
+}
+
+.section p strong {
+  color: var(--ink);
+  font-weight: 400;
+}
+
+/* TIMELINE */
+#timeline-container {
+  min-height: auto;
+  padding: 4rem 2rem 6rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.timeline {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--gold-dim) 10%, var(--gold-dim) 90%, transparent);
+}
+
+.tl-item {
+  position: relative;
+  width: 45%;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--ink-faint);
+  background: rgba(18, 16, 14, 0.7);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s;
+  cursor: pointer;
+}
+
+.tl-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tl-item:nth-child(odd) {
+  margin-left: 0;
+}
+
+.tl-item:nth-child(even) {
+  margin-left: 55%;
+}
+
+.tl-item::before {
+  content: '';
+  position: absolute;
+  top: 1.8rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: var(--deep);
+  z-index: 2;
+}
+
+.tl-item:nth-child(odd)::before { right: -6.5%; }
+.tl-item:nth-child(even)::before { left: -6.5%; }
+
+.tl-item:hover {
+  border-color: var(--gold);
+  box-shadow: 0 0 30px rgba(196, 153, 59, 0.08);
+}
+
+.tl-item .date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  margin-bottom: 0.5rem;
+}
+
+.tl-item .title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.tl-item .desc {
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: var(--ink-dim);
+}
+
+.tl-item .tag {
+  display: inline-block;
+  margin-top: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.tag-water { background: rgba(59, 126, 161, 0.15); color: var(--water-glow); border: 1px solid rgba(59, 126, 161, 0.3); }
+.tag-fire { background: rgba(196, 90, 59, 0.15); color: var(--fire-glow); border: 1px solid rgba(196, 90, 59, 0.3); }
+.tag-spirit { background: rgba(123, 94, 167, 0.15); color: var(--spirit-glow); border: 1px solid rgba(123, 94, 167, 0.3); }
+.tag-gold { background: rgba(196, 153, 59, 0.15); color: var(--gold); border: 1px solid rgba(196, 153, 59, 0.3); }
+
+/* NETWORK GRAPH */
+#network {
+  min-height: auto;
+  padding: 4rem 2rem;
+}
+
+#network .section-label { max-width: 1100px; margin: 0 auto 1rem; }
+#network h2 { max-width: 1100px; margin: 0 auto 2rem; font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; }
+#network h2 em { color: var(--gold); font-style: italic; }
+
+#graph-canvas {
+  width: 100%;
+  height: 70vh;
+  min-height: 500px;
+  cursor: grab;
+  border: 1px solid var(--ink-faint);
+  background: radial-gradient(ellipse at center, rgba(18, 16, 14, 1) 0%, var(--deep) 100%);
+}
+
+#graph-tooltip {
+  position: fixed;
+  pointer-events: none;
+  background: rgba(10, 9, 8, 0.95);
+  border: 1px solid var(--gold-dim);
+  padding: 1rem 1.2rem;
+  max-width: 300px;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.2s;
+  backdrop-filter: blur(10px);
+}
+
+#graph-tooltip .tt-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 0.3rem;
+}
+
+#graph-tooltip .tt-desc {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--ink-dim);
+}
+
+/* CARDS GRID */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.card {
+  border: 1px solid var(--ink-faint);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s;
+  cursor: pointer;
+  background: var(--deep-warm);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  transition: height 0.4s;
+}
+
+.card[data-color="water"]::before { background: var(--water); }
+.card[data-color="fire"]::before { background: var(--fire); }
+.card[data-color="spirit"]::before { background: var(--spirit); }
+.card[data-color="gold"]::before { background: var(--gold); }
+
+.card:hover::before { height: 100%; opacity: 0.05; }
+
+.card:hover {
+  border-color: var(--gold-dim);
+  transform: translateY(-4px);
+}
+
+.card .card-icon {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.card .card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card .card-text {
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: var(--ink-dim);
+}
+
+/* EXPANDABLE DETAILS */
+.expand-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+
+.card.expanded .expand-content {
+  max-height: 600px;
+}
+
+.expand-content .detail {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ink-faint);
+  font-size: 0.78rem;
+  line-height: 1.8;
+  color: var(--ink-dim);
+}
+
+/* FOOTER */
+#footer {
+  padding: 4rem 2rem;
+  text-align: center;
+  border-top: 1px solid var(--ink-faint);
+}
+
+#footer p {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.15em;
+}
+
+#footer .back-top {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5rem 1.5rem;
+  border: 1px solid var(--ink-faint);
+  color: var(--ink-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  transition: all 0.3s;
+}
+
+#footer .back-top:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .timeline::before { left: 20px; }
+  .tl-item, .tl-item:nth-child(even) { width: calc(100% - 50px); margin-left: 50px; }
+  .tl-item::before, .tl-item:nth-child(odd)::before, .tl-item:nth-child(even)::before { left: -35px !important; right: auto !important; }
+  #nav .tabs { display: none; }
+  .cards-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="logo">Les Fils de l'Eau</div>
+  <div class="tabs">
+    <button class="tab active" onclick="scrollTo('#hero')">Accueil</button>
+    <button class="tab" onclick="scrollTo('#s-jean')">Jean</button>
+    <button class="tab" onclick="scrollTo('#s-mandeans')">Mandéens</button>
+    <button class="tab" onclick="scrollTo('#timeline-container')">Chronologie</button>
+    <button class="tab" onclick="scrollTo('#network')">Réseau</button>
+    <button class="tab" onclick="scrollTo('#s-concepts')">Concepts</button>
+  </div>
+</nav>
+
+<!-- HERO WITH PARTICLE CANVAS -->
+<section id="hero">
+  <canvas id="particles"></canvas>
+  <div class="content">
+    <h1>Les <em>Fils de l'Eau</em><br>& les Royaumes de Lumière</h1>
+    <p class="subtitle">Jean le Baptiste · Sabéens-Mandéens · Zarathoustra · Gnose</p>
+  </div>
+  <div class="scroll-hint">
+    <span>Explorer</span>
+    <div class="line"></div>
+  </div>
+</section>
+
+<!-- JEAN LE BAPTISTE -->
+<section class="section" id="s-jean">
+  <div class="section-label">I — Le Prophète</div>
+  <h2>Jean le Baptiste :<br>la <em>figure pivot</em></h2>
+  <p><strong>Vers l'an 28 de notre ère</strong>, un ascète vêtu de poils de chameau baptise les foules dans les eaux du Jourdain. Fils du prêtre Zacharie, nourri de sauterelles et de miel sauvage, Jean annonce l'imminence du Jugement divin. Son baptême est une innovation radicale : administré par lui-même (non auto-administré), unique (non répétable), eschatologique (préparant au Messie).</p>
+  <p>Flavius Josèphe, historien juif contemporain, confirme son existence et sa popularité — <strong>une attestation historique indépendante des Évangiles</strong>. Hérode Antipas le fait exécuter par crainte d'une révolte. Mais son mouvement lui survit : ses disciples forment un groupe distinct, rival du christianisme naissant.</p>
+  <p><strong>Fait sous-estimé :</strong> Jésus a été le disciple de Jean. Les premiers apôtres — André, Simon-Pierre, Philippe — viennent de l'entourage du Baptiste. Le christianisme est, à ses origines, une branche du mouvement baptiste de Jean.</p>
+</section>
+
+<!-- MANDÉENS -->
+<section class="section" id="s-mandeans">
+  <div class="section-label">II — Les Derniers Gnostiques</div>
+  <h2>Les Sabéens-Mandéens :<br><em>Manda</em> = Gnosis</h2>
+  <p>En araméen, <strong>manda</strong> signifie « connaissance » — exactement l'équivalent du grec <strong>gnosis</strong>. Les Mandéens sont donc, étymologiquement, des « gnostiques ». Ils constituent le <strong>seul mouvement gnostique antique à avoir survécu jusqu'à nos jours</strong>.</p>
+  <p>Leur théologie repose sur un dualisme Lumière/Ténèbres directement hérité du zoroastrisme. Ils vénèrent Adam, Abel, Seth, Énoch, Noé et surtout <strong>Jean le Baptiste</strong> comme leur dernier prophète. Abraham, Moïse, Jésus et Mahomet sont considérés comme des <strong>usurpateurs</strong>.</p>
+  <p>Leur rite central — le baptême par immersion dans l'eau courante, renouvelé chaque dimanche — serait quasiment <strong>inchangé depuis l'époque de Jean</strong>. Avant 2003, 65 000 Mandéens vivaient en Irak. Après la guerre et Daech, ils ne seraient plus que 5 000.</p>
+</section>
+
+<!-- TIMELINE -->
+<div id="timeline-container">
+  <div class="section-label" style="max-width:1100px;margin:0 auto 1rem;">III — Chronologie</div>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:300;max-width:1100px;margin:0 auto 2.5rem;">Deux millénaires de <em>filiation</em></h2>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="date">~660 av. J.-C.</div>
+      <div class="title">Zarathoustra prêche en Bactriane</div>
+      <div class="desc">Il invente le dualisme Lumière/Ténèbres, le jugement des âmes, le paradis et l'enfer. Ces concepts n'existaient pas dans le judaïsme ancien.</div>
+      <span class="tag tag-fire">Zoroastrisme</span>
+    </div>
+    <div class="tl-item">
+      <div class="date">~586-538 av. J.-C.</div>
+      <div class="title">Exil babylonien des Juifs</div>
+      <div class="desc">Au contact de l'empire perse, le judaïsme absorbe l'eschatologie zoroastrienne : résurrection, anges, démons, messianisme, jugement dernier.</div>
+      <span class="tag tag-gold">Transmission</span>
+    </div>
+    <div class="tl-item">
+      <div class="date">~IIe s. av. J.-C.</div>
+      <div class="title">Émergence des mouvements baptistes</div>
+      <div class="desc">Esséniens de Qumrân, Hémérobaptistes, Masbothéens. Le salut par l'eau remplace le salut par le sacrifice. Le Temple est contourné.</div>
+      <span class="tag tag-water">Baptisme</span>
+    </div>
+    <div class="tl-item">
+      <div class="date">~6 av. J.-C. — 28/29</div>
+      <div class="title">Jean le Baptiste</div>
+      <div class="desc">Baptême eschatologique dans le Jourdain. Jésus est son disciple. Jean est exécuté par Hérode Antipas. Ses disciples persistent comme groupe rival.</div>
+      <span class="tag tag-water">Baptisme</span>
+    </div>
+    <div class="tl-item">
+      <div class="date">~30-33</div>
+      <div class="title">Mouvement de Jésus</div>
+      <div class="desc">Issu du mouvement baptiste de Jean. Les premiers apôtres sont recrutés parmi les disciples de Jean. Le baptême reste le rite d'initiation central.</div>
+      <span class="tag tag-gold">Transmission</span>
+    </div>
+    <div class="tl-item">
+      <div class="date">~37/38</div>
+      <div class="title">Migration baptiste vers la Mésopotamie</div>
+      <div class="desc">Des disciples de Jean migrent vers le sud irakien. Au contact du mazdéisme et des religions babyloniennes, le mandéisme embryonnaire se forme.</div>
+      <span class="tag tag-water">Mandéisme</span>
+    </div>
+    <div class="tl-item">
+      <div class="date">~100</div>
+      <div class="title">Elkasaï fonde le mouvement elkasaïte</div>
+      <div class="desc">Branche judéo-chrétienne baptiste en Mésène. Observance de la Torah, baptême rédempteur, reconnaissance de Jésus comme prophète (pas Messie).</div>
+      <span class="tag tag-spirit">Elkasaïsme</span>
+    </div>
+    <div class="tl-item">
+      <div class="date">216-277</div>
+      <div class="title">Mani : du baptisme au manichéisme</div>
+      <div class="desc">Élevé dans une communauté elkasaïte, fils d'un judéo-chrétien et d'une zoroastrienne. Rejeté par les baptistes, il fonde une religion universelle qui s'étend de la Gaule à la Chine.</div>
+      <span class="tag tag-fire">Manichéisme</span>
+    </div>
+    <div class="tl-item">
+      <div class="date">~276-293</div>
+      <div class="title">Persécutions sassanides (Kirdir)</div>
+      <div class="desc">Le zoroastrisme devient religion d'État. Kirdir ordonne la persécution des Mandéens, Juifs, Chrétiens, Bouddhistes et Manichéens.</div>
+      <span class="tag tag-fire">Persécution</span>
+    </div>
+    <div class="tl-item">
+      <div class="date">VIIe siècle</div>
+      <div class="title">Conquête islamique</div>
+      <div class="desc">Les Mandéens assemblent le Ginza Rabba pour obtenir le statut de « Gens du Livre ». Le Coran mentionne les Sabéens à trois reprises aux côtés des Juifs et Nazaréens.</div>
+      <span class="tag tag-gold">Islam</span>
+    </div>
+    <div class="tl-item">
+      <div class="date">2003 — aujourd'hui</div>
+      <div class="title">Diaspora mandéenne</div>
+      <div class="desc">De 65 000 en Irak à 5 000. Exil vers les USA, Canada, Suède, Australie, France (Tours). Religion endogame et non-prosélyte face au risque d'extinction.</div>
+      <span class="tag tag-water">Mandéisme</span>
+    </div>
+  </div>
+</div>
+
+<!-- NETWORK GRAPH -->
+<section id="network" class="section">
+  <div class="section-label">IV — Réseau des filiations</div>
+  <h2>La <em>nébuleuse</em> baptiste</h2>
+  <canvas id="graph-canvas"></canvas>
+  <div id="graph-tooltip">
+    <div class="tt-name"></div>
+    <div class="tt-desc"></div>
+  </div>
+</section>
+
+<!-- CONCEPT CARDS -->
+<section class="section" id="s-concepts">
+  <div class="section-label">V — Concepts clés</div>
+  <h2>Les <em>liens</em> invisibles</h2>
+  <div class="cards-grid">
+    <div class="card" data-color="water" onclick="toggleCard(this)">
+      <div class="card-icon">𐡀</div>
+      <div class="card-title">Le Baptême</div>
+      <div class="card-text">Du Jourdain au Tigre, le rite d'immersion comme voie de salut.</div>
+      <div class="expand-content">
+        <div class="detail">Le baptême de Jean innove en étant <strong>administré par un tiers</strong>, <strong>unique</strong> et <strong>eschatologique</strong>. Les Esséniens pratiquent des ablutions auto-administrées et répétitives. Les Mandéens conservent l'immersion hebdomadaire en eau courante — peut-être la forme la plus ancienne de ce rite. Le baptême chrétien héritera du geste unique de Jean, tandis que les Mandéens maintiendront la répétition.</div>
+      </div>
+    </div>
+    <div class="card" data-color="fire" onclick="toggleCard(this)">
+      <div class="card-icon">☽</div>
+      <div class="card-title">Le Dualisme</div>
+      <div class="card-text">Lumière vs Ténèbres — de Zarathoustra aux Mandéens.</div>
+      <div class="expand-content">
+        <div class="detail">Zarathoustra crée le schéma <strong>Ahura Mazda / Angra Mainyu</strong>. Les Esséniens le traduisent en <strong>Fils de la Lumière / Fils des Ténèbres</strong>. Les Mandéens opposent le <strong>Monde d'en haut / Monde d'en bas</strong>. Mani en fait le cœur du manichéisme. Ce dualisme n'existait pas dans le judaïsme ancien — il est d'importation iranienne via l'exil babylonien.</div>
+      </div>
+    </div>
+    <div class="card" data-color="spirit" onclick="toggleCard(this)">
+      <div class="card-icon">𐡌</div>
+      <div class="card-title">La Gnose</div>
+      <div class="card-text">Manda = Gnosis = Connaissance salvatrice.</div>
+      <div class="expand-content">
+        <div class="detail">Le gnosticisme considère le monde matériel comme le produit d'un <strong>dieu inférieur</strong> (démiurge). L'âme emprisonnée doit acquérir la <strong>connaissance</strong> pour s'en libérer et remonter vers le Royaume de la Lumière. Les Mandéens sont les <strong>seuls gnostiques antiques encore vivants</strong>. Leur Ginza Rabba décrit l'ascension de l'âme à travers des purgatoires célestes (matarata) — un schéma parallèle au Pont Chinvat zoroastrien.</div>
+      </div>
+    </div>
+    <div class="card" data-color="gold" onclick="toggleCard(this)">
+      <div class="card-icon">𐡉</div>
+      <div class="card-title">Yahya / Jean</div>
+      <div class="card-text">Prophète pour trois religions, usurpé par zéro.</div>
+      <div class="expand-content">
+        <div class="detail">Jean le Baptiste est <strong>le précurseur</strong> pour les chrétiens, <strong>le prophète Yahya</strong> pour les musulmans, <strong>le dernier et plus grand prophète</strong> pour les Mandéens. Paradoxalement, les Mandéens sont les seuls à le placer au sommet — les deux autres traditions le subordonnent à des figures ultérieures (Jésus, Mahomet). Il est peut-être la <strong>figure religieuse la plus transversale de l'histoire</strong>.</div>
+      </div>
+    </div>
+    <div class="card" data-color="water" onclick="toggleCard(this)">
+      <div class="card-icon">⫰</div>
+      <div class="card-title">L'Ascension de l'Âme</div>
+      <div class="card-text">Du Pont Chinvat aux Matarata mandéens.</div>
+      <div class="expand-content">
+        <div class="detail">Dans le zoroastrisme, l'âme traverse le <strong>Pont Chinvat</strong> trois jours après la mort, jugée par Mithra, Sraosha et Rashnu. Chez les Mandéens, l'âme entame une <strong>ascension de 45 jours</strong> à travers les matarata (purgatoires planétaires). Le vocabulaire rituel mandéen porte ~130 mots d'emprunt parthe/iranien. La masiqta (messe des morts mandéenne) correspond fonctionnellement à la messe zoroastrienne pour les défunts.</div>
+      </div>
+    </div>
+    <div class="card" data-color="fire" onclick="toggleCard(this)">
+      <div class="card-icon">𐡎</div>
+      <div class="card-title">Les Sabéens du Coran</div>
+      <div class="card-text">Ahl al-Kitab — les « Gens du Livre » oubliés.</div>
+      <div class="expand-content">
+        <div class="detail">Le Coran mentionne les Sabéens (Ṣābi'ūn) <strong>trois fois</strong> (2:62, 5:69, 22:17) aux côtés des Juifs et des Nazaréens. Les contemporains de Mahomet qualifiaient ses compagnons de « Sabéens » tant les ressemblances semblaient frappantes. L'elkasaïsme — ancêtre probable des Sabéens coraniques — partage avec l'islam les ablutions, la direction de prière, et certains interdits alimentaires.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="footer">
+  <p>Saad's Lab — Les Fils de l'Eau — Recherche & Visualisation</p>
+  <a href="#hero" class="back-top">↑ Remonter</a>
+</footer>
+
+<script>
+// ─── PARTICLE SYSTEM (HERO) ───
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+function resizeCanvas() {
+  W = canvas.width = canvas.offsetWidth * devicePixelRatio;
+  H = canvas.height = canvas.offsetHeight * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * (W / devicePixelRatio);
+    this.y = Math.random() * (H / devicePixelRatio);
+    this.r = Math.random() * 1.5 + 0.3;
+    this.vx = (Math.random() - 0.5) * 0.15;
+    this.vy = -Math.random() * 0.3 - 0.05;
+    this.alpha = Math.random() * 0.4 + 0.1;
+    this.hue = Math.random() > 0.7 ? '196,153,59' : '200,195,180';
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.y < -10 || this.x < -10 || this.x > W / devicePixelRatio + 10) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${this.hue},${this.alpha})`;
+    ctx.fill();
+  }
+}
+
+const particles = Array.from({ length: 120 }, () => new Particle());
+
+function animateParticles() {
+  ctx.clearRect(0, 0, W / devicePixelRatio, H / devicePixelRatio);
+  particles.forEach(p => { p.update(); p.draw(); });
+
+  // draw connections
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 100) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(196,153,59,${0.06 * (1 - d / 100)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ─── NETWORK GRAPH ───
+const graphCanvas = document.getElementById('graph-canvas');
+const gctx = graphCanvas.getContext('2d');
+const tooltip = document.getElementById('graph-tooltip');
+
+const nodes = [
+  { id: 'zara', label: 'Zarathoustra', x: 0.15, y: 0.3, r: 22, color: '#C45A3B', desc: 'Prophète iranien (~660 av. J.-C.). Inventeur du dualisme Lumière/Ténèbres, du jugement des âmes, du paradis et de l\'enfer.' },
+  { id: 'juda', label: 'Judaïsme post-exilique', x: 0.35, y: 0.18, r: 18, color: '#C4993B', desc: 'Après l\'exil babylonien (538 av. J.-C.), le judaïsme absorbe l\'eschatologie zoroastrienne : résurrection, anges, démons, messianisme.' },
+  { id: 'essen', label: 'Esséniens / Qumrân', x: 0.3, y: 0.42, r: 16, color: '#5AADD0', desc: 'Communauté ascétique du désert de Judée. « Fils de la Lumière » vs « Fils des Ténèbres ». Manuscrits de la mer Morte.' },
+  { id: 'jean', label: 'Jean le Baptiste', x: 0.5, y: 0.35, r: 26, color: '#5AADD0', desc: 'Prophète baptiste (~6 av. J.-C.–28/29). Baptême eschatologique dans le Jourdain. Figure pivot de l\'histoire religieuse.' },
+  { id: 'jesus', label: 'Mouvement de Jésus', x: 0.65, y: 0.2, r: 20, color: '#C4993B', desc: 'Disciple de Jean, Jésus fonde un mouvement qui deviendra le christianisme. Le baptême reste le rite central d\'initiation.' },
+  { id: 'baptdisciples', label: 'Disciples de Jean', x: 0.55, y: 0.55, r: 14, color: '#5AADD0', desc: 'Après la mort de Jean, une partie de ses disciples refuse de reconnaître Jésus et forme un mouvement rival persistant.' },
+  { id: 'elkasa', label: 'Elkasaïtes', x: 0.4, y: 0.65, r: 17, color: '#A080D0', desc: 'Secte baptiste judéo-chrétienne (~100). Torah + baptême + Jésus comme prophète. Matrice du manichéisme et peut-être du mandéisme.' },
+  { id: 'mani', label: 'Mani / Manichéisme', x: 0.25, y: 0.78, r: 19, color: '#C45A3B', desc: 'Élevé chez les Elkasaïtes, fils d\'un judéo-chrétien et d\'une zoroastrienne. Fonde une religion universelle (IIIe s.) de la Gaule à la Chine.' },
+  { id: 'mandeans', label: 'Mandéens', x: 0.6, y: 0.75, r: 24, color: '#5AADD0', desc: 'Derniers gnostiques, derniers baptistes. Jean comme prophète suprême. ~60 000 avant 2003, diaspora mondiale aujourd\'hui.' },
+  { id: 'islam', label: 'Islam', x: 0.82, y: 0.5, r: 18, color: '#C4993B', desc: 'Le Coran mentionne les Sabéens comme « Gens du Livre ». Jean (Yahya) est prophète. Influence elkasaïte/ébionite probable sur les rituels.' },
+  { id: 'mazd', label: 'Mazdéisme sassanide', x: 0.12, y: 0.6, r: 15, color: '#C45A3B', desc: 'Religion d\'État perse (IIIe-VIIe s.). Persécute les Mandéens (inscription de Kirdir) tout en les influençant profondément.' },
+  { id: 'ginza', label: 'Ginza Rabba', x: 0.75, y: 0.72, r: 13, color: '#A080D0', desc: 'Le « Grand Trésor » : texte sacré principal des Mandéens. Assemblé au VIIe s. pour obtenir le statut de Gens du Livre.' },
+];
+
+const edges = [
+  { from: 'zara', to: 'juda', label: 'influence eschatologique' },
+  { from: 'zara', to: 'mazd', label: 'héritage direct' },
+  { from: 'juda', to: 'essen', label: 'courant marginal' },
+  { from: 'essen', to: 'jean', label: 'proximité (débattue)' },
+  { from: 'jean', to: 'jesus', label: 'maître → disciple' },
+  { from: 'jean', to: 'baptdisciples', label: 'disciples fidèles' },
+  { from: 'baptdisciples', to: 'mandeans', label: 'migration mésopotamie' },
+  { from: 'juda', to: 'elkasa', label: 'branche baptiste' },
+  { from: 'elkasa', to: 'mani', label: 'matrice directe' },
+  { from: 'elkasa', to: 'mandeans', label: 'influence probable' },
+  { from: 'mazd', to: 'mandeans', label: '~130 mots, rituels funéraires' },
+  { from: 'mazd', to: 'mani', label: 'héritage maternel' },
+  { from: 'mandeans', to: 'ginza', label: 'texte sacré' },
+  { from: 'mandeans', to: 'islam', label: 'Sabéens coraniques' },
+  { from: 'elkasa', to: 'islam', label: 'influence rituelle' },
+  { from: 'jesus', to: 'islam', label: 'Jésus = prophète' },
+  { from: 'jean', to: 'islam', label: 'Yahya = prophète' },
+  { from: 'zara', to: 'mani', label: 'dualisme cosmique' },
+];
+
+let gW, gH, hoveredNode = null;
+
+function resizeGraph() {
+  const rect = graphCanvas.getBoundingClientRect();
+  gW = graphCanvas.width = rect.width * devicePixelRatio;
+  gH = graphCanvas.height = rect.height * devicePixelRatio;
+  gctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+}
+resizeGraph();
+window.addEventListener('resize', resizeGraph);
+
+function drawGraph() {
+  const w = gW / devicePixelRatio;
+  const h = gH / devicePixelRatio;
+  gctx.clearRect(0, 0, w, h);
+
+  // edges
+  edges.forEach(e => {
+    const from = nodes.find(n => n.id === e.from);
+    const to = nodes.find(n => n.id === e.to);
+    const fx = from.x * w, fy = from.y * h;
+    const tx = to.x * w, ty = to.y * h;
+
+    const isHovered = hoveredNode && (hoveredNode.id === e.from || hoveredNode.id === e.to);
+    gctx.beginPath();
+    gctx.moveTo(fx, fy);
+    gctx.lineTo(tx, ty);
+    gctx.strokeStyle = isHovered ? 'rgba(196,153,59,0.5)' : 'rgba(90,83,71,0.2)';
+    gctx.lineWidth = isHovered ? 1.5 : 0.7;
+    gctx.stroke();
+
+    if (isHovered) {
+      const mx = (fx + tx) / 2, my = (fy + ty) / 2;
+      gctx.font = '9px "JetBrains Mono"';
+      gctx.fillStyle = 'rgba(196,153,59,0.7)';
+      gctx.textAlign = 'center';
+      gctx.fillText(e.label, mx, my - 5);
+    }
+  });
+
+  // nodes
+  nodes.forEach(n => {
+    const nx = n.x * w, ny = n.y * h;
+    const isHovered = hoveredNode && hoveredNode.id === n.id;
+    const isConnected = hoveredNode && edges.some(e =>
+      (e.from === hoveredNode.id && e.to === n.id) || (e.to === hoveredNode.id && e.from === n.id)
+    );
+    const dimmed = hoveredNode && !isHovered && !isConnected;
+
+    // glow
+    if (isHovered) {
+      const grad = gctx.createRadialGradient(nx, ny, 0, nx, ny, n.r * 2.5);
+      grad.addColorStop(0, n.color + '40');
+      grad.addColorStop(1, 'transparent');
+      gctx.beginPath();
+      gctx.arc(nx, ny, n.r * 2.5, 0, Math.PI * 2);
+      gctx.fillStyle = grad;
+      gctx.fill();
+    }
+
+    gctx.beginPath();
+    gctx.arc(nx, ny, n.r, 0, Math.PI * 2);
+    gctx.fillStyle = dimmed ? 'rgba(30,28,25,0.8)' : n.color + (isHovered ? '' : '90');
+    gctx.fill();
+    gctx.strokeStyle = dimmed ? 'rgba(90,83,71,0.15)' : n.color;
+    gctx.lineWidth = isHovered ? 2 : 1;
+    gctx.stroke();
+
+    gctx.font = `${isHovered ? '600 11' : '400 10'}px "Noto Sans"`;
+    gctx.fillStyle = dimmed ? 'rgba(155,145,126,0.3)' : (isHovered ? '#E8E0D0' : '#9B917E');
+    gctx.textAlign = 'center';
+    gctx.fillText(n.label, nx, ny + n.r + 14);
+  });
+
+  requestAnimationFrame(drawGraph);
+}
+drawGraph();
+
+graphCanvas.addEventListener('mousemove', e => {
+  const rect = graphCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const w = rect.width, h = rect.height;
+
+  hoveredNode = null;
+  for (const n of nodes) {
+    const dx = mx - n.x * w;
+    const dy = my - n.y * h;
+    if (Math.sqrt(dx * dx + dy * dy) < n.r + 8) {
+      hoveredNode = n;
+      break;
+    }
+  }
+
+  if (hoveredNode) {
+    graphCanvas.style.cursor = 'pointer';
+    tooltip.style.opacity = 1;
+    tooltip.style.left = (e.clientX + 15) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+    tooltip.querySelector('.tt-name').textContent = hoveredNode.label;
+    tooltip.querySelector('.tt-desc').textContent = hoveredNode.desc;
+  } else {
+    graphCanvas.style.cursor = 'grab';
+    tooltip.style.opacity = 0;
+  }
+});
+
+graphCanvas.addEventListener('mouseleave', () => {
+  hoveredNode = null;
+  tooltip.style.opacity = 0;
+});
+
+// ─── SCROLL ANIMATIONS ───
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.section, .tl-item').forEach(el => observer.observe(el));
+
+// staggered timeline items
+const tlObserver = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 100);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.tl-item').forEach(el => tlObserver.observe(el));
+
+// ─── NAV TABS ───
+function scrollTo(selector) {
+  document.querySelector(selector).scrollIntoView({ behavior: 'smooth' });
+}
+
+// active tab on scroll
+const sections = ['#hero', '#s-jean', '#s-mandeans', '#timeline-container', '#network', '#s-concepts'];
+window.addEventListener('scroll', () => {
+  const tabs = document.querySelectorAll('.tab');
+  let active = 0;
+  sections.forEach((s, i) => {
+    const el = document.querySelector(s);
+    if (el && el.getBoundingClientRect().top < window.innerHeight / 2) active = i;
+  });
+  tabs.forEach((t, i) => t.classList.toggle('active', i === active));
+});
+
+// ─── EXPANDABLE CARDS ───
+function toggleCard(card) {
+  card.classList.toggle('expanded');
+}
+</script>
+</body>
+</html>
