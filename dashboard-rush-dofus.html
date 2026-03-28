@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚔️ Dashboard Rush — Dofus Rétro</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Fira+Code:wght@400;500&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a25;--bg4:#222233;
+    --gold:#d4a843;--gold-dim:#a07a2e;--gold-glow:#f5c94280;
+    --accent:#e8c547;--accent2:#ff6b35;--accent3:#4ecdc4;
+    --text:#e8e4dc;--text-dim:#8a8696;--text-bright:#fff;
+    --border:#2a2a3a;--border-active:#d4a84380;
+    --danger:#e74c3c;--success:#2ecc71;
+    --radius:8px;
+  }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
+    min-height:100vh;line-height:1.6;overflow-x:hidden;
+  }
+
+  /* ── BACKGROUND TEXTURE ── */
+  body::before{
+    content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%,#1a152a 0%,transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 90%,#1a1a10 0%,transparent 50%),
+      repeating-conic-gradient(var(--bg) 0% 25%,transparent 0% 50%) 0 0/60px 60px;
+    opacity:.3;
+  }
+
+  /* ── HEADER ── */
+  .header{
+    position:relative;z-index:1;text-align:center;
+    padding:48px 24px 32px;
+    background:linear-gradient(180deg,#0f0e18 0%,transparent 100%);
+    border-bottom:1px solid var(--border);
+  }
+  .header::after{
+    content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);
+    width:200px;height:2px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+  .header-icon{
+    font-size:48px;display:block;margin-bottom:8px;
+    animation:float 3s ease-in-out infinite;
+    filter:drop-shadow(0 0 20px var(--gold-glow));
+  }
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .header h1{
+    font-family:'Cinzel',serif;font-weight:900;font-size:clamp(1.6rem,4vw,2.4rem);
+    background:linear-gradient(135deg,var(--gold),#fff5d4,var(--gold));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    letter-spacing:3px;text-transform:uppercase;
+  }
+  .header p{
+    color:var(--text-dim);font-size:.9rem;margin-top:6px;
+    font-family:'Fira Code',monospace;letter-spacing:1px;
+  }
+
+  /* ── TABS NAV ── */
+  .tabs-nav{
+    position:sticky;top:0;z-index:100;
+    display:flex;gap:4px;padding:8px 12px;
+    background:var(--bg2);border-bottom:1px solid var(--border);
+    overflow-x:auto;scrollbar-width:thin;
+    scrollbar-color:var(--gold-dim) var(--bg2);
+    backdrop-filter:blur(12px);
+  }
+  .tabs-nav::-webkit-scrollbar{height:4px}
+  .tabs-nav::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:4px}
+  .tab-btn{
+    flex-shrink:0;display:flex;align-items:center;gap:8px;
+    padding:10px 18px;border:1px solid var(--border);border-radius:var(--radius);
+    background:transparent;color:var(--text-dim);
+    font-family:'Cinzel',serif;font-size:.78rem;font-weight:600;
+    cursor:pointer;transition:all .25s ease;white-space:nowrap;
+    letter-spacing:.5px;text-transform:uppercase;
+  }
+  .tab-btn:hover{color:var(--text);border-color:var(--gold-dim);background:var(--bg3)}
+  .tab-btn.active{
+    color:var(--accent);border-color:var(--gold);
+    background:linear-gradient(135deg,var(--bg3),var(--bg4));
+    box-shadow:0 0 16px var(--gold-glow),inset 0 1px 0 #ffffff08;
+  }
+  .tab-btn .tab-icon{font-size:1.1rem}
+
+  /* ── CONTENT ── */
+  .content{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:24px 16px 80px}
+  .tab-panel{display:none;animation:fadeIn .35s ease}
+  .tab-panel.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ── SECTION CARDS ── */
+  .card{
+    background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+    padding:28px 24px;margin-bottom:20px;
+    transition:border-color .3s;position:relative;overflow:hidden;
+  }
+  .card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,transparent 10%,var(--gold-dim),transparent 90%);
+    opacity:0;transition:opacity .3s;
+  }
+  .card:hover{border-color:var(--border-active)}
+  .card:hover::before{opacity:1}
+
+  .card-title{
+    font-family:'Cinzel',serif;font-weight:700;font-size:1.15rem;
+    color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:10px;
+  }
+  .card-title .card-icon{font-size:1.3rem}
+
+  /* ── STAT BLOCKS ── */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+  .stat-block{
+    background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px;text-align:center;transition:transform .2s,border-color .2s;
+  }
+  .stat-block:hover{transform:translateY(-2px);border-color:var(--gold-dim)}
+  .stat-value{
+    font-family:'Cinzel',serif;font-size:1.8rem;font-weight:900;
+    color:var(--accent);line-height:1;
+  }
+  .stat-label{font-size:.75rem;color:var(--text-dim);margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+
+  /* ── INFO BLOCKS ── */
+  .info-block{
+    background:var(--bg3);border-left:3px solid var(--gold-dim);
+    border-radius:0 var(--radius) var(--radius) 0;
+    padding:14px 18px;margin-bottom:12px;
+    font-size:.9rem;line-height:1.7;
+  }
+  .info-block strong{color:var(--accent)}
+  .info-block .highlight{
+    color:var(--accent2);font-family:'Fira Code',monospace;font-weight:500;
+  }
+  .info-block.warn{border-left-color:var(--danger)}
+  .info-block.warn strong{color:var(--danger)}
+  .info-block.tip{border-left-color:var(--accent3)}
+  .info-block.tip strong{color:var(--accent3)}
+
+  /* ── CHECKLIST ── */
+  .checklist{list-style:none}
+  .checklist li{
+    display:flex;align-items:flex-start;gap:14px;
+    padding:14px 16px;margin-bottom:8px;
+    background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
+    transition:all .25s;cursor:pointer;
+  }
+  .checklist li:hover{border-color:var(--gold-dim);background:var(--bg4)}
+  .checklist li.done{opacity:.55;border-color:var(--success)}
+  .checklist li.done .quest-name{text-decoration:line-through;color:var(--text-dim)}
+  .check-box{
+    flex-shrink:0;width:22px;height:22px;border:2px solid var(--gold-dim);
+    border-radius:5px;display:flex;align-items:center;justify-content:center;
+    margin-top:2px;transition:all .25s;font-size:14px;color:transparent;
+  }
+  .checklist li.done .check-box{
+    background:var(--success);border-color:var(--success);color:#fff;
+  }
+  .quest-info{flex:1}
+  .quest-name{
+    font-weight:700;color:var(--text-bright);font-size:.95rem;display:block;margin-bottom:4px;
+  }
+  .quest-detail{font-size:.83rem;color:var(--text-dim);line-height:1.5}
+  .quest-xp{
+    font-family:'Fira Code',monospace;font-size:.75rem;font-weight:500;
+    color:var(--accent3);background:var(--bg);
+    padding:2px 8px;border-radius:4px;margin-top:6px;display:inline-block;
+  }
+
+  /* ── ZONE CARDS ── */
+  .zone-card{
+    background:var(--bg3);border:1px solid var(--border);border-radius:12px;
+    padding:20px;margin-bottom:14px;
+    display:grid;grid-template-columns:auto 1fr;gap:16px;
+    transition:border-color .3s;
+  }
+  .zone-card:hover{border-color:var(--gold-dim)}
+  .zone-level{
+    display:flex;align-items:center;justify-content:center;
+    width:54px;height:54px;border-radius:50%;
+    background:linear-gradient(135deg,var(--bg4),var(--bg));
+    border:2px solid var(--gold-dim);
+    font-family:'Cinzel',serif;font-weight:900;font-size:.85rem;color:var(--gold);
+    text-align:center;line-height:1.1;
+  }
+  .zone-body h4{color:var(--text-bright);font-size:1rem;margin-bottom:6px}
+  .zone-body p{font-size:.85rem;color:var(--text-dim);line-height:1.6}
+  .zone-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .zone-tag{
+    font-size:.7rem;padding:3px 10px;border-radius:20px;
+    background:var(--bg);border:1px solid var(--border);color:var(--text-dim);
+    font-family:'Fira Code',monospace;letter-spacing:.5px;
+  }
+  .zone-tag.xp{border-color:var(--accent3);color:var(--accent3)}
+  .zone-tag.drop{border-color:var(--accent2);color:var(--accent2)}
+  .zone-tag.kamas{border-color:var(--gold);color:var(--gold)}
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap{margin:20px 0 12px}
+  .progress-header{display:flex;justify-content:space-between;margin-bottom:6px}
+  .progress-header span{font-size:.8rem;color:var(--text-dim);font-family:'Fira Code',monospace}
+  .progress-bar{
+    height:10px;background:var(--bg);border-radius:20px;overflow:hidden;
+    border:1px solid var(--border);
+  }
+  .progress-fill{
+    height:100%;border-radius:20px;
+    background:linear-gradient(90deg,var(--gold-dim),var(--accent));
+    transition:width .5s cubic-bezier(.25,.8,.25,1);
+  }
+
+  /* ── KAMAS TABLE ── */
+  .kamas-table{width:100%;border-collapse:collapse;margin-top:12px}
+  .kamas-table th,.kamas-table td{
+    padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);
+    font-size:.85rem;
+  }
+  .kamas-table th{
+    font-family:'Cinzel',serif;color:var(--gold);font-weight:600;
+    background:var(--bg);text-transform:uppercase;font-size:.75rem;letter-spacing:1px;
+  }
+  .kamas-table tr:hover td{background:var(--bg4)}
+  .kamas-table .kamas-amount{
+    font-family:'Fira Code',monospace;color:var(--accent);font-weight:500;
+  }
+
+  /* ── STUFF SECTION ── */
+  .stuff-card{
+    background:var(--bg3);border:1px solid var(--border);border-radius:12px;
+    padding:20px;margin-bottom:14px;position:relative;overflow:hidden;
+  }
+  .stuff-card::after{
+    content:'';position:absolute;top:0;right:0;width:60px;height:60px;
+    background:radial-gradient(circle at top right,var(--gold-glow),transparent 70%);
+    pointer-events:none;
+  }
+  .stuff-name{
+    font-family:'Cinzel',serif;font-weight:700;color:var(--accent);
+    font-size:1rem;margin-bottom:8px;display:flex;align-items:center;gap:8px;
+  }
+  .stuff-desc{font-size:.85rem;color:var(--text-dim);line-height:1.6}
+  .stuff-desc strong{color:var(--text)}
+
+  /* ── RESET BUTTON ── */
+  .reset-bar{
+    display:flex;justify-content:flex-end;margin-bottom:16px;
+  }
+  .reset-btn{
+    background:transparent;border:1px solid var(--danger);color:var(--danger);
+    padding:6px 14px;border-radius:var(--radius);font-size:.75rem;
+    font-family:'Fira Code',monospace;cursor:pointer;transition:all .2s;
+  }
+  .reset-btn:hover{background:var(--danger);color:#fff}
+
+  /* ── FOOTER ── */
+  .footer{
+    text-align:center;padding:32px;font-size:.75rem;color:var(--text-dim);
+    font-family:'Fira Code',monospace;border-top:1px solid var(--border);
+    position:relative;z-index:1;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:600px){
+    .tab-btn{padding:8px 12px;font-size:.7rem}
+    .card{padding:20px 16px}
+    .zone-card{grid-template-columns:1fr}
+    .zone-level{width:40px;height:40px;font-size:.7rem}
+    .stat-grid{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <span class="header-icon">⚔️</span>
+  <h1>Dashboard Rush</h1>
+  <p>Dofus Rétro — Stratégie de Team</p>
+</header>
+
+<!-- TABS NAVIGATION -->
+<nav class="tabs-nav" id="tabsNav">
+  <button class="tab-btn active" data-tab="rules"><span class="tab-icon">📜</span> Règles d'Or</button>
+  <button class="tab-btn" data-tab="quests"><span class="tab-icon">✅</span> Rush Quêtes</button>
+  <button class="tab-btn" data-tab="zones"><span class="tab-icon">🗺️</span> Zones XP</button>
+  <button class="tab-btn" data-tab="kamas"><span class="tab-icon">💰</span> Kamas</button>
+  <button class="tab-btn" data-tab="stuff"><span class="tab-icon">🛡️</span> Stuffs</button>
+</nav>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <!-- ═══ ONGLET 1 : RÈGLES D'OR ═══ -->
+  <section class="tab-panel active" id="panel-rules">
+    <div class="card">
+      <div class="card-title"><span class="card-icon">⚡</span> Multiplicateur d'XP en Groupe</div>
+      <div class="stat-grid">
+        <div class="stat-block">
+          <div class="stat-value">x2.3</div>
+          <div class="stat-label">4 Joueurs</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-value">x3.1</div>
+          <div class="stat-label">5 Joueurs</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-value" style="color:var(--accent2)">x4.7</div>
+          <div class="stat-label">8 Joueurs ★</div>
+        </div>
+      </div>
+      <div class="info-block">
+        L'XP est massivement optimisée en groupe. À <strong>8 joueurs</strong>, le ratio est maximum avec un multiplicateur de <span class="highlight">x4.7</span> — c'est presque comme avoir un bonus d'XP ×5 par rapport à un joueur solo. Toujours privilégier les combats en équipe complète.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="card-icon">⚖️</span> Niveaux des Groupes</div>
+      <div class="info-block tip">
+        <strong>Règle des 10%</strong> : Pour une XP optimale, le niveau total de votre groupe doit être <strong>supérieur ou inférieur de 10% maximum</strong> par rapport au niveau total du groupe de monstres adverse. Au-delà, l'XP chute drastiquement.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="card-icon">⚠️</span> Attention au Malus "Mule"</div>
+      <div class="info-block warn">
+        <strong>Malus drastique !</strong> Le jeu impose un malus d'XP si l'écart de niveau est trop grand au sein du groupe. Pour qu'un personnage "mule" prenne de l'XP normalement, son niveau doit être au moins égal à <span class="highlight">1/3</span> du niveau du personnage le plus haut du groupe.<br><br>
+        <em>Exemple : avec un joueur niveau <span class="highlight">150</span>, la mule doit être au minimum niveau <span class="highlight">50</span>.</em>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ONGLET 2 : CHECKLIST RUSH QUÊTES ═══ -->
+  <section class="tab-panel" id="panel-quests">
+    <div class="card">
+      <div class="card-title"><span class="card-icon">🏁</span> Rush Quêtes — Lvl 1 → 15/20</div>
+      <p style="font-size:.85rem;color:var(--text-dim);margin-bottom:8px">
+        Route optimisée pour atteindre le niveau 15-20 en <strong style="color:var(--accent)">moins de 30 minutes</strong> sans combattre. Coche les quêtes au fur et à mesure !
+      </p>
+      <div class="progress-wrap">
+        <div class="progress-header">
+          <span>Progression</span>
+          <span id="questProgress">0 / 7</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="questFill" style="width:0%"></div></div>
+      </div>
+      <div class="reset-bar">
+        <button class="reset-btn" onclick="resetChecklist()">↺ Reset checklist</button>
+      </div>
+      <ul class="checklist" id="questList">
+        <li data-quest="q1">
+          <div class="check-box">✓</div>
+          <div class="quest-info">
+            <span class="quest-name">Chef de guerre Bouftou — Incarnam</span>
+            <span class="quest-detail">Relancer la quête en boucle à 8 joueurs pour accumuler les chances de drop la Coiffe et la Cape Bouftou (1% de chance par perso).</span>
+            <span class="quest-xp">🎯 Drop: Coiffe + Cape Bouftou</span>
+          </div>
+        </li>
+        <li data-quest="q2">
+          <div class="check-box">✓</div>
+          <div class="quest-info">
+            <span class="quest-name">Pauvre pomme (de terre)</span>
+            <span class="quest-detail">Prendre en <strong>[6, -5]</strong> et livrer en <strong>[12, -7]</strong> à la prison.</span>
+            <span class="quest-xp">+2 000 XP</span>
+          </div>
+        </li>
+        <li data-quest="q3">
+          <div class="check-box">✓</div>
+          <div class="quest-info">
+            <span class="quest-name">Visite guidée au château d'Allister</span>
+            <span class="quest-detail">À faire en parallèle de la quête des patates pour optimiser le temps.</span>
+            <span class="quest-xp">+7 000 XP</span>
+          </div>
+        </li>
+        <li data-quest="q4">
+          <div class="check-box">✓</div>
+          <div class="quest-info">
+            <span class="quest-name">Les dents de la mère Verumacha</span>
+            <span class="quest-detail">Parler au PNJ en <strong>[8, -4]</strong> puis faire les allers-retours dans le port.</span>
+            <span class="quest-xp">+12 000 XP</span>
+          </div>
+        </li>
+        <li data-quest="q5">
+          <div class="check-box">✓</div>
+          <div class="quest-info">
+            <span class="quest-name">À la recherche des enus disparus</span>
+            <span class="quest-detail">Mine d'Astrub en <strong>[6, -19]</strong>. Tuer un rat d'égout niveau 30 (à faire en groupe !).</span>
+            <span class="quest-xp">+12 000 XP</span>
+          </div>
+        </li>
+        <li data-quest="q6">
+          <div class="check-box">✓</div>
+          <div class="quest-info">
+            <span class="quest-name">Bworkidais le paxifik</span>
+            <span class="quest-detail">En <strong>[-5, 6]</strong> au campement Bwork. Répondre <strong>"Zog Zog"</strong> puis <strong>"vous devez être un sage"</strong>.</span>
+            <span class="quest-xp">+15 000 XP</span>
+          </div>
+        </li>
+        <li data-quest="q7">
+          <div class="check-box">✓</div>
+          <div class="quest-info">
+            <span class="quest-name">La discorde végétale</span>
+            <span class="quest-detail">Les premières étapes nécessitent une <strong>fleur de pissenlit diabolique</strong>. Quête en plusieurs étapes à enchaîner.</span>
+            <span class="quest-xp">Jusqu'à +43 000 XP</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══ ONGLET 3 : ZONES XP / DROP ═══ -->
+  <section class="tab-panel" id="panel-zones">
+    <div class="card">
+      <div class="card-title"><span class="card-icon">🗺️</span> Zones d'XP & Drop — Lvl 20 → 50</div>
+
+      <div class="zone-card">
+        <div class="zone-level">20+</div>
+        <div class="zone-body">
+          <h4>Contours d'Astrub</h4>
+          <p>Idéal pour éviter la masse de joueurs. Taper des <strong>Pious</strong> pour les plumes (qui valent cher pour les Tailleurs) et des <strong>Prespics/Sangliers</strong> pour les équipements.</p>
+          <div class="zone-tags">
+            <span class="zone-tag xp">XP stable</span>
+            <span class="zone-tag drop">Plumes</span>
+            <span class="zone-tag kamas">Kamas indirects</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="zone-card">
+        <div class="zone-level">25+</div>
+        <div class="zone-body">
+          <h4>Scarafeuilles</h4>
+          <p>Excellente zone de groupe. Les monstres ont <strong>50% de faiblesses</strong> dans un élément. Drop des panoplies donnant de belles résistances et jusqu'à <strong>120 statistiques</strong> utiles.</p>
+          <div class="zone-tags">
+            <span class="zone-tag xp">XP groupe ★</span>
+            <span class="zone-tag drop">Panoplies Scara</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="zone-card">
+        <div class="zone-level">30+</div>
+        <div class="zone-body">
+          <h4>Tainéla / Donjon Bouftou</h4>
+          <p>Indispensable pour s'équiper. Nécessite beaucoup de clés. Permet de générer des <strong>petits parchemins de sagesse</strong> et de monter les métiers de craft.</p>
+          <div class="zone-tags">
+            <span class="zone-tag drop">Équipements</span>
+            <span class="zone-tag kamas">Parchemins sagesse</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="zone-card">
+        <div class="zone-level">20-<br>30</div>
+        <div class="zone-body">
+          <h4>Porcoss / Plaine des Porkass</h4>
+          <p>Bonne zone de rush en team dès le niveau 20-30 pour prendre de l'avance rapidement.</p>
+          <div class="zone-tags">
+            <span class="zone-tag xp">Rush XP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="zone-card">
+        <div class="zone-level">35+</div>
+        <div class="zone-body">
+          <h4>Les Gelées</h4>
+          <p>Zone oubliée pour l'XP mais excellente pour le drop (<strong>Gélano</strong>). Attention aux Gelées Fraises qui ont des boucliers !</p>
+          <div class="zone-tags">
+            <span class="zone-tag drop">Gélano ★</span>
+            <span class="zone-tag">⚠️ Boucliers Fraises</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ONGLET 4 : KAMAS ═══ -->
+  <section class="tab-panel" id="panel-kamas">
+    <div class="card">
+      <div class="card-title"><span class="card-icon">💰</span> Génération de Kamas</div>
+
+      <table class="kamas-table">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Gain estimé</th>
+            <th>Détails</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Donjon Forgeron</strong></td>
+            <td class="kamas-amount">~60 000k / run</td>
+            <td>Meilleure source de "Kamas bruts" en début de serveur. ~7 500k par perso. Drop le <strong>Manuel du Tailleur</strong>.</td>
+          </tr>
+          <tr>
+            <td><strong>Dopeuls</strong></td>
+            <td class="kamas-amount">Quotidien</td>
+            <td>Utiliser les doplons pour récupérer des <strong>petits parchemins de caractéristiques</strong> et les revendre.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="card-icon">🔨</span> Métiers Rentables</div>
+      <div class="info-block">
+        <strong>Chasseur</strong> — Meilleur métier PvM : génère de la viande automatiquement sans effort supplémentaire à chaque combat.
+      </div>
+      <div class="info-block tip">
+        <strong>Paysan / Boulanger</strong> — Duo valeur sûre. La méthode la plus rapide et la plus fiable pour générer du cash en early-game.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ONGLET 5 : STUFFS ═══ -->
+  <section class="tab-panel" id="panel-stuff">
+    <div class="card">
+      <div class="card-title"><span class="card-icon">🛡️</span> Stuffs & Optimisation</div>
+
+      <div class="stuff-card">
+        <div class="stuff-name">📘 Panoplie Sagesse</div>
+        <div class="stuff-desc">
+          Éviter les items trop compliqués à craft au début. Viser la <strong>panoplie Champ Champ</strong> (lvl 9), un mix Aventurier, puis la <strong>panoplie Prespic</strong> (lvl 38) couplée avec des items comme la <strong>Broche Hète</strong>.
+        </div>
+      </div>
+
+      <div class="stuff-card">
+        <div class="stuff-name">💨 Panoplie Air</div>
+        <div class="stuff-desc">
+          Le duo <strong>Panoplie Toadi</strong> (donne <strong>+50 Agilité</strong> et <strong>+5 Dommages</strong>) et <strong>Cape du Tofu Fou</strong> est indispensable pour les builds agilité.
+        </div>
+      </div>
+
+      <div class="stuff-card">
+        <div class="stuff-name">🔥 Panoplie Terre / Feu</div>
+        <div class="stuff-desc">
+          La <strong>panoplie Bouftou</strong> reste la reine en début de jeu pour les builds Terre et Feu. Facile à obtenir, excellentes statistiques de base.
+        </div>
+      </div>
+
+      <div class="stuff-card">
+        <div class="stuff-name">🧮 Rappel Outils — Formule</div>
+        <div class="stuff-desc">
+          Toujours utiliser le mode <strong>"CAC Minator"</strong> de DofusBook en triant les armes par PA utilisé pour trouver les meilleurs dégâts réels par tour.<br><br>
+          <span style="font-family:'Fira Code',monospace;color:var(--accent2);font-size:.95rem;background:var(--bg);padding:4px 12px;border-radius:6px;display:inline-block;margin-top:4px">
+            1 Dommage = 5 Statistiques pures
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  ⚔️ Dashboard Rush — Dofus Rétro — Team Strategy Tool
+</footer>
+
+<script>
+  // ── Tab Navigation ──
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      tabBtns.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  });
+
+  // ── Checklist with localStorage ──
+  const STORAGE_KEY = 'dofus-rush-quests';
+  const questItems = document.querySelectorAll('#questList li');
+
+  function loadChecklist() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      questItems.forEach(li => {
+        const id = li.dataset.quest;
+        if (saved[id]) li.classList.add('done');
+      });
+    } catch(e) {}
+    updateProgress();
+  }
+
+  function saveChecklist() {
+    const state = {};
+    questItems.forEach(li => {
+      state[li.dataset.quest] = li.classList.contains('done');
+    });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  }
+
+  function updateProgress() {
+    const total = questItems.length;
+    const done = document.querySelectorAll('#questList li.done').length;
+    document.getElementById('questProgress').textContent = done + ' / ' + total;
+    document.getElementById('questFill').style.width = ((done / total) * 100) + '%';
+  }
+
+  questItems.forEach(li => {
+    li.addEventListener('click', () => {
+      li.classList.toggle('done');
+      saveChecklist();
+      updateProgress();
+    });
+  });
+
+  function resetChecklist() {
+    if (!confirm('Réinitialiser toute la checklist ?')) return;
+    questItems.forEach(li => li.classList.remove('done'));
+    saveChecklist();
+    updateProgress();
+  }
+
+  loadChecklist();
+</script>
+</body>
+</html>
