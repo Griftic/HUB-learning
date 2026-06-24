@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>Festival Control — Cashflow Dashboard</title>
+
+  <!-- Tailwind (Play CDN) : fait fonctionner toutes les classes utilitaires sans build -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Import map : une seule copie de React, partagée par recharts + lucide-react -->
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@18.3.1",
+      "react-dom": "https://esm.sh/react-dom@18.3.1",
+      "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+      "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+      "recharts": "https://esm.sh/recharts@2.12.7?external=react,react-dom",
+      "lucide-react": "https://esm.sh/lucide-react@0.383.0?external=react,react-dom"
+    }
+  }
+  </script>
+
+  <style>
+    html, body { margin: 0; padding: 0; background: #080B12; }
+    #root { min-height: 100vh; }
+    #boot { min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 16px; font-family: ui-monospace, monospace; color: #56627A; }
+    .boot-spin { width: 28px; height: 28px; border-radius: 50%; border: 3px solid #1E2633;
+                 border-top-color: #2DE0A6; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .boot-spin { animation: none; } }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div id="boot">
+      <div class="boot-spin"></div>
+      <div class="boot-msg" style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase">Chargement du tableau de bord…</div>
+    </div>
+  </div>
+
+  <!-- Filet de sécurité si un CDN ne répond pas -->
+  <script>
+    window.__loaded = false;
+    window.addEventListener('error', function () {
+      if (!window.__loaded) {
+        var r = document.getElementById('root');
+        if (r) r.innerHTML =
+          '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;' +
+          'font-family:ui-monospace,monospace;color:#FF5C8A;text-align:center;line-height:1.6">' +
+          'Impossible de charger React / Recharts depuis le CDN.<br>Ce fichier a besoin d\'un accès internet ' +
+          'pour fonctionner. Vérifie ta connexion et recharge la page.</div>';
+      }
+    }, true);
+    setTimeout(function () {
+      if (!window.__loaded) {
+        var m = document.querySelector('.boot-msg');
+        if (m) m.textContent = 'Chargement un peu long… (CDN)';
+      }
+    }, 6000);
+  </script>
+
+  <!-- Babel : transpile le JSX directement dans le navigateur -->
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
+
+  <script type="text/babel" data-type="module" data-presets="react">
+    import React, { useReducer, useMemo, useRef, useState, useEffect } from "react";
+    import { createRoot } from "react-dom/client";
+    import {
+      ComposedChart, Area, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
+      Tooltip, ReferenceLine, ReferenceArea, ResponsiveContainer, Cell,
+    } from "recharts";
+    import {
+      Activity, Calendar, Ticket, Building2, AlertTriangle, Wallet, Download,
+      Upload, RotateCcw, Plus, Trash2, Gauge, Zap, ArrowUpRight, ArrowDownRight, Radio,
+    } from "lucide-react";
+
+    /* ============================ THEME ============================ */
+    const C = {
+      bg: "#080B12", bg2: "#0C1019", panel: "#10151F", panel2: "#141A26",
+      border: "#1E2633", borderHi: "#2A3342",
+      ink: "#E8ECF4", sub: "#8A98AD", faint: "#56627A",
+      green: "#2DE0A6", greenDim: "#1B9E76",
+      pink: "#FF5C8A", pinkDim: "#B83E63",
+      amber: "#FFB020", red: "#FF4D5E", cyan: "#4CC9F0", grid: "#161D29",
+    };
+    const MONO = { fontFamily: "ui-monospace, 'SF Mono', Menlo, Consolas, monospace", fontVariantNumeric: "tabular-nums" };
+
+    /* ============================ HELPERS ============================ */
+    const eur = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+    const fmt = (n) => eur.format(Math.round(n || 0));
+    const clampDay = (d) => Math.max(-60, Math.min(2, Math.round(d)));
+    const dayLabel = (d) => (d === 0 ? "J0" : d > 0 ? `J+${d}` : `J${d}`);
+    const uid = () => Math.random().toString(36).slice(2, 9);
+    const num = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+
+    const CATS = ["Billetterie","Lieu","Technique","Line-up","Sécurité","Secours","Sanitaires","Énergie","Structures","Marketing","Bar","Droits","Déchets","Assurance","Autre"];
+
+    /* ============================ SEED ============================ */
+    const seed = () => ({
+      today: -30,
+      initialCash: 12000,
+      billetterieMode: "after_event",
+      capacity: 2000,
+      tiers: [
+        { id: uid(), name: "Early bird", price: 25, alloc: 600, sold: 540 },
+        { id: uid(), name: "Normal",     price: 35, alloc: 1000, sold: 250 },
+        { id: uid(), name: "Last minute",price: 45, alloc: 400, sold: 0 },
+      ],
+      sponsors: [
+        { id: uid(), name: "Brasserie locale", amount: 5000, date: -35 },
+        { id: uid(), name: "Boisson énergisante", amount: 8000, date: -25 },
+        { id: uid(), name: "Marque son / audio", amount: 3000, date: -15 },
+      ],
+      stands: [
+        { id: uid(), name: "Bar central", type: "commission", commissionPct: 15, estimatedRevenue: 45000, date: 1 },
+        { id: uid(), name: "Food trucks (x3)", type: "fixed", fixedRent: 2400, date: -10 },
+        { id: uid(), name: "Stand merch", type: "fixed", fixedRent: 500, date: -10 },
+      ],
+      events: [
+        { id: uid(), date: -55, type: "expense", category: "Lieu", amount: 3000, label: "Acompte terrain" },
+        { id: uid(), date: -55, type: "expense", category: "Marketing", amount: 1500, label: "Lancement com / visuels" },
+        { id: uid(), date: -50, type: "expense", category: "Assurance", amount: 2500, label: "RC organisateur + annulation" },
+        { id: uid(), date: -45, type: "expense", category: "Technique", amount: 6000, label: "Acompte son / scène / light" },
+        { id: uid(), date: -40, type: "expense", category: "Line-up", amount: 8000, label: "Acomptes artistes" },
+        { id: uid(), date: -30, type: "expense", category: "Marketing", amount: 1500, label: "Campagne ads" },
+        { id: uid(), date: -20, type: "expense", category: "Sécurité", amount: 3000, label: "Acompte sécurité privée" },
+        { id: uid(), date: -15, type: "expense", category: "Secours", amount: 800, label: "Acompte DPS (AASC)" },
+        { id: uid(), date: -12, type: "expense", category: "Structures", amount: 3500, label: "Barrières / signalétique" },
+        { id: uid(), date: -10, type: "expense", category: "Sanitaires", amount: 2500, label: "Sanitaires + eau + déchets" },
+        { id: uid(), date: -10, type: "expense", category: "Marketing", amount: 1000, label: "Push final" },
+        { id: uid(), date: -8,  type: "expense", category: "Énergie", amount: 3000, label: "Groupes électrogènes" },
+        { id: uid(), date: -5,  type: "expense", category: "Bar", amount: 6000, label: "Stock bar (avance)" },
+        { id: uid(), date: -3,  type: "expense", category: "Lieu", amount: 5000, label: "Solde terrain" },
+        { id: uid(), date: -2,  type: "expense", category: "Technique", amount: 12000, label: "Solde technique" },
+        { id: uid(), date: -2,  type: "expense", category: "Droits", amount: 1500, label: "SACEM" },
+        { id: uid(), date: -1,  type: "expense", category: "Line-up", amount: 12000, label: "Solde artistes" },
+        { id: uid(), date: 1,   type: "expense", category: "Sécurité", amount: 6000, label: "Solde sécurité" },
+        { id: uid(), date: 1,   type: "expense", category: "Secours", amount: 1700, label: "Solde DPS" },
+        { id: uid(), date: 2,   type: "expense", category: "Déchets", amount: 2500, label: "Remise en état / déchets" },
+      ],
+    });
+
+    /* ============================ REDUCER ============================ */
+    function reducer(s, a) {
+      switch (a.type) {
+        case "SET": return { ...s, [a.key]: a.value };
+        case "TIER": return { ...s, tiers: s.tiers.map(t => t.id === a.id ? { ...t, [a.key]: a.value } : t) };
+        case "ADD_EVENT": return { ...s, events: [...s.events, { id: uid(), date: -30, type: "expense", category: "Autre", amount: 0, label: "Nouvelle ligne" }] };
+        case "EVENT": return { ...s, events: s.events.map(e => e.id === a.id ? { ...e, [a.key]: a.value } : e) };
+        case "DEL_EVENT": return { ...s, events: s.events.filter(e => e.id !== a.id) };
+        case "ADD_SPONSOR": return { ...s, sponsors: [...s.sponsors, { id: uid(), name: "Nouveau sponsor", amount: 0, date: -30 }] };
+        case "SPONSOR": return { ...s, sponsors: s.sponsors.map(x => x.id === a.id ? { ...x, [a.key]: a.value } : x) };
+        case "DEL_SPONSOR": return { ...s, sponsors: s.sponsors.filter(x => x.id !== a.id) };
+        case "ADD_STAND": return { ...s, stands: [...s.stands, { id: uid(), name: "Nouveau stand", type: "fixed", fixedRent: 0, commissionPct: 10, estimatedRevenue: 0, date: -10 }] };
+        case "STAND": return { ...s, stands: s.stands.map(x => x.id === a.id ? { ...x, [a.key]: a.value } : x) };
+        case "DEL_STAND": return { ...s, stands: s.stands.filter(x => x.id !== a.id) };
+        case "RESET": return seed();
+        case "IMPORT": return a.value;
+        default: return s;
+      }
+    }
+
+    /* ============================ MODEL (pure compute) ============================ */
+    function computeModel(s) {
+      const P = 1.2;
+      const cumShare = (d) => (d <= -60 ? 0 : d >= 0 ? 1 : Math.pow((d + 60) / 60, P));
+      const days = []; for (let d = -60; d <= 2; d++) days.push(d);
+
+      const capacity = s.tiers.reduce((a, t) => a + num(t.alloc), 0) || 1;
+      const sold = s.tiers.reduce((a, t) => a + num(t.sold), 0);
+      const realizedRev = s.tiers.reduce((a, t) => a + num(t.sold) * num(t.price), 0);
+
+      const today0 = Math.min(s.today, 0);
+      const frac = Math.max(cumShare(today0), 1e-6);
+      let projectedFinal = sold > 0 ? Math.round(sold / frac) : 0;
+      projectedFinal = Math.max(sold, Math.min(capacity, projectedFinal));
+
+      let remain = projectedFinal, projectedRev = 0;
+      for (const t of s.tiers) { const n = Math.max(0, Math.min(num(t.alloc), remain)); remain -= n; projectedRev += n * num(t.price); }
+
+      const sponsorsTotal = s.sponsors.reduce((a, x) => a + num(x.amount), 0);
+      const standVal = (st) => st.type === "fixed" ? num(st.fixedRent) : num(st.estimatedRevenue) * num(st.commissionPct) / 100;
+      const standsTotal = s.stands.reduce((a, x) => a + standVal(x), 0);
+      const incomeEvents = s.events.filter(e => e.type === "income").reduce((a, e) => a + num(e.amount), 0);
+      const totalExpenses = s.events.filter(e => e.type === "expense").reduce((a, e) => a + num(e.amount), 0);
+
+      const ticketTarget = totalExpenses - sponsorsTotal - standsTotal - incomeEvents;
+      const ticketsForRevenue = (target) => {
+        if (target <= 0) return 0;
+        let rev = 0, n = 0;
+        for (const t of s.tiers) {
+          const full = num(t.alloc) * num(t.price);
+          if (rev + full < target) { rev += full; n += num(t.alloc); }
+          else { return n + Math.min(num(t.alloc), Math.ceil((target - rev) / num(t.price))); }
+        }
+        return Infinity;
+      };
+      const breakEven = ticketsForRevenue(ticketTarget);
+
+      const dInc = {}, dExp = {}; days.forEach(d => { dInc[d] = 0; dExp[d] = 0; });
+      s.events.forEach(e => { const d = clampDay(e.date); (e.type === "income" ? dInc : dExp)[d] += num(e.amount); });
+      s.sponsors.forEach(x => { dInc[clampDay(x.date)] += num(x.amount); });
+      s.stands.forEach(x => { dInc[clampDay(x.date)] += standVal(x); });
+
+      if (s.billetterieMode === "after_event") {
+        dInc[1] += projectedRev;
+      } else {
+        const denomR = cumShare(today0), denomP = 1 - cumShare(today0);
+        const extra = projectedRev - realizedRev;
+        days.forEach(d => {
+          const inc = cumShare(d) - cumShare(d - 1);
+          if (d <= today0) dInc[d] += realizedRev * (denomR > 1e-9 ? inc / denomR : d === today0 ? 1 : 0);
+          else if (d <= 0) dInc[d] += extra * (denomP > 1e-9 ? inc / denomP : d === 0 ? 1 : 0);
+        });
+      }
+
+      let run = num(s.initialCash);
+      const series = days.map(d => { run += dInc[d] - dExp[d]; return { d, balance: run, income: dInc[d], expense: dExp[d] }; });
+      let minCash = Infinity, dangerDay = -60;
+      series.forEach(r => { if (r.balance < minCash) { minCash = r.balance; dangerDay = r.d; } });
+      const cashToday = series.find(r => r.d === s.today)?.balance ?? num(s.initialCash);
+
+      const cfData = series.map(r => ({ d: r.d, actual: r.d <= s.today ? r.balance : null, proj: r.d >= s.today ? r.balance : null }));
+
+      const buckets = [];
+      for (let start = -60; start <= 2; start += 7) {
+        const end = Math.min(start + 6, 2); let inc = 0, exp = 0;
+        for (let d = start; d <= end; d++) { inc += dInc[d] || 0; exp += dExp[d] || 0; }
+        buckets.push({ label: dayLabel(start), income: Math.round(inc), expense: -Math.round(exp) });
+      }
+
+      const byCat = {}; s.events.filter(e => e.type === "expense").forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + num(e.amount); });
+      const catArr = Object.entries(byCat).map(([cat, amount]) => ({ cat, amount })).sort((a, b) => b.amount - a.amount);
+
+      const totalIncomeProj = projectedRev + sponsorsTotal + standsTotal + incomeEvents;
+      const projectedNet = totalIncomeProj - totalExpenses;
+      const coverage = totalExpenses > 0 ? totalIncomeProj / totalExpenses : 0;
+      const encaisse = days.filter(d => d <= s.today).reduce((a, d) => a + dInc[d], 0);
+      const engage = days.filter(d => d <= s.today).reduce((a, d) => a + dExp[d], 0);
+
+      const sgn = (d) => (d >= 0 ? `+${d}` : `${d}`);
+      const alerts = [];
+      if (projectedNet < 0) alerts.push({ level: "red", title: "Seuil de rentabilité non atteint", detail: `Résultat projeté ${fmt(projectedNet)}. Il manque ${fmt(-projectedNet)} pour couvrir ${fmt(totalExpenses)} de charges.` });
+      else if (projectedNet < 0.08 * totalExpenses) alerts.push({ level: "amber", title: "Marge très faible", detail: `Résultat projeté ${fmt(projectedNet)} — soit ${(projectedNet / totalExpenses * 100).toFixed(1)}% du budget. Peu de coussin en cas d'imprévu.` });
+      else alerts.push({ level: "green", title: "Rentabilité projetée OK", detail: `Résultat projeté ${fmt(projectedNet)} (${(projectedNet / totalExpenses * 100).toFixed(0)}% du budget).` });
+
+      if (minCash < 0) alerts.push({ level: minCash < -0.15 * totalExpenses ? "red" : "amber", title: "Trésorerie négative", detail: `Le solde descend à ${fmt(minCash)} vers J${sgn(dangerDay)}. ${s.billetterieMode === "after_event" ? "La billetterie n'est versée qu'après J — prévois un financement-relais ou un acompte plateforme." : "Décale des paiements ou augmente la trésorerie de départ."}` });
+      else alerts.push({ level: "green", title: "Trésorerie toujours positive", detail: `Point bas ${fmt(minCash)} vers J${sgn(dangerDay)}.` });
+
+      if (s.today < 0) {
+        if (!isFinite(breakEven)) alerts.push({ level: "red", title: "Rentabilité impossible au prix actuel", detail: "Même à guichets fermés, les billets ne couvrent pas les charges. Revois les prix, les sponsors ou les dépenses." });
+        else if (projectedFinal < breakEven) alerts.push({ level: "red", title: "Ventes trop lentes", detail: `Projection ${projectedFinal} billets ; seuil de rentabilité à ${breakEven} (${(breakEven / capacity * 100).toFixed(0)}% de la jauge). Accélère la prévente.` });
+        else if (projectedFinal < 0.9 * capacity) alerts.push({ level: "amber", title: "Ventes sous l'objectif", detail: `Projection ${projectedFinal}/${capacity}. Au-dessus du seuil (${breakEven}) mais marge fine.` });
+        else alerts.push({ level: "green", title: "Rythme de vente sain", detail: `Projection ${projectedFinal}/${capacity} billets.` });
+      }
+
+      const hasIns = s.events.some(e => e.type === "expense" && /assur/i.test(e.category + " " + e.label));
+      if (!hasIns) alerts.push({ level: "amber", title: "Aucune ligne assurance", detail: "Pas de RC organisateur / annulation au budget — risque majeur pour un plein air." });
+
+      const ord = { green: 0, amber: 1, red: 2 };
+      const risk = alerts.reduce((m, x) => (ord[x.level] > ord[m] ? x.level : m), "green");
+
+      return { days, capacity, sold, projectedFinal, realizedRev, projectedRev, sponsorsTotal, standsTotal,
+        totalExpenses, totalIncomeProj, projectedNet, coverage, breakEven, minCash, dangerDay, cashToday,
+        encaisse, engage, series, cfData, buckets, catArr, alerts, risk, standVal };
+    }
+
+    /* ============================ UI ATOMS ============================ */
+    const lvl = { green: C.green, amber: C.amber, red: C.red };
+    const RISK_LABEL = { green: "MAÎTRISÉ", amber: "VIGILANCE", red: "CRITIQUE" };
+
+    function Panel({ children, className = "", style }) {
+      return <div className={`rounded-xl ${className}`} style={{ background: C.panel, border: `1px solid ${C.border}`, ...style }}>{children}</div>;
+    }
+    function Eyebrow({ children, color = C.faint }) {
+      return <div style={{ ...MONO, color, fontSize: 10.5, letterSpacing: "0.14em" }} className="uppercase font-medium">{children}</div>;
+    }
+    function Readout({ label, value, sub, color = C.ink, icon: Icon }) {
+      return (
+        <Panel className="p-3.5" style={{ background: C.panel2 }}>
+          <div className="flex items-center justify-between mb-2">
+            <Eyebrow>{label}</Eyebrow>
+            {Icon && <Icon size={14} style={{ color: C.faint }} />}
+          </div>
+          <div style={{ ...MONO, color, fontSize: 22, lineHeight: 1 }} className="font-semibold">{value}</div>
+          {sub && <div style={{ ...MONO, color: C.sub, fontSize: 11 }} className="mt-1.5">{sub}</div>}
+        </Panel>
+      );
+    }
+    const inputCls = "rounded-md px-2 py-1.5 text-sm w-full";
+    const inputStyle = { background: C.bg2, border: `1px solid ${C.border}`, color: C.ink, ...MONO };
+    function NumInput({ value, onChange, step = 100, w }) {
+      return <input type="number" step={step} value={value} onChange={(e) => onChange(num(e.target.value))} className={inputCls} style={{ ...inputStyle, width: w }} />;
+    }
+    function TextInput({ value, onChange }) {
+      return <input value={value} onChange={(e) => onChange(e.target.value)} className={inputCls} style={{ ...inputStyle, fontFamily: "inherit" }} />;
+    }
+    function Select({ value, onChange, options }) {
+      return <select value={value} onChange={(e) => onChange(e.target.value)} className={inputCls} style={inputStyle}>
+        {options.map((o) => <option key={o} value={o} style={{ background: C.panel }}>{o}</option>)}
+      </select>;
+    }
+    function IconBtn({ icon: Icon, label, onClick, color = C.sub }) {
+      return <button onClick={onClick} title={label} className="rounded-md p-2 transition-colors"
+        style={{ background: C.panel2, border: `1px solid ${C.border}`, color }}
+        onMouseEnter={(e) => (e.currentTarget.style.borderColor = C.borderHi)}
+        onMouseLeave={(e) => (e.currentTarget.style.borderColor = C.border)}><Icon size={15} /></button>;
+    }
+    function AddRow({ onClick, children }) {
+      return <button onClick={onClick} className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors"
+        style={{ background: C.panel2, border: `1px dashed ${C.borderHi}`, color: C.sub, ...MONO }}
+        onMouseEnter={(e) => { e.currentTarget.style.color = C.green; e.currentTarget.style.borderColor = C.greenDim; }}
+        onMouseLeave={(e) => { e.currentTarget.style.color = C.sub; e.currentTarget.style.borderColor = C.borderHi; }}>
+        <Plus size={14} />{children}</button>;
+    }
+
+    function ChartTip({ active, payload, label, money = true }) {
+      if (!active || !payload?.length) return null;
+      return (
+        <div className="rounded-lg px-3 py-2" style={{ background: "#0A0E17", border: `1px solid ${C.borderHi}`, ...MONO }}>
+          <div style={{ color: C.sub, fontSize: 11, marginBottom: 4 }}>{typeof label === "number" ? dayLabel(label) : label}</div>
+          {payload.filter(p => p.value != null).map((p, i) => (
+            <div key={i} className="flex items-center gap-2" style={{ fontSize: 12 }}>
+              <span style={{ width: 8, height: 8, borderRadius: 2, background: p.color || p.stroke }} />
+              <span style={{ color: C.ink }}>{money ? fmt(p.value) : p.value}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    /* ============================ VIEWS ============================ */
+    function CashflowView({ m, s }) {
+      return (
+        <div className="flex flex-col gap-4">
+          <Panel className="p-4">
+            <div className="flex items-center justify-between mb-1">
+              <div>
+                <Eyebrow color={C.green}>Trésorerie cumulée · J-60 → J+2</Eyebrow>
+                <div style={{ color: C.faint, fontSize: 11.5, marginTop: 3 }}>
+                  Trait plein = réalisé jusqu'à {dayLabel(s.today)} · pointillés = projection · bande rose = sous zéro
+                </div>
+              </div>
+              <div className="text-right">
+                <div style={{ ...MONO, color: m.minCash < 0 ? C.pink : C.green, fontSize: 18 }} className="font-semibold">{fmt(m.minCash)}</div>
+                <Eyebrow>point bas · J{m.dangerDay >= 0 ? "+" + m.dangerDay : m.dangerDay}</Eyebrow>
+              </div>
+            </div>
+            <div style={{ height: 280 }}>
+              <ResponsiveContainer>
+                <ComposedChart data={m.cfData} margin={{ top: 10, right: 8, bottom: 0, left: -8 }}>
+                  <defs>
+                    <linearGradient id="gActual" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={C.green} stopOpacity={0.32} />
+                      <stop offset="100%" stopColor={C.green} stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke={C.grid} vertical={false} />
+                  <XAxis dataKey="d" tickFormatter={dayLabel} tick={{ fill: C.faint, fontSize: 10, ...MONO }} stroke={C.border} interval={6} />
+                  <YAxis tickFormatter={(v) => `${Math.round(v / 1000)}k`} tick={{ fill: C.faint, fontSize: 10, ...MONO }} stroke={C.border} width={42} />
+                  <Tooltip content={<ChartTip />} />
+                  {m.minCash < 0 && <ReferenceArea y1={m.minCash * 1.05} y2={0} fill={C.pink} fillOpacity={0.07} />}
+                  <ReferenceLine y={0} stroke={C.pinkDim} strokeWidth={1.5} />
+                  <ReferenceLine x={s.today} stroke={C.cyan} strokeDasharray="3 3" strokeWidth={1.5}
+                    label={{ value: `AUJ ${dayLabel(s.today)}`, position: "top", fill: C.cyan, fontSize: 10, ...MONO }} />
+                  <Area type="monotone" dataKey="actual" stroke={C.green} strokeWidth={2.4} fill="url(#gActual)" dot={false} isAnimationActive={false} connectNulls={false} />
+                  <Line type="monotone" dataKey="proj" stroke={C.cyan} strokeWidth={2} strokeDasharray="5 4" dot={false} isAnimationActive={false} connectNulls={false} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          </Panel>
+
+          <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
+            <Panel className="p-4 xl:col-span-3">
+              <Eyebrow>Entrées vs sorties · par semaine</Eyebrow>
+              <div style={{ height: 220 }} className="mt-2">
+                <ResponsiveContainer>
+                  <BarChart data={m.buckets} margin={{ top: 8, right: 8, bottom: 0, left: -8 }} barGap={2}>
+                    <CartesianGrid stroke={C.grid} vertical={false} />
+                    <XAxis dataKey="label" tick={{ fill: C.faint, fontSize: 9.5, ...MONO }} stroke={C.border} />
+                    <YAxis tickFormatter={(v) => `${Math.round(v / 1000)}k`} tick={{ fill: C.faint, fontSize: 10, ...MONO }} stroke={C.border} width={42} />
+                    <Tooltip content={<ChartTip />} cursor={{ fill: C.panel2 }} />
+                    <ReferenceLine y={0} stroke={C.border} />
+                    <Bar dataKey="income" fill={C.green} radius={[2, 2, 0, 0]} isAnimationActive={false} />
+                    <Bar dataKey="expense" fill={C.pink} radius={[0, 0, 2, 2]} isAnimationActive={false} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Panel>
+
+            <Panel className="p-4 xl:col-span-2">
+              <Eyebrow>Dépenses par poste</Eyebrow>
+              <div className="mt-3 flex flex-col gap-2.5 fc-scroll" style={{ maxHeight: 220, overflowY: "auto" }}>
+                {m.catArr.map((c) => {
+                  const pct = (c.amount / m.totalExpenses) * 100;
+                  return (
+                    <div key={c.cat}>
+                      <div className="flex justify-between" style={{ ...MONO, fontSize: 11.5 }}>
+                        <span style={{ color: C.sub }}>{c.cat}</span>
+                        <span style={{ color: C.ink }}>{fmt(c.amount)}</span>
+                      </div>
+                      <div className="mt-1 rounded-full overflow-hidden" style={{ height: 5, background: C.bg2 }}>
+                        <div style={{ width: `${pct}%`, height: "100%", background: C.pink, opacity: 0.7 }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Panel>
+          </div>
+        </div>
+      );
+    }
+
+    function TimelineView({ m, s, d }) {
+      const sorted = [...s.events].sort((a, b) => a.date - b.date);
+      const posX = (day) => ((clampDay(day) + 60) / 62) * 100;
+      return (
+        <div className="flex flex-col gap-4">
+          <Panel className="p-4">
+            <Eyebrow color={C.cyan}>Échéancier visuel · entrées au-dessus, sorties en dessous</Eyebrow>
+            <div className="relative mt-6 mb-2" style={{ height: 140 }}>
+              <div className="absolute left-0 right-0" style={{ top: "50%", height: 1, background: C.borderHi }} />
+              <div className="absolute" style={{ left: `${posX(s.today)}%`, top: 0, bottom: 0, width: 1, background: C.cyan }}>
+                <div style={{ ...MONO, color: C.cyan, fontSize: 9, position: "absolute", top: -14, transform: "translateX(-50%)" }}>{dayLabel(s.today)}</div>
+              </div>
+              {sorted.map((e) => {
+                const inc = e.type === "income"; const x = posX(e.date);
+                return <div key={e.id} title={`${dayLabel(e.date)} · ${e.label} · ${fmt(e.amount)}`}
+                  className="absolute rounded-full" style={{ left: `${x}%`, top: inc ? "50%" : undefined, bottom: inc ? undefined : "50%",
+                    transform: inc ? "translate(-50%,-100%)" : "translate(-50%,100%)", width: 9, height: 9,
+                    background: inc ? C.green : C.pink, boxShadow: `0 0 0 3px ${(inc ? C.green : C.pink)}22` }} />;
+              })}
+              {[-60, -45, -30, -15, 0].map((t) => (
+                <div key={t} style={{ position: "absolute", left: `${posX(t)}%`, bottom: -18, transform: "translateX(-50%)", ...MONO, fontSize: 9, color: C.faint }}>{dayLabel(t)}</div>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel className="p-0 overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: `1px solid ${C.border}` }}>
+              <Eyebrow>Lignes de cashflow ({s.events.length})</Eyebrow>
+              <AddRow onClick={() => d({ type: "ADD_EVENT" })}>Ajouter une ligne</AddRow>
+            </div>
+            <div className="fc-scroll" style={{ maxHeight: 360, overflowY: "auto" }}>
+              <table className="w-full" style={{ ...MONO, fontSize: 12 }}>
+                <thead><tr style={{ color: C.faint }}>
+                  {["Jour", "Type", "Poste", "Libellé", "Montant", ""].map((h, i) => (
+                    <th key={i} className="text-left px-3 py-2 font-medium" style={{ fontSize: 10, letterSpacing: "0.08em" }}>{h.toUpperCase()}</th>
+                  ))}
+                </tr></thead>
+                <tbody>
+                  {sorted.map((e) => (
+                    <tr key={e.id} style={{ borderTop: `1px solid ${C.border}` }}>
+                      <td className="px-3 py-1.5" style={{ width: 90 }}>
+                        <input type="number" value={e.date} onChange={(ev) => d({ type: "EVENT", id: e.id, key: "date", value: clampDay(num(ev.target.value)) })}
+                          className="rounded px-1.5 py-1 w-16" style={inputStyle} />
+                      </td>
+                      <td className="px-3 py-1.5" style={{ width: 110 }}>
+                        <Select value={e.type} onChange={(v) => d({ type: "EVENT", id: e.id, key: "type", value: v })} options={["income", "expense"]} />
+                      </td>
+                      <td className="px-3 py-1.5" style={{ width: 130 }}>
+                        <Select value={e.category} onChange={(v) => d({ type: "EVENT", id: e.id, key: "category", value: v })} options={CATS} />
+                      </td>
+                      <td className="px-3 py-1.5"><TextInput value={e.label} onChange={(v) => d({ type: "EVENT", id: e.id, key: "label", value: v })} /></td>
+                      <td className="px-3 py-1.5" style={{ width: 120 }}>
+                        <div className="flex items-center gap-1.5">
+                          {e.type === "income" ? <ArrowUpRight size={13} style={{ color: C.green }} /> : <ArrowDownRight size={13} style={{ color: C.pink }} />}
+                          <NumInput value={e.amount} onChange={(v) => d({ type: "EVENT", id: e.id, key: "amount", value: v })} w={84} />
+                        </div>
+                      </td>
+                      <td className="px-3 py-1.5" style={{ width: 44 }}>
+                        <button onClick={() => d({ type: "DEL_EVENT", id: e.id })} className="p-1.5 rounded" style={{ color: C.faint }}
+                          onMouseEnter={(ev) => (ev.currentTarget.style.color = C.red)} onMouseLeave={(ev) => (ev.currentTarget.style.color = C.faint)}><Trash2 size={14} /></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Panel>
+        </div>
+      );
+    }
+
+    function TicketsView({ m, s, d }) {
+      const pct = (m.sold / m.capacity) * 100;
+      const projPct = (m.projectedFinal / m.capacity) * 100;
+      const bePct = isFinite(m.breakEven) ? (m.breakEven / m.capacity) * 100 : 100;
+      return (
+        <div className="flex flex-col gap-4">
+          <Panel className="p-5">
+            <div className="flex items-end justify-between mb-4 flex-wrap gap-3">
+              <div>
+                <Eyebrow color={C.green}>Remplissage de la jauge</Eyebrow>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span style={{ ...MONO, color: C.ink, fontSize: 34 }} className="font-semibold">{m.sold}</span>
+                  <span style={{ ...MONO, color: C.faint, fontSize: 16 }}>/ {m.capacity}</span>
+                  <span style={{ ...MONO, color: C.green, fontSize: 14 }} className="ml-1">{pct.toFixed(0)}%</span>
+                </div>
+              </div>
+              <div className="flex gap-6">
+                <div><Eyebrow>Recette réalisée</Eyebrow><div style={{ ...MONO, color: C.green, fontSize: 18 }} className="mt-1">{fmt(m.realizedRev)}</div></div>
+                <div><Eyebrow>Projection finale</Eyebrow><div style={{ ...MONO, color: C.cyan, fontSize: 18 }} className="mt-1">{m.projectedFinal} · {fmt(m.projectedRev)}</div></div>
+                <div><Eyebrow>Seuil rentabilité</Eyebrow><div style={{ ...MONO, color: isFinite(m.breakEven) ? C.amber : C.red, fontSize: 18 }} className="mt-1">{isFinite(m.breakEven) ? `${m.breakEven} billets` : "hors d'atteinte"}</div></div>
+              </div>
+            </div>
+            <div className="relative rounded-full overflow-hidden" style={{ height: 16, background: C.bg2, border: `1px solid ${C.border}` }}>
+              <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${projPct}%`, background: C.cyan, opacity: 0.18 }} />
+              <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${pct}%`, background: `linear-gradient(90deg, ${C.greenDim}, ${C.green})` }} />
+              {isFinite(m.breakEven) && <div style={{ position: "absolute", left: `${bePct}%`, top: -4, bottom: -4, width: 2, background: C.amber }} title="seuil de rentabilité" />}
+            </div>
+            <div className="flex justify-between mt-2" style={{ ...MONO, fontSize: 10.5, color: C.faint }}>
+              <span><span style={{ color: C.green }}>■</span> vendu · <span style={{ color: C.cyan }}>■</span> projeté · <span style={{ color: C.amber }}>■</span> seuil rentabilité</span>
+              <span>{m.capacity - m.sold} billets restants</span>
+            </div>
+          </Panel>
+
+          <Panel className="p-0 overflow-hidden">
+            <div className="px-4 py-3" style={{ borderBottom: `1px solid ${C.border}` }}><Eyebrow>Paliers tarifaires</Eyebrow></div>
+            <div className="p-4 flex flex-col gap-4">
+              {s.tiers.map((t) => {
+                const tp = num(t.alloc) > 0 ? (num(t.sold) / num(t.alloc)) * 100 : 0;
+                return (
+                  <div key={t.id} className="rounded-lg p-3" style={{ background: C.panel2, border: `1px solid ${C.border}` }}>
+                    <div className="flex items-center justify-between gap-4 flex-wrap">
+                      <div style={{ width: 140 }}><Eyebrow>Nom</Eyebrow><TextInput value={t.name} onChange={(v) => d({ type: "TIER", id: t.id, key: "name", value: v })} /></div>
+                      <div style={{ width: 110 }}><Eyebrow>Prix (€)</Eyebrow><NumInput step={1} value={t.price} onChange={(v) => d({ type: "TIER", id: t.id, key: "price", value: v })} /></div>
+                      <div style={{ width: 110 }}><Eyebrow>Quota</Eyebrow><NumInput step={50} value={t.alloc} onChange={(v) => d({ type: "TIER", id: t.id, key: "alloc", value: v })} /></div>
+                      <div className="flex-1" style={{ minWidth: 200 }}>
+                        <div className="flex justify-between"><Eyebrow>Vendus</Eyebrow><span style={{ ...MONO, fontSize: 12, color: C.ink }}>{t.sold} · {fmt(num(t.sold) * num(t.price))}</span></div>
+                        <input type="range" min={0} max={t.alloc} value={Math.min(t.sold, t.alloc)} onChange={(e) => d({ type: "TIER", id: t.id, key: "sold", value: num(e.target.value) })} className="w-full mt-1.5" />
+                        <div className="rounded-full overflow-hidden mt-1" style={{ height: 4, background: C.bg2 }}><div style={{ width: `${tp}%`, height: "100%", background: C.green }} /></div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Panel>
+        </div>
+      );
+    }
+
+    function SponsorsView({ m, s, d }) {
+      return (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <Panel className="p-0 overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: `1px solid ${C.border}` }}>
+              <div><Eyebrow color={C.green}>Sponsors</Eyebrow><div style={{ ...MONO, color: C.green, fontSize: 14, marginTop: 2 }}>{fmt(m.sponsorsTotal)}</div></div>
+              <AddRow onClick={() => d({ type: "ADD_SPONSOR" })}>Sponsor</AddRow>
+            </div>
+            <div className="p-4 flex flex-col gap-3">
+              {s.sponsors.map((x) => (
+                <div key={x.id} className="flex items-end gap-2 rounded-lg p-3" style={{ background: C.panel2, border: `1px solid ${C.border}` }}>
+                  <div className="flex-1"><Eyebrow>Nom</Eyebrow><TextInput value={x.name} onChange={(v) => d({ type: "SPONSOR", id: x.id, key: "name", value: v })} /></div>
+                  <div style={{ width: 110 }}><Eyebrow>Montant</Eyebrow><NumInput value={x.amount} onChange={(v) => d({ type: "SPONSOR", id: x.id, key: "amount", value: v })} /></div>
+                  <div style={{ width: 78 }}><Eyebrow>Jour</Eyebrow><input type="number" value={x.date} onChange={(e) => d({ type: "SPONSOR", id: x.id, key: "date", value: clampDay(num(e.target.value)) })} className={inputCls} style={inputStyle} /></div>
+                  <button onClick={() => d({ type: "DEL_SPONSOR", id: x.id })} className="p-2 rounded mb-0.5" style={{ color: C.faint }}
+                    onMouseEnter={(ev) => (ev.currentTarget.style.color = C.red)} onMouseLeave={(ev) => (ev.currentTarget.style.color = C.faint)}><Trash2 size={14} /></button>
+                </div>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel className="p-0 overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: `1px solid ${C.border}` }}>
+              <div><Eyebrow color={C.green}>Stands</Eyebrow><div style={{ ...MONO, color: C.green, fontSize: 14, marginTop: 2 }}>{fmt(m.standsTotal)}</div></div>
+              <AddRow onClick={() => d({ type: "ADD_STAND" })}>Stand</AddRow>
+            </div>
+            <div className="p-4 flex flex-col gap-3">
+              {s.stands.map((x) => (
+                <div key={x.id} className="rounded-lg p-3" style={{ background: C.panel2, border: `1px solid ${C.border}` }}>
+                  <div className="flex items-end gap-2 mb-2">
+                    <div className="flex-1"><Eyebrow>Nom</Eyebrow><TextInput value={x.name} onChange={(v) => d({ type: "STAND", id: x.id, key: "name", value: v })} /></div>
+                    <div style={{ width: 130 }}><Eyebrow>Type</Eyebrow><Select value={x.type} onChange={(v) => d({ type: "STAND", id: x.id, key: "type", value: v })} options={["fixed", "commission"]} /></div>
+                    <div style={{ width: 78 }}><Eyebrow>Jour</Eyebrow><input type="number" value={x.date} onChange={(e) => d({ type: "STAND", id: x.id, key: "date", value: clampDay(num(e.target.value)) })} className={inputCls} style={inputStyle} /></div>
+                    <button onClick={() => d({ type: "DEL_STAND", id: x.id })} className="p-2 rounded mb-0.5" style={{ color: C.faint }}
+                      onMouseEnter={(ev) => (ev.currentTarget.style.color = C.red)} onMouseLeave={(ev) => (ev.currentTarget.style.color = C.faint)}><Trash2 size={14} /></button>
+                  </div>
+                  <div className="flex items-end gap-2">
+                    {x.type === "fixed" ? (
+                      <div style={{ width: 150 }}><Eyebrow>Loyer fixe (€)</Eyebrow><NumInput value={x.fixedRent} onChange={(v) => d({ type: "STAND", id: x.id, key: "fixedRent", value: v })} /></div>
+                    ) : (
+                      <>
+                        <div style={{ width: 110 }}><Eyebrow>Commission %</Eyebrow><NumInput step={1} value={x.commissionPct} onChange={(v) => d({ type: "STAND", id: x.id, key: "commissionPct", value: v })} /></div>
+                        <div style={{ width: 150 }}><Eyebrow>CA estimé (€)</Eyebrow><NumInput value={x.estimatedRevenue} onChange={(v) => d({ type: "STAND", id: x.id, key: "estimatedRevenue", value: v })} /></div>
+                      </>
+                    )}
+                    <div className="flex-1 text-right"><Eyebrow>Revenu</Eyebrow><div style={{ ...MONO, color: C.green, fontSize: 14, marginTop: 2 }}>{fmt(m.standVal(x))}</div></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </div>
+      );
+    }
+
+    function AlertsView({ m }) {
+      return (
+        <div className="flex flex-col gap-3">
+          {m.alerts.map((a, i) => (
+            <Panel key={i} className="p-4 flex items-start gap-3.5" style={{ borderLeft: `3px solid ${lvl[a.level]}` }}>
+              <div className="rounded-lg p-2 mt-0.5" style={{ background: `${lvl[a.level]}1A` }}><AlertTriangle size={16} style={{ color: lvl[a.level] }} /></div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span style={{ color: C.ink, fontSize: 14 }} className="font-medium">{a.title}</span>
+                  <span style={{ ...MONO, fontSize: 9.5, color: lvl[a.level], border: `1px solid ${lvl[a.level]}44`, borderRadius: 4, padding: "1px 6px" }} className="uppercase">{a.level === "red" ? "critique" : a.level === "amber" ? "vigilance" : "ok"}</span>
+                </div>
+                <div style={{ color: C.sub, fontSize: 12.5, marginTop: 4, lineHeight: 1.5 }}>{a.detail}</div>
+              </div>
+            </Panel>
+          ))}
+        </div>
+      );
+    }
+
+    /* ============================ APP ============================ */
+    const NAV = [
+      { id: "cashflow", label: "Cashflow", icon: Activity },
+      { id: "timeline", label: "Échéancier", icon: Calendar },
+      { id: "tickets", label: "Billetterie", icon: Ticket },
+      { id: "sponsors", label: "Sponsors & Stands", icon: Building2 },
+      { id: "alerts", label: "Alertes", icon: AlertTriangle },
+    ];
+
+    const STORAGE_KEY = "festival-control-v1";
+    const loadState = () => {
+      try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) return JSON.parse(raw); } catch (e) {}
+      return seed();
+    };
+
+    function FestivalControlDashboard() {
+      const [s, d] = useReducer(reducer, undefined, loadState);
+      const [view, setView] = useState("cashflow");
+      const fileRef = useRef(null);
+      const m = useMemo(() => computeModel(s), [s]);
+
+      // Sauvegarde automatique (localStorage) — fonctionne sur un vrai domaine type GitHub Pages
+      useEffect(() => {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (e) {}
+      }, [s]);
+
+      const exportJSON = () => {
+        const blob = new Blob([JSON.stringify(s, null, 2)], { type: "application/json" });
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+        a.download = "festival-control.json"; a.click(); URL.revokeObjectURL(a.href);
+      };
+      const importJSON = (e) => {
+        const f = e.target.files?.[0]; if (!f) return;
+        const r = new FileReader(); r.onload = () => { try { d({ type: "IMPORT", value: JSON.parse(r.result) }); } catch (err) {} }; r.readAsText(f);
+      };
+
+      const riskColor = lvl[m.risk];
+      const alertCount = m.alerts.filter(a => a.level !== "green").length;
+
+      return (
+        <div style={{ background: C.bg, color: C.ink, minHeight: "100vh", fontFamily: "ui-sans-serif, system-ui, -apple-system, sans-serif" }}>
+          <style>{`
+            *{ -webkit-tap-highlight-color: transparent; }
+            .fc-scroll::-webkit-scrollbar{ width:8px; height:8px }
+            .fc-scroll::-webkit-scrollbar-thumb{ background:#222c3a; border-radius:8px }
+            .fc-scroll::-webkit-scrollbar-track{ background:transparent }
+            input,select,button,textarea{ font-family:inherit }
+            input:focus-visible,select:focus-visible,button:focus-visible{ outline:2px solid ${C.cyan}; outline-offset:1px }
+            input[type=range]{ accent-color:${C.green}; height:4px }
+            @media (prefers-reduced-motion: reduce){ *{ transition:none!important; animation:none!important } }
+          `}</style>
+
+          <header className="sticky top-0 z-20" style={{ background: "rgba(8,11,18,0.92)", backdropFilter: "blur(8px)", borderBottom: `1px solid ${C.border}` }}>
+            <div className="px-4 lg:px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg p-2" style={{ background: `${C.green}1A`, border: `1px solid ${C.greenDim}55` }}><Radio size={18} style={{ color: C.green }} /></div>
+                <div>
+                  <div style={{ ...MONO, fontSize: 14, letterSpacing: "0.04em" }} className="font-semibold">FESTIVAL CONTROL</div>
+                  <div style={{ ...MONO, color: C.faint, fontSize: 10 }}>2 000 cap · 1 ha · J-60 → J+2</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-3 rounded-lg px-3 py-2" style={{ background: C.panel, border: `1px solid ${C.border}` }}>
+                  <Eyebrow color={C.cyan}>Aujourd'hui</Eyebrow>
+                  <input type="range" min={-60} max={2} value={s.today} onChange={(e) => d({ type: "SET", key: "today", value: clampDay(num(e.target.value)) })} style={{ width: 160 }} />
+                  <span style={{ ...MONO, color: C.cyan, fontSize: 13, width: 44 }} className="text-right">{dayLabel(s.today)}</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-lg px-3 py-2" style={{ background: C.panel, border: `1px solid ${C.border}` }}>
+                  <Wallet size={14} style={{ color: C.faint }} />
+                  <Eyebrow>Trésorerie départ</Eyebrow>
+                  <input type="number" step={1000} value={s.initialCash} onChange={(e) => d({ type: "SET", key: "initialCash", value: num(e.target.value) })}
+                    className="rounded px-2 py-1" style={{ ...inputStyle, width: 96 }} />
+                </div>
+                <div className="flex rounded-lg overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
+                  {[["after_event", "Versé après J"], ["continuous", "Versé à la vente"]].map(([val, lab]) => (
+                    <button key={val} onClick={() => d({ type: "SET", key: "billetterieMode", value: val })}
+                      style={{ ...MONO, fontSize: 11, padding: "8px 12px", background: s.billetterieMode === val ? C.panel2 : "transparent", color: s.billetterieMode === val ? C.green : C.faint, borderRight: val === "after_event" ? `1px solid ${C.border}` : "none" }}>{lab}</button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <IconBtn icon={Download} label="Exporter JSON" onClick={exportJSON} />
+                  <IconBtn icon={Upload} label="Importer JSON" onClick={() => fileRef.current?.click()} />
+                  <IconBtn icon={RotateCcw} label="Réinitialiser" onClick={() => d({ type: "RESET" })} />
+                  <input ref={fileRef} type="file" accept="application/json" onChange={importJSON} className="hidden" />
+                </div>
+              </div>
+            </div>
+            <div className="flex lg:hidden gap-1 px-4 pb-2 fc-scroll" style={{ overflowX: "auto" }}>
+              {NAV.map((n) => (
+                <button key={n.id} onClick={() => setView(n.id)} className="flex items-center gap-1.5 rounded-md px-3 py-1.5 whitespace-nowrap"
+                  style={{ ...MONO, fontSize: 12, background: view === n.id ? C.panel2 : "transparent", color: view === n.id ? C.green : C.sub, border: `1px solid ${view === n.id ? C.borderHi : "transparent"}` }}>
+                  <n.icon size={14} />{n.label}</button>
+              ))}
+            </div>
+          </header>
+
+          <div className="flex">
+            <nav className="hidden lg:flex flex-col gap-1 p-3 sticky" style={{ width: 220, top: 73, height: "calc(100vh - 73px)", borderRight: `1px solid ${C.border}` }}>
+              {NAV.map((n) => {
+                const on = view === n.id;
+                const badge = n.id === "alerts" && alertCount > 0;
+                return (
+                  <button key={n.id} onClick={() => setView(n.id)} className="flex items-center justify-between rounded-lg px-3 py-2.5 transition-colors"
+                    style={{ background: on ? C.panel2 : "transparent", color: on ? C.ink : C.sub, border: `1px solid ${on ? C.borderHi : "transparent"}` }}
+                    onMouseEnter={(e) => { if (!on) e.currentTarget.style.background = C.panel; }}
+                    onMouseLeave={(e) => { if (!on) e.currentTarget.style.background = "transparent"; }}>
+                    <span className="flex items-center gap-2.5"><n.icon size={16} style={{ color: on ? C.green : C.faint }} /><span style={{ ...MONO, fontSize: 13 }}>{n.label}</span></span>
+                    {badge && <span style={{ ...MONO, fontSize: 10, color: C.bg, background: riskColor, borderRadius: 10, padding: "1px 7px" }} className="font-bold">{alertCount}</span>}
+                  </button>
+                );
+              })}
+              <div className="mt-auto rounded-lg p-3" style={{ background: C.panel2, border: `1px solid ${C.border}` }}>
+                <Eyebrow>Niveau de risque</Eyebrow>
+                <div className="flex items-center gap-2 mt-2">
+                  <Gauge size={18} style={{ color: riskColor }} />
+                  <span style={{ ...MONO, color: riskColor, fontSize: 16 }} className="font-semibold">{RISK_LABEL[m.risk]}</span>
+                </div>
+              </div>
+            </nav>
+
+            <main className="flex-1 min-w-0 p-4 lg:p-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 xl:hidden">
+                <Readout label="Résultat projeté" value={fmt(m.projectedNet)} color={m.projectedNet >= 0 ? C.green : C.red} icon={m.projectedNet >= 0 ? ArrowUpRight : ArrowDownRight} />
+                <Readout label={`Tréso ${dayLabel(s.today)}`} value={fmt(m.cashToday)} color={m.cashToday >= 0 ? C.ink : C.red} icon={Wallet} />
+                <Readout label="Billets" value={`${m.sold}/${m.capacity}`} sub={`proj. ${m.projectedFinal}`} icon={Ticket} />
+                <Readout label="Couverture" value={`${(m.coverage * 100).toFixed(0)}%`} color={m.coverage >= 1 ? C.green : C.amber} icon={Gauge} />
+              </div>
+
+              {view === "cashflow" && <CashflowView m={m} s={s} />}
+              {view === "timeline" && <TimelineView m={m} s={s} d={d} />}
+              {view === "tickets" && <TicketsView m={m} s={s} d={d} />}
+              {view === "sponsors" && <SponsorsView m={m} s={s} d={d} />}
+              {view === "alerts" && <AlertsView m={m} />}
+            </main>
+
+            <aside className="hidden xl:flex flex-col gap-3 p-4 sticky" style={{ width: 300, top: 73, height: "calc(100vh - 73px)", overflowY: "auto", borderLeft: `1px solid ${C.border}` }}>
+              <Eyebrow color={C.green}>KPIs en direct</Eyebrow>
+              <Readout label="Résultat projeté" value={fmt(m.projectedNet)} sub={`${(m.coverage * 100).toFixed(0)}% des charges couvertes`} color={m.projectedNet >= 0 ? C.green : C.red} icon={m.projectedNet >= 0 ? ArrowUpRight : ArrowDownRight} />
+              <Readout label={`Trésorerie · ${dayLabel(s.today)}`} value={fmt(m.cashToday)} sub={`encaissé ${fmt(m.encaisse)} · engagé ${fmt(m.engage)}`} color={m.cashToday >= 0 ? C.ink : C.red} icon={Wallet} />
+              <Readout label="Point bas trésorerie" value={fmt(m.minCash)} sub={`vers J${m.dangerDay >= 0 ? "+" + m.dangerDay : m.dangerDay} · ${s.billetterieMode === "after_event" ? "billetterie versée après J" : "versée à la vente"}`} color={m.minCash >= 0 ? C.green : C.pink} icon={Zap} />
+              <Readout label="Billets vendus" value={`${m.sold} / ${m.capacity}`} sub={`${((m.sold / m.capacity) * 100).toFixed(0)}% · projection ${m.projectedFinal}`} color={C.ink} icon={Ticket} />
+              <Readout label="Seuil de rentabilité" value={isFinite(m.breakEven) ? `${m.breakEven}` : "∞"} sub={isFinite(m.breakEven) ? `${((m.breakEven / m.capacity) * 100).toFixed(0)}% de la jauge` : "non atteignable au prix actuel"} color={isFinite(m.breakEven) ? C.amber : C.red} icon={Gauge} />
+
+              <Panel className="p-3.5 mt-1" style={{ borderColor: `${riskColor}55` }}>
+                <div className="flex items-center justify-between"><Eyebrow color={riskColor}>Niveau de risque</Eyebrow><Gauge size={15} style={{ color: riskColor }} /></div>
+                <div style={{ ...MONO, color: riskColor, fontSize: 22 }} className="font-semibold mt-2">{RISK_LABEL[m.risk]}</div>
+                <div className="flex flex-col gap-1.5 mt-3">
+                  {m.alerts.map((a, i) => (
+                    <div key={i} className="flex items-center gap-2" style={{ ...MONO, fontSize: 11 }}>
+                      <span style={{ width: 7, height: 7, borderRadius: 2, background: lvl[a.level], flexShrink: 0 }} />
+                      <span style={{ color: C.sub }} className="truncate">{a.title}</span>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+
+              <Panel className="p-3.5">
+                <Eyebrow>Recettes projetées</Eyebrow>
+                {[["Billetterie", m.projectedRev], ["Sponsors", m.sponsorsTotal], ["Stands", m.standsTotal]].map(([k, v]) => (
+                  <div key={k} className="flex justify-between mt-2" style={{ ...MONO, fontSize: 12 }}>
+                    <span style={{ color: C.sub }}>{k}</span><span style={{ color: C.green }}>{fmt(v)}</span>
+                  </div>
+                ))}
+                <div className="flex justify-between mt-2.5 pt-2.5" style={{ borderTop: `1px solid ${C.border}`, ...MONO, fontSize: 12 }}>
+                  <span style={{ color: C.sub }}>Charges</span><span style={{ color: C.pink }}>{fmt(m.totalExpenses)}</span>
+                </div>
+              </Panel>
+            </aside>
+          </div>
+        </div>
+      );
+    }
+
+    createRoot(document.getElementById("root")).render(<FestivalControlDashboard />);
+    window.__loaded = true;
+  </script>
+</body>
+</html>
